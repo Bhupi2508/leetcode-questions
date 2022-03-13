@@ -37,7 +37,7 @@
 let i = 0;
 let finalVal = '', final = '';
 var arr = [1000, 500, 100, 50, 10, 5, 1];
-var romanToInt = function (s) {
+var intToRoman = function (s) {
     if (s > 0) {
         while (Math.floor(s / arr[i]) > 0) {
             switch (arr[i]) {
@@ -70,8 +70,8 @@ var romanToInt = function (s) {
             s = val > 1 ? s - val * arr[i] : s - arr[i];
         }
         ++i;
-        romanToInt(s)
+        intToRoman(s)
     }
 };
 
-romanToInt(2458)
+intToRoman(2458)
