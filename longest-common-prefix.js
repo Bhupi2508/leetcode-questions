@@ -29,7 +29,6 @@ var longestCommonPrefix = function (strs) {
         }
         ++i;
     })
-    console.log("Response : ", result ? result : "");
     return result ? result : "";
 };
 
@@ -48,4 +47,4 @@ var longestCommonPrefix = function (strs) {
 //     return prefix;
 //   };
 
-longestCommonPrefix(["cir", "car"])
+console.log(longestCommonPrefix(["cir", "car"]));
