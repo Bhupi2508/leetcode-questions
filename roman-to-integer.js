@@ -34,74 +34,102 @@
  * @return {number}
  */
 var romanToInt = function (s) {
-    let final = 0;
-    let val = s.split('')
-    val.map((req, index) => {
-        if (req === 'C' && val[index + 1] === 'M') {
-            val.splice(val.indexOf(req), 2, '')
-            req = 'CM';
-        } else if (req === 'C' && val[index + 1] === 'D') {
-            val.splice(val.indexOf(req), 2, '')
-            req = 'CD';
-        } else if (req === 'X' && val[index + 1] === 'C') {
-            val.splice(val.indexOf(req), 2, '')
-            req = 'XC';
-        } else if (req === 'X' && val[index + 1] === 'L') {
-            val.splice(val.indexOf(req), 2, '')
-            req = 'XL';
-        } else if (req === 'I' && val[index + 1] === 'V') {
-            val.splice(val.indexOf(req), 2, '')
-            req = 'IV';
-        } else if (req === 'I' && val[index + 1] === 'X') {
-            val.splice(val.indexOf(req), 2, '')
-            req = 'IX';
-        }
-        switch (req) {
-            case 'M':
-                final += 1000;
-                break;
-            case 'CM':
-                final += 900;
-                break;
-            case 'D':
-                final += 500;
-                break;
-            case 'CD':
-                final += 400;
-                break;
-            case 'C':
-                final += 100;
-                break;
-            case 'XC':
-                final += 90;
-                break;
-            case 'L':
-                final += 50;
-                break;
-            case 'XL':
-                final += 40;
-                break;
-            case 'X':
-                final += 10;
-                break;
-            case 'IX':
-                final += 9;
-                break;
-            case 'V':
-                final += 5;
-                break;
-            case 'IV':
-                final += 4;
-                break;
-            case 'I':
-                final += 1;
-                break;
-            default:
-                final += 0;
-        }
+    const amount = {
+        "M": 1000,
+        "D": 500,
+        "C": 100,
+        "L": 50,
+        "X": 10,
+        "V": 5,
+        "I": 1,
+    }
 
-    })
-    console.log(final);
+    let final = 0;
+    const val = s.split('')
+    val.map((req, index) => {
+        const curr = amount[req];
+        const next = val[index + 1] ? amount[val[index + 1]] : 0;
+        if (curr < next) {
+            final -= curr;
+            console.log("If ",final);
+        } else {
+            final += curr;
+            console.log("else ",final);
+        }
+        return final;
+    });
     return final;
+
+
+    // let final = 0;
+    // let val = s.split('')
+    // val.map((req, index) => {
+    // if (req === 'C' && val[index + 1] === 'M') {
+    //     val.splice(val.indexOf(req), 2, '')
+    //     req = 'CM';
+    // } else if (req === 'C' && val[index + 1] === 'D') {
+    //     val.splice(val.indexOf(req), 2, '')
+    //     req = 'CD';
+    // } else if (req === 'X' && val[index + 1] === 'C') {
+    //     val.splice(val.indexOf(req), 2, '')
+    //     req = 'XC';
+    // } else if (req === 'X' && val[index + 1] === 'L') {
+    //     val.splice(val.indexOf(req), 2, '')
+    //     req = 'XL';
+    // } else if (req === 'I' && val[index + 1] === 'V') {
+    //     val.splice(val.indexOf(req), 2, '')
+    //     req = 'IV';
+    // } else if (req === 'I' && val[index + 1] === 'X') {
+    //     val.splice(val.indexOf(req), 2, '')
+    //     req = 'IX';
+    // }
+    //     switch (req) {
+    //         case 'M':
+    //             final += 1000;
+    //             break;
+    //         case 'CM':
+    //             final += 900;
+    //             break;
+    //         case 'D':
+    //             final += 500;
+    //             break;
+    //         case 'CD':
+    //             final += 400;
+    //             break;
+    //         case 'C':
+    //             final += 100;
+    //             break;
+    //         case 'XC':
+    //             final += 90;
+    //             break;
+    //         case 'L':
+    //             final += 50;
+    //             break;
+    //         case 'XL':
+    //             final += 40;
+    //             break;
+    //         case 'X':
+    //             final += 10;
+    //             break;
+    //         case 'IX':
+    //             final += 9;
+    //             break;
+    //         case 'V':
+    //             final += 5;
+    //             break;
+    //         case 'IV':
+    //             final += 4;
+    //             break;
+    //         case 'I':
+    //             final += 1;
+    //             break;
+    //         default:
+    //             final += 0;
+    //     }
+
+    // })
+    // console.log(final);
+    //return final;
 };
-romanToInt("MCMXCIV")
+
+console.log(romanToInt("MCMXCIV"));
