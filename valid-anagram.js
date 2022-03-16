@@ -15,15 +15,22 @@
  * @return {boolean}
  */
 var isAnagram = function (s, t) {
-    // if (s.length != t.length) return false
 
+    if (s.length != length) return false
+    s = s.split("").sort();
+    t = t.split("").sort();
+
+    return s.every((val, index) => val == t[index]);
+
+    // if (s.length != t.length) return false;
+    // const first = s.split('').sort().join('');s
+    // const second = t.split('').sort().join('');
+    // return first === second;
+
+    // if (s.length != t.length) return false
     // s = s.split("").sort();
     // t = t.split("").sort();
     // return JSON.stringify(s) === JSON.stringify(t);
-
-    const first = s.toLowerCase().split('').sort().join('').trim();
-    const second = t.toLowerCase().split('').sort().join('').trim();
-    return first === second
 };
 
-console.log(isAnagram("anagram", "nagaram"));
+console.log(isAnagram("anagram", "nagarsam"));
