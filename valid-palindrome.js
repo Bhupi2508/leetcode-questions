@@ -15,27 +15,15 @@
  * @return {boolean}
  */
 var isPalindrome = function (s) {
-    // Empty string
-    if (s && !s.trim()) {
-        return true;
-    }
-
     // find the array length
-    const arr = s.replaceAll(" ", "").toLowerCase().split("")
-
-    // If array length is even
-    if ((arr.length) % 2 == 0) {
-        return false
-    }
+    const arr = s.replaceAll(/[^a-zA-Z0-9]/g, "").toLowerCase().split("")
 
     // compare elements
     for (let i = 0; i < Math.floor(arr.length / 2); i++) {
-        if (arr[i] != arr[arr.length - 1 - i]) {
-            return false;
-        }
+        if (arr[i] != arr[arr.length - 1 - i]) return false;
     }
 
     return true;
 };
 
-console.log(isPalindrome("Hello r oll  eh"));
+console.log(isPalindrome("..."));
