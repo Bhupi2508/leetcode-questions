@@ -17,15 +17,19 @@
  */
 
 var addDigits = function (num) {
+    // if (num == 0) return 0;
+
+    // let count = 0
+    // num.toString().split("").map(req => count += parseInt(req))
+
+    // if (count.toString().length !== 1) {
+    //     return addDigits(count)
+    // }
+    // return count;
+
     if (num == 0) return 0;
-
-    let count = 0
-    num.toString().split("").map(req => count += parseInt(req))
-
-    if (count.toString().length !== 1) {
-        return addDigits(count)
-    }
-    return count;
+    else if (num % 9 == 0) return 9;
+    else return num % 9;
 };
 
-console.log(addDigits(56789));
+console.log(addDigits(678));
