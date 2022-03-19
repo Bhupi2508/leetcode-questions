@@ -23,10 +23,14 @@
  * @return {number}
  */
 var titleToNumber = function (columnTitle) {
+
+    // If there is only single character
     if (columnTitle.length == 1) return columnTitle.charCodeAt(columnTitle) % 64;
 
     let result = 0;
     for (let i = columnTitle.length - 1, k = 0; i >= 0; i--, k++) {
+
+        // Find the character first and then multiply with 26, depends on the length of the string
         result += (columnTitle.charCodeAt(i) - 64) * (26 ** k);
     };
     return result;
