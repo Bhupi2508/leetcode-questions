@@ -13,22 +13,20 @@
  * @param {string} s
  * @return {string}
  */
-var reverseVowels = function (s) {
+ var reverseVowels = function (s) {
     let arr = [];
-    const vowel = ['a', 'e', 'i', 'o', 'u'];
-    for (let i = 0; i < s.length; i++) {
-        console.log("s[i] :::: ", s[i]);
-        if (vowel.includes(s[i])) {
-            console.log("If :::: ", s[i]);
+    const vowels = ['a', 'e', 'i', 'o', 'u', 'A', 'E', 'I', 'O', 'U'];
+
+    // Loop to detect vowels and store in an array
+    for (let i = 0; i < s.trim().length; i++) {
+        if (vowels.includes(s[i])) {
             arr.push(s[i]);
-            s = s.replace(s[i], "-")
+            //  s = s.replace(s[i], "~")
         }
-        console.log("s :::  ", s, "\n");
     }
 
-    const a= s.split("").map(req => req == "-" ? (req = arr.pop()) : req).join("");
-    console.log(a);
-    return a;
+    // Convert string vowels from array vowels to descending order
+    return s.split("").map(req => vowels.includes(req) ? (req = arr.pop()) : req).join("");
 };
 
 console.log(reverseVowels("hello"));
