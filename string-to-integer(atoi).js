@@ -76,11 +76,38 @@
 //     if (parseInt(len) >= 2147483648) return (2147483648 - 1);
 //     return len;
 // };
-const myAtoi = (s)=> {
-    let s_int = Math.min(Math.max(parseInt(s), -2147483648), 2147483647);
-    console.log(parseInt(s)); 
-    console.log(Math.max(parseInt(s), -2147483648), 2147483647);
-    console.log(parseInt(s_int));
-    return isNaN(s_int) ? 0 : s_int
-  }
-console.log(myAtoi("-156785678823"));
+// const myAtoi = (s)=> {
+//     let s_int = Math.min(Math.max(parseInt(s), -2147483648), 2147483647);
+//     console.log(parseInt(s)); 
+//     console.log(Math.max(parseInt(s), -2147483648), 2147483647);
+//     console.log(parseInt(s_int));
+//     return isNaN(s_int) ? 0 : s_int
+//   }
+// const myAtoi = (str) => {
+//     let trimmed = str.trim()
+//     let parsed = parseInt(trimmed, 10)
+//     console.log(trimmed);
+//     console.log(parsed);
+
+//     if (isNaN(parsed)) {
+//         return 0
+//     } else if (parsed >= Math.pow(2, 31)) {
+//         return Math.pow(2, 31) - 1   
+//     } else if (parsed <= Math.pow(-2, 31)) {
+//         return Math.pow(-2, 31)
+//     } else {
+//         return parsed
+//     }
+// }
+const myAtoi = (s) => {
+    const final = parseInt(s);
+    if (isNaN(final)) return 0;
+
+    if (final >= Math.pow(2, 31)) {
+        return Math.pow(2, 31) - 1
+    } else if (final <= Math.pow(-2, 31)) {
+        return Math.pow(-2, 31)
+    }
+    return final;
+}
+console.log(myAtoi("----- 663    "));
