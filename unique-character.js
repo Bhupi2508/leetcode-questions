@@ -14,8 +14,8 @@
 var firstUniqChar = function (s) {
   for (let i = 0; i < s.length; i++) {
     const element = s.replace(s[i], "-");
-    if (element.indexOf(s[i]) == -1) return s.indexOf(s[i]);
+    if (element.indexOf(s[i]) == -1) return i;
   }
   return -1;
 };
-console.log(firstUniqChar("aabb"));
+console.log(firstUniqChar("wertyuikzswertyuio;lkjhgfdszxcvbwdfghjvbnm,aq"));
