@@ -1,43 +1,53 @@
-// 69. Sqrt(x)
-// Easy   28%
+// 70. Climbing Stairs
+// Easy   40%
 
-// Implement int sqrt(int x).
+// You are climbing a stair case. It takes n steps to reach to the top.
 
-// Compute and return the square root of x.
+// Each time you can either climb 1 or 2 steps. In how many distinct ways can
+// you climb to the top?
 
-// x is guaranteed to be a non-negative integer.
+// Note: Given n will be a positive integer.
 
 // Example 1:
+// Input: 2
+// Output:  2
+// Explanation:  There are two ways to climb to the top.
 
-// Input: 4
-// Output: 2
+// 1. 1 step + 1 step
+// 2. 2 steps
+
 
 // Example 2:
+// Input: 3
+// Output:  3
+// Explanation:  There are three ways to climb to the top.
 
-// Input: 8
-// Output: 2
-// Explanation: The square root of 8 is 2.82842..., and since we want to return
-// an integer, the decimal part will be truncated.
+// 1. 1 step + 1 step + 1 step
+// 2. 1 step + 2 steps
+// 3. 2 steps + 1 step
 
 /**
- * @param {number} x
+ * @param {number} n
  * @return {number}
  */
-const mySqrt = function(x) {
-  let r = x
-  while (r * r > x) r = ((r + x / r) / 2) | 0
-  return r
+const climbStairs = function(n) {
+  let curr = 1, prev = 0
+  for (let i = 1; i <= n; i++) [curr, prev] = [prev + curr, curr]
+  return curr
 }
 
 ;[
-  4,                            // 2
-  8,                            // 2
-  100,                          // 10
-].forEach(x => {
-  console.log(mySqrt(x));
+  2,                            // 2
+  3,                            // 3
+  7,                            // 21
+].forEach(n => {
+  console.log(climbStairs(n))
 })
 
 // Solution:
-// 牛顿迭代法的特殊情况（精度为1）
+// 从第二个台阶开始，每个台阶都可以从下一个台阶或下下个台阶上来，
+// 因此，上到该台阶的走法是到下一个台阶的走法加上下下个的。
+
+// 保存两个变量，进行动态规划。
 
 // Submission Result: Accepted
