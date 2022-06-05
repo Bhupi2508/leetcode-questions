@@ -1,39 +1,20 @@
-// 51. N-Queens
-// Hard   31%
+// 52. N-Queens II
+// Hard    45%
 
-// The n-queens puzzle is the problem of placing n queens on an n×n chessboard
-// such that no two queens attack each other.
+// Follow up for N-Queens problem.
 
-// Given an integer n, return all distinct solutions to the n-queens puzzle.
-
-// Each solution contains a distinct board configuration of the n-queens'
-// placement, where 'Q' and '.' both indicate a queen and an empty space
-// respectively.
-
-// For example,
-// There exist two distinct solutions to the 4-queens puzzle:
-
-// [
-//  [".Q..",  // Solution 1
-//   "...Q",
-//   "Q...",
-//   "..Q."],
-
-//  ["..Q.",  // Solution 2
-//   "Q...",
-//   "...Q",
-//   ".Q.."]
-// ]
+// Now, instead outputting board configurations, return the total number of
+// distinct solutions.
 
 /**
  * @param {number} n
- * @return {string[][]}
+ * @return {number}
  */
-const solveNQueens = function(n) {
-  const result = []
+const totalNQueens = function(n) {
+  let result = 0
   function iter(rows) {
     if (rows.length === n) {
-      addSolution(rows)
+      result++
       return
     }
     for (let i = 0; i < n; i++) {
@@ -50,18 +31,6 @@ const solveNQueens = function(n) {
     }
     return true
   }
-  function addSolution(rows) {
-    const solution = Array(n)
-    for (let i = 0; i < n; i++) {
-      let string = ''
-      for (let j = 0; j < n; j++) {
-        string += rows[i] === j ? 'Q' : '.'
-      }
-      solution[i] = string
-    }
-    result.push(solution)
-  }
-
   iter([])
   return result
 }
@@ -69,25 +38,12 @@ const solveNQueens = function(n) {
 ;[
   4,
   5,
+  8,
 ].forEach(n => {
-  console.log(solveNQueens(n))
+  console.log(totalNQueens(n))
 })
 
 // Solution:
-// 每个摆放方法，都只需要用一个数组来表示（因为棋盘中每行只能放一个皇后）
-// 数组下标表示行号，数值表示列号（都从0开始）
-
-// 使用试探的方法来递归地解决，试探错误则回溯。
-// 每次试着填写一个数字，若合适，则填写下一个数字，否则换一个数字来填写。
-// 直到数组填满，这个填满的数组就是一种摆放方法。
-
-// 检查函数，每次只需检查已填的数字
-// 需要检查4种情况：
-// 1. 每行只能放一个皇后。因为每行用一个数组位置表示，因此确保了每行一个。
-// 2. 每列只能放一个皇后。因为每次添加一个数之前，前面的数都是合法的，因此只需要
-//    检查新加的数是否合法。所以，检查新加的数是否出现过，即列号是否出现过。
-// 3. “\”方向斜线只能放一个皇后。若在该同斜线上的皇后，则它们 *下标与值的差* 是
-//    相同的。
-// 4. “/”方向斜线只能放一个皇后。这时检查它们 *下标与值的和* 是否相同。
+// 同 51-n-queens.js
 
 // Submission Result: Accepted
