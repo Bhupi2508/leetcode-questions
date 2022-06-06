@@ -1,48 +1,39 @@
 /**
- * Definition for singly-linked list.
- * function ListNode(val) {
- *     this.val = val;
- *     this.next = null;
- * }
- */
-/**
- * sort, then merge. In fact, this method use O(logN) space for recursive function calls.
- * needs to be improved.
+ * Key: first pointer tracks from the first element to the last third element.
+ * then, it is a 2sum problem for finding -nums[i] from the remaining elements.
+ * no matter which pointer meets a duplicate, just skip the duplicate.
  *
- * @param {ListNode} head
- * @return {ListNode}
+ * @param {number[]} nums
+ * @return {number[][]}
  */
-var sortList = function(head) {
-    if (!head || !head.next) return head;
-    var fast = head;
-    var slow = head;
+var threeSum = function(nums) {
+    nums.sort(function(a, b) {
+        return a - b;
+    });
 
-    while (fast.next && fast.next.next) {
-        slow = slow.next;
-        fast = fast.next.next;
-    }
-    fast = slow.next;
-    slow.next = null;
-    var secondHalf = sortList(fast);
-    var firstHalf = sortList(head);
-    return merge(firstHalf, secondHalf);
-};
+    var results = [];
 
-var merge = function(l1, l2) {
-    var l3 = new ListNode();
-    var l3Head = l3;
-    while (l1 && l2) {
-        if (l1.val <= l2.val ) {
-            l3.next = l1;
-            l1 = l1.next;
-        } else {
-            l3.next = l2;
-            l2 = l2.next;
+    for (var i = 0; i < nums.length - 2; i++) {
+        // there is a same number, because this number has been checked last time, skip it.
+        if (i > 0 && nums[i] === nums[i-1]) continue;
+        var lo = i + 1;
+        var hi = nums.length - 1;
+        var twoSum = 0 - nums[i];
+        while (lo < hi) {
+            if (nums[lo] + nums[hi] === twoSum) {
+                results.push([nums[i], nums[lo], nums[hi]]);
+                // there is a same number, because this number has been checked last time, skip it.
+                while (lo < hi && nums[lo] === nums[lo+1]) lo++;
+                while (lo < hi && nums[hi] === nums[hi-1]) hi--;
+                lo++;
+                hi--;
+            } else if (nums[lo] + nums[hi] < twoSum) {
+                lo++;
+            } else {
+                hi--;
+            }
         }
-        l3 = l3.next;
     }
-    if (!l1) l3.next = l2;
-    if (!l2) l3.next = l1;
 
-    return l3Head.next;
+    return results;
 };
