@@ -1,21 +1,26 @@
-// 112. Path Sum
-// Easy   34%
+// 113. Path Sum II
+// Medium   34%
 
-// Given a binary tree and a sum, determine if the tree has a root-to-leaf path
-// such that adding up all the values along the path equals the given sum.
+// Given a binary tree and a sum, find all root-to-leaf paths where each path's
+// sum equals the given sum.
 
 // For example:
 // Given the below binary tree and sum = 22,
 
-//       5
-//      / \
-//     4   8
-//    /   / \
-//   11  13  4
-//  /  \      \
-// 7    2      1
+//               5
+//              / \
+//             4   8
+//            /   / \
+//           11  13  4
+//          /  \    / \
+//         7    2  5   1
 
-// return true, as there exist a root-to-leaf path 5->4->11->2 which sum is 22.
+// return
+
+// [
+//    [5,4,11,2],
+//    [5,8,4,5]
+// ]
 
 /**
  * Definition for a binary tree node.
@@ -25,28 +30,37 @@
  * }
  */
 
-
 /**
  * @param {TreeNode} root
  * @param {number} sum
- * @return {boolean}
+ * @return {number[][]}
  */
-const hasPathSum = function(root, sum) {
-  if (root == null) return false
-  if (root.val === sum && root.left == null && root.right == null) return true
-  sum -= root.val
-  return hasPathSum(root.left, sum) || hasPathSum(root.right, sum)
+const pathSum = function(root, sum) {
+  const res = [], path = []
+  function iter (root, sum) {
+    if (root == null) return
+    if (root.val === sum && root.left == null && root.right == null) {
+      res.push([...path, root.val])
+    } else {
+      path.push(root.val)
+      sum -= root.val
+      iter(root.left, sum)
+      iter(root.right, sum)
+      path.pop()
+    }
+  }
+  iter(root, sum)
+  return res
 }
 
 const TreeNode = require('../structs/TreeNode')
 ;[
-  [[5,4,8,11,null,13,4,7,2,null,null,null,1], 22], // true
+  [[5,4,8,11,null,13,4,7,2,null,null,5,1], 22], // [[5,4,11,2],[5,8,4,5]]
 ].forEach(([array, sum]) => {
-  console.log(hasPathSum(TreeNode.from(array), sum))
+  console.log(pathSum(TreeNode.from(array), sum))
 })
 
 // Solution:
-// 每当是叶子节点的时候，判断路径和时候为给定值。
-// 使用减法减小给定值，来代替路径和，可减少一个参数的传递。
+// 使用递归和回溯，将结果记录下来。
 
 // Submission Result: Accepted
