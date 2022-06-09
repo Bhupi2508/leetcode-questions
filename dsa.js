@@ -1,76 +1,88 @@
-// 889. Construct Binary Tree from Preorder and Postorder Traversal
-// Medium   66%
+// 890. Find and Replace Pattern
+// Medium   73%
 
 
-// Return any binary tree that matches the given preorder and postorder
-// traversals.
-// Values in the traversals pre and post are distinct positive integers.
+// You have a list of words and a pattern, and you want to know which words in
+// words matches the pattern.
+// A word matches the pattern if there exists a permutation of letters p so that
+// after replacing every letter x in the pattern with p(x), we get the desired
+// word.
+// (Recall that a permutation of letters is a bijection from letters to letters:
+// every letter maps to another letter, and no two letters map to the same
+// letter.)
+// Return a list of the words in words that match the given pattern.
+// You may return the answer in any order.
 
 // Example 1:
-// Input: pre = [1,2,4,5,3,6,7], post = [4,5,2,6,7,3,1]
-// Output: [1,2,3,4,5,6,7]
+// Input: words = ["abc","deq","mee","aqq","dkd","ccc"], pattern = "abb"
+// Output: ["mee","aqq"]
+// Explanation: "mee" matches the pattern because there is a permutation {a -> m,
+// b -> e, ...}.
+// "ccc" does not match the pattern because {a -> c, b -> c, ...} is not a
+// permutation,
+// since a and b map to the same letter.
 
 // Note:
-//     1 <= pre.length == post.length <= 30
-//     pre[] and post[] are both permutations of 1, 2, ..., pre.length.
-//     It is guaranteed an answer exists. If there exists multiple answers, you
-// can return any of them.
+//     1 <= words.length <= 50
+//     1 <= pattern.length = words[i].length <= 20
 
 
 /**
- * Definition for a binary tree node.
- * function TreeNode(val, left, right) {
- * this.val = (val===undefined ? 0 : val)
- *     this.left = (left===undefined ? null : left)
- *     this.right = (right===undefined ? null : right)
- * }
+ * @param {string[]} words
+ * @param {string} pattern
+ * @return {string[]}
  */
-const TreeNode = require('../structs/TreeNode')
-
-/**
- * @param {number[]} pre
- * @param {number[]} post
- * @return {TreeNode}
- */
-const constructFromPrePost = function(pre, post) {
-  const n = pre.length
-  if (n === 0) return null
-
-  let i = 0
-  while (i < n - 1 && pre[i + 1] !== post[n - 2]) i++
-
-  const root = new TreeNode(
-    pre[0],
-    constructFromPrePost(pre.slice(1, i + 1), post.slice(0, i)),
-    constructFromPrePost(pre.slice(i + 1), post.slice(i, n - 1))
-  )
-  return root
+const findAndReplacePattern = function(words, pattern) {
+  const res = [], n = pattern.length
+  for (let word of words) {
+    const hash = {}
+    let isMatches = true
+    for (let i = 0; i < n; i++) {
+      if (
+        (hash[pattern[i]] && hash[pattern[i]] !== word[i]) ||
+        (hash['$' + word[i]] && hash['$' + word[i]] !== pattern[i])
+      ) {
+        isMatches = false
+      } else {
+        hash[pattern[i]] = word[i]
+        hash['$' + word[i]] = pattern[i]
+      }
+    }
+    if (isMatches) res.push(word)
+  }
+  return res
 }
 
-const better = function(pre, post) {
-  let preIndex = 0, postIndex = 0
-  function recursive() {
-    const root = new TreeNode(pre[preIndex++])
-    if (root.val !== post[postIndex]) root.left = recursive()
-    if (root.val !== post[postIndex]) root.right = recursive()
-    postIndex++
-    return root
+const better = function(words, pattern) {
+  function f(s) {
+    const map = new Map()
+    let res = ''
+    for (let c of s) {
+      if (!map.has(c)) map.set(c, map.size + ',')
+      res += map.get(c)
+    }
+    return res
   }
-  return recursive()
+
+  const p = f(pattern)
+  return words.filter((w) => p === f(w))
 }
 
 ;[
-  [[1,2,4,5,3,6,7,8], [4,5,2,6,8,7,3,1]],
-].forEach(([pre, post]) => {
-  // console.log(constructFromPrePost(pre, post))
-  console.log(better(pre, post))
+  [['abc','deq','mee','aqq','dkd','ccc'], 'abb'],
+].forEach(([words, pattern]) => {
+  // console.log(findAndReplacePattern(words, pattern))
+  console.log(better(words, pattern))
 })
 
 // Solution:
-// 1. 找到左子树数组和右子树数组，递归创建。
-// 每次都创建新数组，消耗了大量的空间
+// 1. 使用 hashMap 来建立了一一对应的关系
 
-// 2. 使用两个全局变量
-// TODO #889 组织语言，理顺思路，解释清楚。
+// 2. 将字符串转换成序列字符串
+// 如 'abb' -> '0,1,1,'
+//    'abc' -> '0,1,2,'
+//    'aqq' -> '0,1,1,'
+//    'ccc' -> '0,0,0,'
+// 若序列字符串相同，则匹配
 
 // Submission Result: Accepted
