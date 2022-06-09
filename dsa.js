@@ -1,74 +1,151 @@
-// 953. Verifying an Alien Dictionary
-// Easy   55%
+// 959. Regions Cut By Slashes
+// Medium   66%
 
 
-// In an alien language, surprisingly they also use english lowercase letters,
-// but possibly in a different order. The order of the alphabet is some
-// permutation of lowercase letters.
-// Given a sequence of words written in the alien language, and the order of the
-// alphabet, return true if and only if the given words are sorted
-// lexicographicaly in this alien language.
+// In a N x N grid composed of 1 x 1 squares, each 1 x 1 square consists of a /,
+// \, or blank space.  These characters divide the square into contiguous
+// regions.
+// (Note that backslash characters are escaped, so a \ is represented as "\\".)
+// Return the number of regions.
 
 // Example 1:
-// Input: words = ["hello","leetcode"], order = "hlabcdefgijkmnopqrstuvwxyz"
-// Output: true
-// Explanation: As 'h' comes before 'l' in this language, then the sequence is
-// sorted.
+// Input:
+// [
+//   " /",
+//   "/ "
+// ]
+// Output: 2
+// Explanation: The 2x2 grid is as follows:
 
 // Example 2:
-// Input: words = ["word","world","row"], order = "worldabcefghijkmnpqstuvxyz"
-// Output: false
-// Explanation: As 'd' comes after 'l' in this language, then words[0] >
-// words[1], hence the sequence is unsorted.
+// Input:
+// [
+//   " /",
+//   "  "
+// ]
+// Output: 1
+// Explanation: The 2x2 grid is as follows:
 
 // Example 3:
-// Input: words = ["apple","app"], order = "abcdefghijklmnopqrstuvwxyz"
-// Output: false
-// Explanation: The first three characters "app" match, and the second string is
-// shorter (in size.) According to lexicographical rules "apple" > "app", because
-// 'l' > '&empty;', where '&empty;' is defined as the blank character which is
-// less than any other character (More info).
+// Input:
+// [
+//   "\\/",
+//   "/\\"
+// ]
+// Output: 4
+// Explanation: (Recall that because \ characters are escaped, "\\/" refers to
+// \/, and "/\\" refers to /\.)
+// The 2x2 grid is as follows:
 
-// Constraints:
-//     1 <= words.length <= 100
-//     1 <= words[i].length <= 20
-//     order.length == 26
-//     All characters in words[i] and order are English lowercase letters.
+// Example 4:
+// Input:
+// [
+//   "/\\",
+//   "\\/"
+// ]
+// Output: 5
+// Explanation: (Recall that because \ characters are escaped, "/\\" refers to
+// /\, and "\\/" refers to \/.)
+// The 2x2 grid is as follows:
+
+// Example 5:
+// Input:
+// [
+//   "//",
+//   "/ "
+// ]
+// Output: 3
+// Explanation: The 2x2 grid is as follows:
+
+// Note:
+//     1 <= grid.length == grid[0].length <= 30
+//     grid[i][j] is either '/', '\', or ' '.
 
 
 /**
- * @param {string[]} words
- * @param {string} order
- * @return {boolean}
+ * @param {string[]} grid
+ * @return {number}
  */
-const isAlienSorted = function(words, order) {
-  const map = {}
-  for (let i = 0; i < order.length; i++) map[order[i]] = i
-  for (let i = 0; i < words.length - 1; i++) {
-    const l = Math.max(words[i].length, words[i + 1].length)
-    for (let j = 0; j < l; j++) {
-      const a = map[words[i][j]] || -1
-      const b = map[words[i + 1][j]] || -1
-      if (a > b) return false
-      if (a < b) break
+const regionsBySlashes = function(grid) {
+  const n = grid.length, m = []
+  for (let i = 0; i < n; i++) {
+    m.push([], [], [])
+    for (let j = 0; j < n; j++) {
+      if (grid[i][j] === '/') m[i * 3][j * 3 + 2] = m[i * 3 + 1][j * 3 + 1] = m[i * 3 + 2][j * 3] = true
+      if (grid[i][j] === '\\') m[i * 3][j * 3] = m[i * 3 + 1][j * 3 + 1] = m[i * 3 + 2][j * 3 + 2] = true
     }
   }
-  return true
+
+  function dfs(i, j) {
+    if (0 <= i && i < n * 3 && 0 <= j && j < n * 3 && !m[i][j]) {
+      m[i][j] = true
+      dfs(i - 1, j)
+      dfs(i, j + 1)
+      dfs(i + 1, j)
+      dfs(i, j - 1)
+    }
+  }
+
+  let res = 0
+  for (let i = 0; i < n * 3; i++) {
+    for (let j = 0; j < n * 3; j++) {
+      if (!m[i][j]) {
+        dfs(i, j)
+        res++
+      }
+    }
+  }
+  return res
 }
 
 ;[
-  [['hello','leetcode'], 'hlabcdefgijkmnopqrstuvwxyz'],   // true
-  [["word","world","row"], 'worldabcefghijkmnpqstuvxyz'], // false
-  [["apple","app"], 'abcdefghijklmnopqrstuvwxyz'],        // false
-].forEach(([words, order]) => {
-  console.log(isAlienSorted(words, order))
+  [
+    ' /',
+    '/ ',
+  ], // 2
+  [
+    ' /',
+    '  ',
+  ], // 1
+  [
+    '\\/',
+    '/\\',
+  ], // 4
+  [
+    '/\\',
+    '\\/',
+  ], // 5
+  [
+    '//',
+    '/ ',
+  ], // 3
+].forEach((grid) => {
+  console.log(regionsBySlashes(grid))
 })
 
 // Solution:
-// 将字母表变为哈希表，字母为键，序号为值。
-// 然后前一个字符串和后一个字符串比较，
-// 从第一个字符开始比较，若两个字符相同，则比较下一个，
-// 若不同，则比较其在哈希表的值，前一个小于后一个，比较下一对字符串，
-// 否则返回 false
+// 将矩阵扩大为原来的3倍，再使用广度遍历法，找到不同区块的数量
+// 扩大时
+// '/' 变为
+// '  1'
+// ' 1 '
+// '1  '
+// '\\' 变为
+// '1  '
+// ' 1 '
+// '  1'
+
+// 示例
+// 如 [
+//     '\\/',
+//     '/\\',
+//    ]
+// 变为
+// '1    1'
+// ' 1  1 '
+// '  11  '
+// '  11  '
+// ' 1  1 '
+// '1    1'
 
 // Submission Result: Accepted
