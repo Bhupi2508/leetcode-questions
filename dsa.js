@@ -1,86 +1,56 @@
-// 744. Find Smallest Letter Greater Than Target
-// Easy   55%
+// 746. Min Cost Climbing Stairs
+// Easy   49%
 
+// On a staircase, the i-th step has some non-negative cost cost[i] assigned (0
+// indexed).
 
-// Given a list of sorted characters letters containing only lowercase letters,
-// and given a target letter target, find the smallest element in the list that
-// is larger than the given target.
+// Once you pay the cost, you can either climb one or two steps. You need to
+// find minimum cost to reach the top of the floor, and you can either start
+// from the step with index 0, or the step with index 1.
 
-// Letters also wrap around.  For example, if the target is target = 'z' and
-// letters = ['a', 'b'], the answer is 'a'.
+// Example 1:
 
-// Examples:
+// Input: cost = [10, 15, 20]
+// Output: 15
+// Explanation: Cheapest is start on cost[1], pay that cost and go to the top.
 
-// Input:
-// letters = ["c", "f", "j"]
-// target = "a"
-// Output: "c"
+// Example 2:
 
-// Input:
-// letters = ["c", "f", "j"]
-// target = "c"
-// Output: "f"
-
-// Input:
-// letters = ["c", "f", "j"]
-// target = "d"
-// Output: "f"
-
-// Input:
-// letters = ["c", "f", "j"]
-// target = "g"
-// Output: "j"
-
-// Input:
-// letters = ["c", "f", "j"]
-// target = "j"
-// Output: "c"
-
-// Input:
-// letters = ["c", "f", "j"]
-// target = "k"
-// Output: "c"
+// Input: cost = [1, 100, 1, 1, 1, 100, 1, 1, 100, 1]
+// Output: 6
+// Explanation: Cheapest is start on cost[0], and only step on 1s, skipping
+// cost[3].
 
 // Note:
-
-// letters has a length in range [2, 10000].
-// letters consists of lowercase letters, and contains at least 2 unique letters.
-// target is a lowercase letter.
-
+//  1. cost will have a length in the range [2, 1000].
+//  2. Every cost[i] will be an integer in the range [0, 999].
 
 /**
- * @param {character[]} letters
- * @param {character} target
- * @return {character}
+ * @param {number[]} cost
+ * @return {number}
  */
-const nextGreatestLetter = function(letters, target) {
-  const n = letters.length
-  let i = 0, j = n - 1
-  while (i < j) {
-    const mid = (i + j) >> 1
-    if (letters[mid] <= target) i = mid + 1
-    else j = mid - 1
+const minCostClimbingStairs = function(cost) {
+  let low = 0, high = 0
+  for (let i = cost.length - 1; i >= 0; i--) {
+    const then = cost[i] + Math.min(low, high)
+    high = low
+    low = then
   }
-  return letters[(letters[i] > target ? i : i + 1) % n]
+  return Math.min(low, high)
 }
 
 ;[
-  [['c', 'f', 'j'], 'a'],                          // 'c'
-  [['c', 'f', 'j'], 'c'],                          // 'f'
-  [['c', 'f', 'j'], 'd'],                          // 'f'
-  [['c', 'f', 'j'], 'g'],                          // 'j'
-  [['c', 'f', 'j'], 'j'],                          // 'c'
-  [['c', 'f', 'j'], 'k'],                          // 'c'
-  [['e','e','e','e','e','e','n','n','n','n'], 'e'] // 'n'
-].forEach(args => {
-  console.log(nextGreatestLetter(...args))
+  [10, 15, 20],                         // 15
+  [1, 100, 1, 1, 1, 100, 1, 1, 100, 1], // 6
+].forEach(cost => {
+  console.log(minCostClimbingStairs(cost))
 })
 
 // Solution:
-// 使用二分查找法，
-// 若中位数小于或等于目标数，则检查后半部分，否则检查前半部分。
-// 最后找到一个大于或等于目标数的数，
-// 若大于，则返回该数，
-// 若等于，则返回下一个数，因为循环，所以使用取模运算。
+// 使用动态规划。
+// 记录长度为n的数组，每个项都是当前所需付费和前两个项中较小的一项的和。
+
+// 本页实现是对动态规划的优化，
+// 只需保留两个变量即可，而不需整个数组。
 
 // Submission Result: Accepted
