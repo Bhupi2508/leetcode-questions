@@ -1,19 +1,40 @@
 /**
- * Key: Use two pointers. First pointer is for the a newly(modified) generated array
- * as long as it doesn't have more than two more Duplicates, the original point
- * keeps moving...
+ * Because duplicates are allowed in the array, consider the following two scenarios
+ * 1. [1,1,3,1,1,1,1,1,1,1,1,1] 2. [1,1,1,1,1,1,1,1,1,1,1,1,3]
+ * if nums[mid] === nums[lo], that means:
+ * 1) all lefts are 1
+ * 2) there is a different number exists in this half.
+ * So, we need to increase lo one. --> worst case is the second array.O(n)
  *
  * @param {number[]} nums
- * @return {number}
+ * @param {number} target
+ * @return {boolean}
  */
-var removeDuplicates = function(nums) {
-    var newStart = 0;
-    for (var i = 0; i < nums.length; i++) {
-        if (newStart < 2 || nums[i] > nums[newStart - 2]) {
-            nums[newStart] = nums[i];
-            newStart++;
+var search = function(nums, target) {
+    var lo = 0;
+    var hi = nums.length - 1;
+
+    while (lo <= hi) {
+        var mid = lo + Math.floor((hi - lo) / 2);
+        if (nums[mid] === target) return true;
+
+        if (nums[lo] < nums[mid]) {
+            if (target >= nums[lo] && target < nums[mid]) {
+                hi = mid - 1;
+            } else {
+                lo = mid + 1;
+            }
+        } else if (nums[lo] > nums[mid]) {
+            if (target <= nums[hi] && target > nums[mid]) {
+                lo = mid + 1;
+            } else {
+                hi = mid - 1;
+            }
+        } else {
+            lo += 1;
         }
     }
 
-    return newStart;
+    return false;
+
 };
