@@ -1,62 +1,57 @@
-// 1022. Sum of Root To Leaf Binary Numbers
-// Easy   64%
+// 1025. Divisor Game
+// Easy   66%
 
 
-// Given a binary tree, each node has value 0 or 1.  Each root-to-leaf path
-// represents a binary number starting with the most significant bit.  For
-// example, if the path is 0 -> 1 -> 1 -> 0 -> 1, then this could represent 01101
-// in binary, which is 13.
-// For all leaves in the tree, consider the numbers represented by the path from
-// the root to that leaf.
-// Return the sum of these numbers.
+// Alice and Bob take turns playing a game, with Alice starting first.
+// Initially, there is a number N on the chalkboard.  On each player's turn, that
+// player makes a move consisting of:
+//     Choosing any x with 0 < x < N and N % x == 0.
+//     Replacing the number N on the chalkboard with N - x.
+// Also, if a player cannot make a move, they lose the game.
+// Return True if and only if Alice wins the game, assuming both players play
+// optimally.
 
 // Example 1:
-// Input: [1,0,1,0,1,0,1]
-// Output: 22
-// Explanation: (100) + (101) + (110) + (111) = 4 + 5 + 6 + 7 = 22
+// Input: 2
+// Output: true
+// Explanation: Alice chooses 1, and Bob has no more moves.
+// Example 2:
+// Input: 3
+// Output: false
+// Explanation: Alice chooses 1, Bob chooses 1, and Alice has no more moves.
 
 // Note:
-//     The number of nodes in the tree is between 1 and 1000.
-//     node.val is 0 or 1.
-//     The answer will not exceed 2^31 - 1.
+//     1 <= N <= 1000
 
 
 /**
- * Definition for a binary tree node.
- * function TreeNode(val) {
- *   this.val = val;
- *   this.left = this.right = null;
- * }
+ * @param {number} N
+ * @return {boolean}
  */
-
-/**
- * @param {TreeNode} root
- * @return {number}
- */
-const sumRootToLeaf = function(root) {
-  function dfs(root, value) {
-    if (root == null) return 0
-
-    value = value * 2 + root.val
-    return root.left === root.right
-      ? value
-      : dfs(root.left, value) + dfs(root.right, value)
-  }
-  return dfs(root, 0)
+const divisorGame = function(N) {
+  return N % 2 === 0
 }
 
-const TreeNode = require('../structs/TreeNode')
 ;[
-  [1,0,1,0,1,0,1], // 22
-].forEach((array) => {
-  const root = TreeNode.from(array)
-  console.log(sumRootToLeaf(root))
+  2,  // true
+  3,  // false
+].forEach((N) => {
+  console.log(divisorGame(N))
 })
 
 // Solution:
-// 使用深度遍历,
-// 若节点为 null, 返回 0
-// 若节点为叶子节点，返回 value * 2 + node.val
-// 否则返回其子节点返回值的和
+// 方法1
+// 因为每个人决策最优
+// 因此使用递归的算法
+// 假设当前轮到 Alice
+// 在找出所有的因数后，选择使得 N 变为 N - x 后 Bob 如何选都会输的 x
+// 若没有这样的 x，则 Alice 必输
+
+// 方法2
+// 通过从1到比较小的数的依次推算，发现：
+// 1) 奇数，Alice 必输
+// 2) 偶数，必赢
+
+// 使用归纳法可以证明
 
 // Submission Result: Accepted
