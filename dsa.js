@@ -1,70 +1,88 @@
-// 867. Transpose Matrix
-// Easy   63%
+// 868. Binary Gap
+// Easy   60%
 
 
-// Given a matrix A, return the transpose of A.
-// The transpose of a matrix is the matrix flipped over it's main diagonal,
-// switching the row and column indices of the matrix.
+// Given a positive integer N, find and return the longest distance between two
+// consecutive 1's in the binary representation of N.
+// If there aren't two consecutive 1's, return 0.
 
 // Example 1:
-// Input: [[1,2,3],[4,5,6],[7,8,9]]
-// Output: [[1,4,7],[2,5,8],[3,6,9]]
+// Input: 22
+// Output: 2
+// Explanation:
+// 22 in binary is 0b10110.
+// In the binary representation of 22, there are three ones, and two consecutive
+// pairs of 1's.
+// The first consecutive pair of 1's have distance 2.
+// The second consecutive pair of 1's have distance 1.
+// The answer is the largest of these two distances, which is 2.
 // Example 2:
-// Input: [[1,2,3],[4,5,6]]
-// Output: [[1,4],[2,5],[3,6]]
+// Input: 5
+// Output: 2
+// Explanation:
+// 5 in binary is 0b101.
+// Example 3:
+// Input: 6
+// Output: 1
+// Explanation:
+// 6 in binary is 0b110.
+// Example 4:
+// Input: 8
+// Output: 0
+// Explanation:
+// 8 in binary is 0b1000.
+// There aren't any consecutive pairs of 1's in the binary representation of 8,
+// so we return 0.
 
 // Note:
-//     1 <= A.length <= 1000
-//     1 <= A[0].length <= 1000
+//     1 <= N <= 10^9
 
 
 /**
- * @param {number[][]} A
- * @return {number[][]}
+ * @param {number} N
+ * @return {number}
  */
-const transpose = function(A) {
-  const N = A.length, M = A[0].length
-  const res = []
-  for (let i = 0; i < M; i++) {
-    res[i] = []
-    for (let j = 0; j < N; j++) {
-      res[i].push(A[j][i])
-    }
+const binaryGap = function(N) {
+  let result = 0, count = -Infinity
+  while (N > 0) {
+    if (N % 2) {
+      result = Math.max(result, count + 1)
+      count = 0
+    } else count++
+    N = N >>> 1
   }
-  return res
+  return result
 }
 
-const inPlace = function(A) {
-  const N = A.length, M = A[0].length
-  const MAX = Math.max(N, M)
-  for (let i = N; i < MAX; i++) A.push([])
-  for (let i = 0; i < MAX; i++) {
-    for (let j = i; j < MAX; j++) {
-      const t = A[i][j]
-      A[i][j] = A[j][i]
-      A[j][i] = t
+const better = function(N) {
+  let result = 0
+  for (let d = -32; N > 0; N = N >>> 1, d++) {
+    if (N % 2) {
+      result = Math.max(result, d)
+      d = 0
     }
-    for (let j = N; j < MAX; j++) A[i].pop()
   }
-  for (let i = M; i < MAX; i++) A.pop()
-  return A
+  return result
 }
 
 ;[
-  [[1,2,3],[4,5,6],[7,8,9]], // [[1,4,7],[2,5,8],[3,6,9]]
-  [[1,2,3],[4,5,6]], // [[1,4],[2,5],[3,6]]
-  [[1,2],[3,4],[5,6]],// [[1,3,5],[2,4,6]]
-].forEach((A) => {
-  console.log(transpose(A))
+  22, // 2
+  5,  // 2
+  6,  // 1
+  8,  // 0
+  9,  // 3
+].forEach((N) => {
+  console.log(binaryGap(N))
+  console.log(better(N))
 })
 
 // Solution:
-// 1. 新建一个数组
+// 用一个变量记录中间产生的最大距离（即结果），另一个变量记录计算过程中的距离 (count)。
+// 先初始化 count 为无限小，表示还没有遇到 "1"，还不用计算距离。
+// 遇到 1 时，更新 result，并初始化 count = 0。
 
-// 2. 就地替换
-// 先添加翻转后缺少的行
-// 交换
-// 去除列中多余的数
-// 去除多余的行
+// 更简洁的方法
+// 将 d 初始化为 -32 (因为 N 的最大的值为 31 位的)，
+// 优化过程。
 
 // Submission Result: Accepted
