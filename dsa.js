@@ -1,65 +1,53 @@
-// 4. Median of Two Sorted Arrays
-// Hard 22%
+// 5. Longest Palindromic Substring
+// Medium  25%
 
-// There are two sorted arrays nums1 and nums2 of size m and n respectively.
+// Given a string s, find the longest palindromic substring in s. You may assume
+// that the maximum length of s is 1000.
 
-// Find the median of the two sorted arrays. The overall run time complexity
-// should be O(log (m+n)).
+// Example:
+// Input: "babad"
+// Output: "bab"
 
-// Example 1:
+// Note: "aba" is also a valid answer.
 
-// nums1 = [1, 3]
-// nums2 = [2]
-
-// The median is 2.0
-
-// Example 2:
-
-// nums1 = [1, 2]
-// nums2 = [3, 4]
-
-// The median is (2 + 3)/2 = 2.5
+// Example:
+// Input: "cbbd"
+// Output: "bb"
 
 /**
- * @param {number[]} nums1
- * @param {number[]} nums2
- * @return {number}
+ * @param {string} s
+ * @return {string}
  */
-const findMedianSortedArrays = function(nums1, nums2) {
-  let m = nums1.length, n = nums2.length
-  if (m > n) [nums1, nums2, m, n] = [nums2, nums1, n, m]
+const longestPalindrome = function(s) {
+  s = '#' + s.split('').join('#') + '#'
 
-  const half_len = (m + n + 1) >> 1
-  let imin = 0, imax = m
-  while (imin <= imax) {
-    const i = (imin + imax) >> 1, j = half_len - i
-
-    if (i < m && nums2[j - 1] > nums1[i]) imin = i + 1
-    else if (i > 0 && nums1[i - 1] > nums2[j]) imax = i - 1
-    else {
-      let max_of_left
-      if (i === 0) max_of_left = nums2[j - 1]
-      else if (j === 0) max_of_left = nums1[i - 1]
-      else max_of_left = Math.max(nums1[i - 1], nums2[j - 1])
-
-      if ((m + n) % 2) return max_of_left
-
-      let min_of_right
-      if (i === m) min_of_right = nums2[j]
-      else if (j === n) min_of_right = nums1[i]
-      else min_of_right = Math.min(nums1[i], nums2[j])
-
-      return (max_of_left + min_of_right) / 2
+  const n = s.length
+  let start = 0, end = 0
+  for (let i = 0; i < n; i++) {
+    let j = 0
+    while (i - j >= 0 && i + j < n && s[i - j] === s[i + j]) j++
+    if (2 * (--j) > end - start) {
+      start = i - j
+      end = i + j
     }
   }
+
+  return s.slice(start, end).split('#').join('')
 }
 
 ;[
-  [[1, 2], [3]],                // 2
-  [[1, 2], [3, 4]],             // 2.5
-].forEach(args => {
-  console.log(findMedianSortedArrays(...args))
+  'babad',                      // 'bab'
+  'cbbd',                       // 'cbbd'
+  'ccc',                        // 'ccc'
+].forEach(s => {
+  console.log(longestPalindrome(s))
 })
 
+// Solution:
+// 两个字符之间插入一个标记（如 #），整个字符串两边也分别添加。
+// 这样字符串中就不会出现两个连续且相同的字符，处理起来更方便。
+// 这个思想很新颖。
+
+// 每遍历到一个字符，就计算其左右的最大对称长度。保留当前最长的左右字符下标。
 
 // Submission Result: Accepted
