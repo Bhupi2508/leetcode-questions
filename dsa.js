@@ -1,25 +1,25 @@
-// 107. Binary Tree Level Order Traversal II
-// Easy   40%
+// 108. Convert Sorted Array to Binary Search Tree
+// Easy   42%
 
-// Given a binary tree, return the bottom-up level order traversal of its nodes'
-// values. (ie, from left to right, level by level from leaf to root).
+// Given an array where elements are sorted in ascending order, convert it to a
+// height balanced BST.
 
-// For example:
-// Given binary tree [3,9,20,null,null,15,7],
+// For this problem, a height-balanced binary tree is defined as a binary tree
+// in which the depth of the two subtrees of every node never differ by more
+// than 1.
 
-//     3
-//    / \
-//   9  20
-//     /  \
-//    15   7
+// Example:
 
-// return its bottom-up level order traversal as:
+// Given the sorted array: [-10,-3,0,5,9],
 
-// [
-//   [15,7],
-//   [9,20],
-//   [3]
-// ]
+// One possible answer is: [0,-3,9,-10,null,5], which represents the following
+// height balanced BST:
+
+//      0
+//     / \
+//   -3   9
+//   /   /
+// -10  5
 
 
 /**
@@ -30,35 +30,28 @@
  * }
  */
 
-
 /**
- * @param {TreeNode} root
- * @return {number[][]}
+ * @param {number[]} nums
+ * @return {TreeNode}
  */
-const levelOrderBottom = function(root) {
-  const res = []
-  function iter(root, level) {
-    if (root != null) {
-      if (level >= res.length) res.unshift([])
-      res[res.length - level - 1].push(root.val)
-      iter(root.left, level + 1)
-      iter(root.right, level + 1)
-    }
-  }
-  iter(root, 0)
-  return res
+const sortedArrayToBST = function(nums) {
+  const n = nums.length
+  if (n === 0) return null
+  const mid = (n - 1) >> 1
+  const root = new TreeNode(nums[mid])
+  root.left = sortedArrayToBST(nums.slice(0, mid))
+  root.right = sortedArrayToBST(nums.slice(mid + 1, n))
+  return root
 }
 
-const TreeNode = require('../structs/TreeNode')
 ;[
-  [3,9,20,null,null,15,7], // [ [ 15, 7 ], [ 9, 20 ], [ 3 ] ]
-].forEach(array => {
-  console.log(levelOrderBottom(TreeNode.from(array)))
+  [-10,-3,0,5,9],
+].forEach(nums => {
+  console.log(sortedArrayToBST(nums))
 })
 
 // Solution:
-// 带一个层级参数，进行递归遍历。
-// 根据层级参数和数组的长度来构造数组，
-// 当层数大于或等于数组长度时，在数组头部插入一个代表新的层的数组。
+// 构造一个平衡的二叉查找树。
+// 以中位数为根节点，分别递归地以左边和右边的数构造左右子树。
 
 // Submission Result: Accepted
