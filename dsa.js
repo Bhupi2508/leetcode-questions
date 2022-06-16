@@ -1,62 +1,81 @@
-// 1018. Binary Prefix Divisible By 5
-// Easy   47%
+// 1021. Remove Outermost Parentheses
+// Easy   76%
 
 
-// Given an array A of 0s and 1s, consider N_i: the i-th subarray from A[0] to
-// A[i] interpreted as a binary number (from most-significant-bit to
-// least-significant-bit.)
-// Return a list of booleans answer, where answer[i] is true if and only if N_i
-// is divisible by 5.
+// A valid parentheses string is either empty (""), "(" + A + ")", or A + B,
+// where A and B are valid parentheses strings, and + represents string
+// concatenation.  For example, "", "()", "(())()", and "(()(()))" are all valid
+// parentheses strings.
+// A valid parentheses string S is primitive if it is nonempty, and there does
+// not exist a way to split it into S = A+B, with A and B nonempty valid
+// parentheses strings.
+// Given a valid parentheses string S, consider its primitive decomposition: S =
+// P_1 + P_2 + ... + P_k, where P_i are primitive valid parentheses strings.
+// Return S after removing the outermost parentheses of every primitive string in
+// the primitive decomposition of S.
+
 // Example 1:
-// Input: [0,1,1]
-// Output: [true,false,false]
+// Input: "(()())(())"
+// Output: "()()()"
 // Explanation:
-// The input numbers in binary are 0, 01, 011; which are 0, 1, and 3 in base-10. 
-// Only the first number is divisible by 5, so answer[0] is true.
+// The input string is "(()())(())", with primitive decomposition "(()())" +
+// "(())".
+// After removing outer parentheses of each part, this is "()()" + "()" =
+// "()()()".
 // Example 2:
-// Input: [1,1,1]
-// Output: [false,false,false]
+// Input: "(()())(())(()(()))"
+// Output: "()()()()(())"
+// Explanation:
+// The input string is "(()())(())(()(()))", with primitive decomposition
+// "(()())" + "(())" + "(()(()))".
+// After removing outer parentheses of each part, this is "()()" + "()" +
+// "()(())" = "()()()()(())".
 // Example 3:
-// Input: [0,1,1,1,1,1]
-// Output: [true,false,false,false,true,false]
-// Example 4:
-// Input: [1,1,1,0,1]
-// Output: [false,false,false,false,false]
+// Input: "()()"
+// Output: ""
+// Explanation:
+// The input string is "()()", with primitive decomposition "()" + "()".
+// After removing outer parentheses of each part, this is "" + "" = "".
 
 // Note:
-//     1 <= A.length <= 30000
-//     A[i] is 0 or 1
+//     S.length <= 10000
+//     S[i] is "(" or ")"
+//     S is a valid parentheses string
+
 
 
 /**
- * @param {number[]} A
- * @return {boolean[]}
+ * @param {string} S
+ * @return {string}
  */
-const prefixesDivBy5 = function(A) {
-  const result = []
-  let num = 0
-  for (let i of A) {
-    num = (num * 2 + i) % 5
-    result.push(num === 0)
+const removeOuterParentheses = function(S) {
+  let result = ''
+  let count = 0
+  for (let c of S) {
+    if (c === '(' && count > 0) result += '('
+    if (c === ')' && count > 1) result += ')'
+    count += c === '(' ? 1 : -1
   }
   return result
 }
 
 ;[
-  [0,1,1],      // [true, false, false]
-  [1,1,1],      // [false,false, false]
-  [0,1,1,1,1,1],// [true,false,false,false,true,false]
-  [1,1,1,0,1],  // [false,false,false,false,false]
-  [1,1,0,0,0,1,0,0,1], // [false,false,false,false,false,false,false,false,false]
-  [1,0,1,0,0,0,0,0,0,0,0,1,1,1,0,0,1,0,1,1,1,1,1,1,0,0,0,1,0,1,1,1,1,0,1,1,0,1,0,1,0,0,0,1,0,0,0,0,0,1,0,0,1,1,0,0,1,1,1],
-].forEach((A) => {
-  console.log(prefixesDivBy5(A))
+  '(()())(())',             // '()()()'
+  '(()())(())(()(()))',     // '()()()()(())'
+  '()()',                   // ''
+  '((()))',                 // '(())'
+].forEach((S) => {
+  console.log(removeOuterParentheses(S))
 })
 
 // Solution:
-// 二进制数转十进制，从前遍历只需前面的值乘 2 再加上该位置的数即可
-// 本题关键在于数组的长度非常大时，得到的十进制数也十分大，超出了 % 运算符正常运算的范围
-// 这就需要一些取模运算的法则了
-// <= to be continued
+// 使用堆栈的思想
+// count 表示栈的高度
+// 遍历字符串
+// 遇到 '(' 入栈，count + 1
+// 遇到 ')' 出栈，count - 1
+// 因为要去掉最外层括号，所以只有（在栈操作前）
+// 当 count > 0 才将 '(' 加入 result
+// 当 count > 1 才将 ')' 加入 result
 
-// Submission Result: Accepted
+// Submission Result: Accept
