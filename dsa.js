@@ -1,59 +1,43 @@
-// 257. Binary Tree Paths
-// Easy   39%
+// 258. Add Digits
+// Easy   51%
 
 
-// Given a binary tree, return all root-to-leaf paths.
+// Given a non-negative integer num, repeatedly add all its digits until the
+// result has only one digit.
 
-// For example, given the following binary tree:
+// For example:
 
-//    1
-//  /   \
-// 2     3
-//  \
-//   5
+// Given num = 38, the process is like: 3 + 8 = 11, 1 + 1 = 2. Since 2 has only
+// one digit, return it.
 
-// All root-to-leaf paths are:
-
-// ["1->2->5", "1->3"]
+// Follow up:
+// Could you do it without any loop/recursion in O(1) runtime?
 
 // Credits:Special thanks to @jianchao.li.fighter for adding this problem and
 // creating all test cases.
 
 
 /**
- * Definition for a binary tree node.
- * function TreeNode(val) {
- *   this.val = val;
- *   this.left = this.right = null;
- * }
+ * @param {number} num
+ * @return {number}
  */
-
-/**
- * @param {TreeNode} root
- * @return {string[]}
- */
-const binaryTreePaths = function(root) {
-  const array = []
-  function traversal(root, string) {
-    string += (string === '' ? '' : '->') + root.val
-    if (root.left) traversal(root.left, string, array)
-    if (root.right) traversal(root.right, string, array)
-    if (!root.left && !root.right) array.push(string)
-  }
-  if (root) traversal(root, '')
-  return array
+const addDigits = function(num) {
+  return num % 9 || (num ? 9 : 0)
 }
 
-const TreeNode = require('../structs/TreeNode')
 ;[
-  [1,2,3,null,5],      // ['1->2->5', '1->3']
-].forEach((array) => {
-  console.log(binaryTreePaths(TreeNode.from(array)))
+  38,                           // 2
+].forEach(num => {
+  console.log(addDigits(num))
 })
 
-
 // Solution:
-// 递归一遍树，带上字符参数，每遍历一个节点，添加一个值。
-// 若是叶子节点，再加完值之后，将字符串添加到数组中。
+// 数字对9取余。
+// 得到的数，若不为0就是答案。
+// 若为0，则是9。
+// 若数本身为0，则为0。
+
+// 至于为什么是9，还是不明白。
+// 是通过观察得到的。
 
 // Submission Result: Accepted
