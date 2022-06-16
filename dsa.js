@@ -1,69 +1,33 @@
-// 206. Reverse Linked List
-// Easy   45%
+// 217. Contains Duplicate
+// Easy   46%
 
 
-// Reverse a singly linked list.
+// Given an array of integers, find if the array contains any duplicates. Your
+// function should return true if any value appears at least twice in the array,
+// and it should return false if every element is distinct.
 
-// click to show more hints.
-
-// Hint:
-// A linked list can be reversed either iteratively or recursively. Could you
-// implement both?
 
 /**
- * Definition for singly-linked list.
- * function ListNode(val) {
- *     this.val = val;
- *     this.next = null;
- * }
+ * @param {number[]} nums
+ * @return {boolean}
  */
-
-/**
- * @param {ListNode} head
- * @return {ListNode}
- */
-const reverseList = function(head) {
-  function iter(head) {
-    const prev = new ListNode()
-    let node = prev
-    while (head) {
-      const tmp = head.next
-      head.next = node.next
-      node.next = head
-      head = tmp
-    }
-    return prev.next
+const containsDuplicate = function(nums) {
+  const n = nums.length, hash = {}
+  for (let i = 0; i < n; i++) {
+    if (hash[nums[i]]) return true
+    hash[nums[i]] = true
   }
-  function recu(head) {
-    const prev = new ListNode()
-    let node = prev
-    function body(head) {
-      if (head) {
-        body(head.next)
-        head.next = null
-        node.next = head
-        node = node.next
-      }
-    }
-    body(head)
-    return prev.next
-  }
-  //return iter(head)
-  return recu(head)
+  return false
 }
 
-const ListNode = require('../structs/ListNode')
 ;[
-  [0,1,2,3,4,5,6],
-].forEach((array) => {
-  console.log((reverseList(ListNode.from(array)) || '').toString())
+  [1,2,3,4,5,6,1],              // true
+].forEach(nums => {
+  console.log(containsDuplicate(nums))
 })
 
 // Solution:
-// 迭代：
-// 头插法：每遍历一个节点，都插入到新链表的头部。
-
-// 递归：
-// 先递归到最后一个节点，从最后一个节点开始插入新的链表的尾部。
+// 用一个哈希来保存出现的字符，
+// 若再次出现，则返回 true，否则 false 。
 
 // Submission Result: Accepted
