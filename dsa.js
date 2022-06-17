@@ -1,56 +1,66 @@
-// 746. Min Cost Climbing Stairs
-// Easy   49%
+// 747. Largest Number At Least Twice of Others
+// Easy   41%
 
-// On a staircase, the i-th step has some non-negative cost cost[i] assigned (0
-// indexed).
 
-// Once you pay the cost, you can either climb one or two steps. You need to
-// find minimum cost to reach the top of the floor, and you can either start
-// from the step with index 0, or the step with index 1.
-
+// In a given integer array nums, there is always exactly one largest element.
+// Find whether the largest element in the array is at least twice as much as
+// every other number in the array.
+// If it is, return the index of the largest element, otherwise return -1.
 // Example 1:
-
-// Input: cost = [10, 15, 20]
-// Output: 15
-// Explanation: Cheapest is start on cost[1], pay that cost and go to the top.
+// Input: nums = [3, 6, 1, 0]
+// Output: 1
+// Explanation: 6 is the largest integer, and for every other number in the array
+// x,
+// 6 is more than twice as big as x.  The index of value 6 is 1, so we return 1.
 
 // Example 2:
-
-// Input: cost = [1, 100, 1, 1, 1, 100, 1, 1, 100, 1]
-// Output: 6
-// Explanation: Cheapest is start on cost[0], and only step on 1s, skipping
-// cost[3].
+// Input: nums = [1, 2, 3, 4]
+// Output: -1
+// Explanation: 4 isn't at least as big as twice the value of 3, so we return -1.
 
 // Note:
-//  1. cost will have a length in the range [2, 1000].
-//  2. Every cost[i] will be an integer in the range [0, 999].
+//     nums will have a length in the range [1, 50].
+//     Every nums[i] will be an integer in the range [0, 99].
+
+
 
 /**
- * @param {number[]} cost
+ * @param {number[]} nums
  * @return {number}
  */
-const minCostClimbingStairs = function(cost) {
-  let low = 0, high = 0
-  for (let i = cost.length - 1; i >= 0; i--) {
-    const then = cost[i] + Math.min(low, high)
-    high = low
-    low = then
+const dominantIndex = function(nums) {
+  let res = -1, max = 0
+  for (let i = 0; i < nums.length; i++) {
+    if (nums[i] > max) {
+      res = nums[i] >= max * 2 ? i : -1
+      max = nums[i]
+    } else {
+      if (max < nums[i] * 2) res = -1
+    }
   }
-  return Math.min(low, high)
+  return res
 }
 
 ;[
-  [10, 15, 20],                         // 15
-  [1, 100, 1, 1, 1, 100, 1, 1, 100, 1], // 6
-].forEach(cost => {
-  console.log(minCostClimbingStairs(cost))
+  [0,0,0,1], // 3
+  [3,6,1,0], // 1
+  [1,2,3,4], // -1
+  [6,3,1,0], // 0
+  [0,1,3,6], // 3
+].forEach((nums) => {
+  console.log(dominantIndex(nums))
 })
 
 // Solution:
-// 使用动态规划。
-// 记录长度为n的数组，每个项都是当前所需付费和前两个项中较小的一项的和。
 
-// 本页实现是对动态规划的优化，
-// 只需保留两个变量即可，而不需整个数组。
+// 想法
+// 遍历数组，记录最大值和第二大值，最后比较 最大值是否大于或等于第二大值的2倍。
+
+// 想法2
+// 只记录一个最大值 max
+// 1. A[i] > max * 2，则设置 res，并替换 max
+// 2. A[i] > max && A[i] < max * 2，则 res = -1，并替换 max
+// 3. A[i] <= max && A[i] > max / 2，则 res = -1
+// 4. A[i] < max / 2，跳过
 
 // Submission Result: Accepted
