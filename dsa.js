@@ -1,66 +1,45 @@
-// 414. Third Maximum Number
-// Easy   27%
+// 415. Add Strings
+// Easy   41%
 
 
-// Given a non-empty array of integers, return the third maximum number in this
-// array. If it does not exist, return the maximum number. The time complexity
-// must be in O(n).
+// Given two non-negative integers num1 and num2 represented as string, return
+// the sum of num1 and num2.
 
-// Example 1:
+// Note:
 
-// Input: [3, 2, 1]
-
-// Output: 1
-
-// Explanation: The third maximum is 1.
-
-// Example 2:
-
-// Input: [1, 2]
-
-// Output: 2
-
-// Explanation: The third maximum does not exist, so the maximum (2) is returned
-// instead.
-
-// Example 3:
-
-// Input: [2, 2, 3, 1]
-
-// Output: 1
-
-// Explanation: Note that the third maximum here means the third maximum distinct
-// number.
-// Both numbers with value 2 are both considered as second maximum.
+// The length of both num1 and num2 is < 5100.
+// Both num1 and num2 contains only digits 0-9.
+// Both num1 and num2 does not contain any leading zero.
+// You must not use any built-in BigInteger library or convert the inputs to
+// integer directly.
 
 
 /**
- * @param {number[]} nums
- * @return {number}
+ * @param {string} num1
+ * @param {string} num2
+ * @return {string}
  */
-const thirdMax = function(nums) {
-  let first = null, second = null, third = null
-  for (let i = 0, n = nums.length; i < n; i++) {
-    const num = nums[i]
-    if (num === first || num === second || num === third) continue
-    if (third === null || num > third) third = num
-    if (second === null || num > second) [third, second] = [second, num]
-    if (first === null || num > first) [second, first] = [first, num]
+const addStrings = function(num1, num2) {
+  let result = '', carry = 0, i = num1.length - 1, j = num2.length - 1
+  while (i >= 0 || j >= 0) {
+    const sum = ((num1[i--] || '0') - '0') + ((num2[j--] || '0') - '0') + carry
+    result = (sum % 10) + result
+    carry = Math.trunc(sum / 10)
   }
-  return third === null ? first : third
+  return (carry || '') + result
 }
 
 ;[
-  [3, 2, 1],                    // 1
-  [1, 2],                       // 2
-  [2, 2, 3, 1],                 // 1
-].forEach(nums => {
-  console.log(thirdMax(nums))
+  ['0', '0'],                   // '0'
+  ['123456789', '123456789'],   // '246913578'
+  ['999999', '1'],              // '1000000'
+].forEach(args => {
+  console.log(addStrings(...args))
 })
 
 // Solution:
-// 用三个变量保存前三个最大的数。
-// 这三个变量像是一个优先队列一样，数字进来会把最小的数挤出去。
-
+// 利用 - '0' 操作获得字符所代表的数字。
+// carry 变量保存进位信息。
+// 结果中，每位字符要用 %10 来获得个位上的数。
 
 // Submission Result: Accepted
