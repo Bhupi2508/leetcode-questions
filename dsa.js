@@ -1,70 +1,50 @@
-// 1046. Last Stone Weight
-// Easy   63%
+// 1047. Remove All Adjacent Duplicates In String
+// Easy   66%
 
 
-// We have a collection of rocks, each rock has a positive integer weight.
-// Each turn, we choose the two heaviest rocks and smash them together.  Suppose
-// the stones have weights x and y with x <= y.  The result of this smash is:
-//     If x == y, both stones are totally destroyed;
-//     If x != y, the stone of weight x is totally destroyed, and the stone of
-// weight y has new weight y-x.
-// At the end, there is at most 1 stone left.  Return the weight of this stone
-// (or 0 if there are no stones left.)
+// Given a string S of lowercase letters, a duplicate removal consists of
+// choosing two adjacent and equal letters, and removing them.
+// We repeatedly make duplicate removals on S until we no longer can.
+// Return the final string after all such duplicate removals have been made.  It
+// is guaranteed the answer is unique.
 
 // Example 1:
-// Input: [2,7,4,1,8,1]
-// Output: 1
+// Input: "abbaca"
+// Output: "ca"
 // Explanation:
-// We combine 7 and 8 to get 1 so the array converts to [2,4,1,1,1] then,
-// we combine 2 and 4 to get 2 so the array converts to [2,1,1,1] then,
-// we combine 2 and 1 to get 1 so the array converts to [1,1,1] then,
-// we combine 1 and 1 to get 0 so the array converts to [1] then that's the value
-// of last stone.
+// For example, in "abbaca" we could remove "bb" since the letters are adjacent
+// and equal, and this is the only possible move.  The result of this move is
+// that the string is "aaca", of which only "aa" is possible, so the final string
+// is "ca".
 
 // Note:
-//     1 <= stones.length <= 30
-//     1 <= stones[i] <= 1000
+//     1 <= S.length <= 20000
+//     S consists only of English lowercase letters.
 
 
 /**
- * @param {number[]} stones
- * @return {number}
+ * @param {string} S
+ * @return {string}
  */
-const lastStoneWeight = function(stones) {
-  for (let i = 1; i < stones.length; i++) {
-    let y = 0, x = 1
-    if (stones[y] < stones[x]) [y, x] = [x, y]
-    for (let j = 2; j < stones.length; j++) {
-      if (stones[j] > stones[y]) [y, x] = [j, y]
-      else if (stones[j] > stones[x]) x = j
-    }
-
-    stones[y] = stones[y] - stones[x]
-    stones[x] = 0
-    i += stones[y] == 0 ? 1 : 0
+const removeDuplicates = function(S) {
+  const n = S.length
+  const arr = S.split('')
+  let i = 0
+  for (let j = 0; j < n; j++, i++) {
+    arr[i] = arr[j]
+    if (i > 0 && arr[i] == arr[i - 1]) i -= 2
   }
-
-  for (let i = 0; i < stones.length; i++) {
-    if (stones[i] !== 0) return stones[i]
-  }
-  return 0
+  return arr.slice(0, i).join('')
 }
 
 ;[
-  [2,7,4,1,8,1],  // 1
-  [1,1],          // 0
-  [1],            // 1
-  [1,6],          // 5
-  [10,4,2,10],    // 2
-  [10,5,10],      // 5
-].forEach((stones) => {
-  console.log(lastStoneWeight(stones))
+  'abbaca',             // 'ca'
+].forEach((S) => {
+  console.log(removeDuplicates(S))
 })
 
 // Solution:
-// 执行 n 次，每次遍历一遍数组，找出最大的两个数
-// 两数进行相减的结果替换数1，并将数2设置为 0
-// 最后遍历一遍找出不为0的数
-// TO(n*n)-SO(1)
+// 使用两个指针，一个负责遍历数组，
+// 另一个随机变动，遇到相同数则往回指（相当于跳过），只有不同时才往后指。
 
 // Submission Result: Accepted
