@@ -1,67 +1,83 @@
-// 1413. Minimum Value to Get Positive Step by Step Sum
-// Easy   65%
+// 1417. Reformat The String
+// Easy   56%
 
 
-// Given an array of integers nums, you start with an initial positive value
-// startValue.
-// In each iteration, you calculate the step by step sum of startValue plus
-// elements in nums (from left to right).
-// Return the minimum positive value of startValue such that the step by step sum
-// is never less than 1.
+// Given alphanumeric string s. (Alphanumeric string is a string consisting of
+// lowercase English letters and digits).
+// You have to find a permutation of the string where no letter is followed by
+// another letter and no digit is followed by another digit. That is, no two
+// adjacent characters have the same type.
+// Return the reformatted string or return an empty string if it is impossible to
+// reformat the string.
 
 // Example 1:
-// Input: nums = [-3,2,-3,4,2]
-// Output: 5
-// Explanation: If you choose startValue = 4, in the third iteration your step by
-// step sum is less than 1.
-//                 step by step sum
-//                 startValue = 4 | startValue = 5 | nums
-//                   (4 -3 ) = 1  | (5 -3 ) = 2    |  -3
-//                   (1 +2 ) = 3  | (2 +2 ) = 4    |   2
-//                   (3 -3 ) = 0  | (4 -3 ) = 1    |  -3
-//                   (0 +4 ) = 4  | (1 +4 ) = 5    |   4
-//                   (4 +2 ) = 6  | (5 +2 ) = 7    |   2
+// Input: s = "a0b1c2"
+// Output: "0a1b2c"
+// Explanation: No two adjacent characters have the same type in "0a1b2c".
+// "a0b1c2", "0a1b2c", "0c2a1b" are also valid permutations.
 // Example 2:
-// Input: nums = [1,2]
-// Output: 1
-// Explanation: Minimum start value should be positive.
+// Input: s = "leetcode"
+// Output: ""
+// Explanation: "leetcode" has only characters so we cannot separate them by
+// digits.
 // Example 3:
-// Input: nums = [1,-2,-3]
-// Output: 5
+// Input: s = "1229857369"
+// Output: ""
+// Explanation: "1229857369" has only digits so we cannot separate them by
+// characters.
+// Example 4:
+// Input: s = "covid2019"
+// Output: "c2o0v1i9d"
+// Example 5:
+// Input: s = "ab123"
+// Output: "1a2b3"
 
 // Constraints:
-//     1 <= nums.length <= 100
-//     -100 <= nums[i] <= 100
+//     1 <= s.length <= 500
+//     s consists of only lowercase English letters and/or digits.
 
 
 /**
- * @param {number[]} nums
- * @return {number}
+ * @param {string} s
+ * @return {string}
  */
-const minStartValue = function(nums) {
-  let res = sum = 1
-  for (let i = 0; i < nums.length; i++) {
-    sum += nums[i]
-    if (sum <= 0) {
-      res += -sum + 1
-      sum = 1
+const reformat = function(s) {
+  const nums = [], digits = []
+  for (let c of s) {
+    if (Number.isInteger(c - 0)) nums.push(c)
+    else digits.push(c)
+  }
+  const n = nums.length, m = digits.length
+  if (Math.abs(n - m) > 1) return ''
+  let res = ''
+  if (n < m) {
+    for (let i = 0; i < n; i++) {
+      res += digits[i] + nums[i]
     }
+    res += digits[m - 1]
+  } else {
+    for (let i = 0; i < m; i++) {
+      res += nums[i] + digits[i]
+    }
+    if (n !== m) res += nums[n - 1]
   }
   return res
 }
 
 ;[
-  [-3,2,-3,4,2], // 5
-  [1,2], // 1
-  [1,-2,-3], // 5
-  [-2,-3], // 6
-].forEach((nums) => {
-  console.log(minStartValue(nums))
+  'a0b1c2', // '0a1b2c'
+  'leetcode', // ''
+  '1229857369', // ''
+  'covid2019', // 'c2o0v1i9d'
+  'ab123', // '1a2b3'
+  'da0b1c2e', // ''
+].forEach((s) => {
+  console.log(reformat(s))
 })
 
 // Solution:
-// 初始值为 res=1，当前总和为 sum=1
-// 遍历数组，计算当前总和
-// 当 sum <= 0 时，改变初始值，使 sum = 1
+// 使用两个数组分别记录 s 字符串中的数字和字母
+// 若两数组的长度之差大于 1，则不能组成新字符串
+// 交替遍历两个数组组成新字符串，（长度大的先遍历，若相等则数字先）
 
 // Submission Result: Accepted
