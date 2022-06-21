@@ -1,26 +1,65 @@
 /**
- * @param {number} x
- * @param {number} n
- * @return {number}
+ * Definition for a binary tree node.
+ * function TreeNode(val) {
+ *     this.val = val;
+ *     this.left = this.right = null;
+ * }
  */
-var myPow = function(x, n) {
-  if (n === 0) return 1;
-  if (n < 0) {
-    n *= -1;
-    x = 1 / x;
-  }
-  return n % 2 === 0 ? myPow(x*x, n / 2) : x * myPow(x * x, Math.floor(n / 2));
-};
 
-// runtime error?
-var myPow = function(x, n) {
-    if (n === 0) {
-        return 1;
+// my own solution BFS, iterative
+/**
+ * @param {TreeNode} root
+ * @return {number[]}
+ */
+var largestValues = function(root) {
+    var next = [root];
+    var maxArr = [];
+
+    if (!root) {
+        return maxArr;
     }
 
-    if (n === 1) {
-        return x;
+    while (next.length > 0) {
+        var curr = next.slice();
+        var max = -Number.MAX_VALUE;
+        next = [];
+
+        while (curr.length > 0) {
+            var node = curr.shift();
+            max = Math.max(node.val, max);
+
+            if (node.left) {
+                next.push(node.left);
+            }
+            if (node.right) {
+                next.push(node.right);
+            }
+        }
+
+        maxArr.push(max);
     }
 
-    return n > 0 ? myPow(x, n - 1) * x : x / myPow(x, -n - 1) * x;
+    return maxArr;
 };
+
+// DFS
+var largestValues = function(root) {
+    var result = [];
+    helper(root, result, 0);
+    return result;
+};
+
+var helper = function(root, res, level) {
+    if (!root) {
+        return;
+    }
+
+    if (res.length === level) {
+        res.push(root.val);
+    } else {
+        res[level] = Math.max(res[level], root.val);
+    }
+
+    helper(root.left, res, level + 1);
+    helper(root.right, res, level + 1);
+}
