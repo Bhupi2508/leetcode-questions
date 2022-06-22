@@ -1,56 +1,80 @@
-// 1346. Check If N and Its Double Exist
-// Easy   39%
+// 1351. Count Negative Numbers in a Sorted Matrix
+// Easy   77%
 
 
-// Given an array arr of integers, check if there exists two integers N and M
-// such that N is the double of M ( i.e. N = 2 * M).
-// More formally check if there exists two indices i and j such that :
-//     i != j
-//     0 <= i, j < arr.length
-//     arr[i] == 2 * arr[j]
+// Given a m * n matrix grid which is sorted in non-increasing order both
+// row-wise and column-wise.
+// Return the number of negative numbers in grid.
 
 // Example 1:
-// Input: arr = [10,2,5,3]
-// Output: true
-// Explanation: N = 10 is the double of M = 5,that is, 10 = 2 * 5.
+// Input: grid = [[4,3,2,-1],[3,2,1,-1],[1,1,-1,-2],[-1,-1,-2,-3]]
+// Output: 8
+// Explanation: There are 8 negatives number in the matrix.
 // Example 2:
-// Input: arr = [7,1,14,11]
-// Output: true
-// Explanation: N = 14 is the double of M = 7,that is, 14 = 2 * 7.
+// Input: grid = [[3,2],[1,0]]
+// Output: 0
 // Example 3:
-// Input: arr = [3,1,7,11]
-// Output: false
-// Explanation: In this case does not exist N and M, such that N = 2 * M.
+// Input: grid = [[1,-1],[-1,-1]]
+// Output: 3
+// Example 4:
+// Input: grid = [[-1]]
+// Output: 1
 
 // Constraints:
-//     2 <= arr.length <= 500
-//     -10^3 <= arr[i] <= 10^3
+//     m == grid.length
+//     n == grid[i].length
+//     1 <= m, n <= 100
+//     -100 <= grid[i][j] <= 100
 
 
 /**
- * @param {number[]} arr
- * @return {boolean}
+ * @param {number[][]} grid
+ * @return {number}
  */
-const checkIfExist = function(arr) {
-  const hashSet = new Set()
-  for (let n of arr) {
-    if (hashSet.has(n)) return true
-    hashSet.add(n * 2)
-    if (n % 2 === 0) hashSet.add(n >>> 1)
+const countNegatives = function(grid) {
+  const m = grid.length, n = grid[0].length
+  let res = 0
+  for (let i = 0; i < m && grid[i][0] >= 0; i++) {
+    for (let j = 0; j < n && grid[i][j] >= 0; j++) res++
   }
-  return false
+  return m * n - res
+}
+
+const better = function(grid) {
+  let m = grid.length, n = grid[0].length, res = 0, c = 0
+  while (m > 0 && c < n) {
+    if (grid[m - 1][c] < 0) {
+      res += n - c
+      m--
+    } else {
+      c++
+    }
+  }
+  return res
 }
 
 ;[
-  [10,2,5,3],
-  [7,1,14,11],
-  [3,1,7,11],
-].forEach((arr) => {
-  console.log(checkIfExist(arr))
+  [[4,3,2,-1],[3,2,1,-1],[1,1,-1,-2],[-1,-1,-2,-3]],
+  [[3,2],[1,0]],
+  [[1,-1],[-1,-1]],
+  [[-1]],
+].forEach((grid) => {
+  console.log(countNegatives(grid))
+  console.log(better(grid))
 })
 
 // Solution:
-// 遍历数组的过程中，使用 Set 记录每个数的双倍和偶数的一半，
-// 并且查看 当前数 是否包含在 Set 中，在则直接返回 true，否则继续。
+// 1. 直接计算，或数非负数个数再用总数减。
+
+// 2. 充分利用非递增的规律
+// 矩阵的大致布局如下：
+// +++++++
+// +++++--
+// ++-----
+// +------
+// -------
+// 可以发现，从下到上每行的负数依次减少，即从下到上每行的第一个负数的下标依次增加。
+// 通过第一个负数的位置和每行的长度可以计算出该行的负数的个数。
+// 因此可以从下到上遍历，而遍历每行是，记录第一个负数的位置，在遍历下一行时，从该位置开始即可。
 
 // Submission Result: Accepted
