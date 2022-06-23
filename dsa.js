@@ -1,86 +1,49 @@
-// 451. Sort Characters By Frequency
-// Medium   51%
+// 453. Minimum Moves to Equal Array Elements
+// Easy   47%
 
 
-// Given a string, sort it in decreasing order based on the frequency of
-// characters.
+// Given a non-empty integer array of size n, find the minimum number of moves
+// required to make all array elements equal, where a move is incrementing n - 1
+// elements by 1.
 
-// Example 1:
-
-// Input:
-// "tree"
-
-// Output:
-// "eert"
-
-// Explanation:
-// 'e' appears twice while 'r' and 't' both appear once.
-// So 'e' must appear before both 'r' and 't'. Therefore "eetr" is also a valid
-// answer.
-
-// Example 2:
+// Example:
 
 // Input:
-// "cccaaa"
+// [1,2,3]
 
 // Output:
-// "cccaaa"
+// 3
 
 // Explanation:
-// Both 'c' and 'a' appear three times, so "aaaccc" is also a valid answer.
-// Note that "cacaca" is incorrect, as the same characters must be together.
+// Only three moves are needed (remember each move increments two elements):
 
-// Example 3:
-
-// Input:
-// "Aabb"
-
-// Output:
-// "bbAa"
-
-// Explanation:
-// "bbaA" is also a valid answer, but "Aabb" is incorrect.
-// Note that 'A' and 'a' are treated as two different characters.
+// [1,2,3]  =>  [2,3,3]  =>  [3,4,3]  =>  [4,4,4]
 
 
 /**
- * @param {string} s
- * @return {string}
+ * @param {number[]} nums
+ * @return {number}
  */
-const frequencySort = function(s) {
-  const hash = {}
-  for (let c of s) hash[c] = (hash[c] || 0) + 1
-
-  const bucket = []
-  for (let key in hash) {
-    const n = hash[key]
-    bucket[n] = (bucket[n] || '') + key.repeat(n)
+const minMoves = function(nums) {
+  nums.sort((a, b) => b - a)
+  let result = 0
+  for (let i = 1, n = nums.length; i < n; i++) {
+    result += (nums[i - 1] - nums[i]) * i
   }
-
-  let result = ''
-  for (let i = s.length; i > 0; i--) {
-    if (bucket[i]) result += bucket[i]
-  }
-
   return result
 }
 
 ;[
-  'tree',                       // 'eetr'
-  'cccaaa',                     // 'cccaaa'
-  'Aabb',                       // 'bbAa'
-].forEach(s => {
-  console.log(frequencySort(s))
+  [1,2,3],                      // 3
+  [1,3,6],                      // 7
+  [3,2,7,5],                    // 9
+].forEach(nums => {
+  console.log(minMoves(nums))
 })
 
 // Solution:
-
-// 方法一：
-// 使用哈希表保存每个字符出现的次数，
-// 将次数按降序排序后，构造新字符串。
-
-// 方法二：
-// 同样使用哈希，但不使用排序，而是使用桶（其实类似桶排序思想）
-// 即分配 n+1 个位置，位置i中保存出现次数为i的字符组成的字符串。
+// 先按降序排序，使元素不断向前一个元素变化。
+// 每完成一个元素的变化，该元素之前的元素都会变成一样的元素。
+// 假设当前元素与前一个元素的差为 a，且该元素前有 k 个元素，则需要变化 a x k 次。
 
 // Submission Result: Accepted
