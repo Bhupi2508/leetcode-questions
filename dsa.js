@@ -1,74 +1,44 @@
-// 235. Lowest Common Ancestor of a Binary Search Tree
-// Easy   39%
+// 237. Delete Node in a Linked List
+// Easy   46%
 
 
-// Given a binary search tree (BST), find the lowest common ancestor (LCA) of two
-// given nodes in the BST.
+// Write a function to delete a node (except the tail) in a singly linked list,
+// given only access to that node.
 
-// According to the definition of LCA on Wikipedia: “The lowest common ancestor
-// is defined between two nodes v and w as the lowest node in T that has both v
-// and w as descendants (where we allow a node to be a descendant of itself).”
+// Supposed the linked list is 1 -> 2 -> 3 -> 4 and you are given the third node
+// with value 3, the linked list should become 1 -> 2 -> 4 after calling your
+// function.
 
-// Given binary search tree:  root = [6,2,8,0,4,7,9,null,null,3,5]
-//         _______6______
-//        /              \
-//     ___2__          ___8__
-//    /      \        /      \
-//    0      _4       7       9
-//          /  \
-//          3   5
-
-// Example 1:
-
-// Input: root = [6,2,8,0,4,7,9,null,null,3,5], p = 2, q = 8
-// Output: 6
-// Explanation: The LCA of nodes 2 and 8 is 6.
-
-// Example 2:
-
-// Input: root = [6,2,8,0,4,7,9,null,null,3,5], p = 2, q = 4
-// Output: 2
-// Explanation: The LCA of nodes 2 and 4 is 2, since a node can be a descendant
-// of itself according to the LCA definition.
-
-// Note:
-//     All of the nodes' values will be unique.
-//     p and q are different and both values will exist in the BST.
 
 /**
- * Definition for a binary tree node.
- * function TreeNode(val) {
- *   this.val = val;
- *   this.left = this.right = null;
+ * Definition for singly-linked list.
+ * function ListNode(val) {
+ *     this.val = val;
+ *     this.next = null;
  * }
  */
 
 /**
- * @param {TreeNode} root
- * @param {TreeNode} p
- * @param {TreeNode} q
- * @return {TreeNode}
+ * @param {ListNode} node
+ * @return {void} Do not return anything, modify node in-place instead.
  */
-const lowestCommonAncestor = function(root, p, q) {
-  if (!root || !p || !q) return root
-  if (root.val > p.val && root.val > q.val) return lowestCommonAncestor(root.left, p, q)
-  if (root.val < p.val && root.val < q.val) return lowestCommonAncestor(root.right, p, q)
-  return root
+const deleteNode = function(node) {
+  node.val = node.next.val
+  node.next = node.next.next
 }
 
-const TreeNode = require('../structs/TreeNode')
+const ListNode = require('../structs/ListNode')
 ;[
-  [[6,2,8,0,4,7,9,null,null,3,5], 2, 8], // 6
-  [[6,2,8,0,4,7,9,null,null,3,5], 2, 4], // 2
-].forEach(([array, a, b]) => {
-  const root = TreeNode.from(array)
-  const p = root.getNode(a)
-  const q = root.getNode(b)
-  console.log(lowestCommonAncestor(root, p, q))
+  [[1,2,3,4], 2],              // 1 -> 2 -> 4
+].forEach(([array, k]) => {
+  const node = ListNode.from(array)
+  console.log(node.toString())
+  deleteNode(node.nth(k))
+  console.log(node.toString())
 })
 
 // Solution:
-// 若两个给定节点的值都大（小）于某节点，说明最低公共先辈在该节点的右（左）子节点下。
-// 否则就是该节点。
+// 既然不能获得前一个节点，那就该节点复制下一个节点的值，再删除下一个节点。
+
 
 // Submission Result: Accepted
