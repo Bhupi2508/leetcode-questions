@@ -1,25 +1,20 @@
-// 226. Invert Binary Tree
-// Easy   52%
+// 230. Kth Smallest Element in a BST
+// Medium   44%
 
-//         Invert a binary tree.
 
-//      4
-//    /   \
-//   2     7
-//  / \   / \
-// 1   3 6   9
+// Given a binary search tree, write a function kthSmallest to find the kth
+// smallest element in it.
 
-// to
-//      4
-//    /   \
-//   7     2
-//  / \   / \
-// 9   6 3   1
+// Note:
+// You may assume k is always valid, 1 ≤ k ≤ BST's total elements.
 
-// Trivia:
-// This problem was inspired by this original tweet by Max Howell:
-// Google: 90% of our engineers use the software you wrote (Homebrew), but you
-// can’t invert a binary tree on a whiteboard so fuck off.
+// Follow up:
+// What if the BST is modified (insert/delete operations) often and you need to
+// find the kth smallest frequently? How would you optimize the kthSmallest
+// routine?
+
+// Credits:Special thanks to @ts for adding this problem and creating all test
+// cases.
 
 
 /**
@@ -32,22 +27,28 @@
 
 /**
  * @param {TreeNode} root
- * @return {TreeNode}
+ * @param {number} k
+ * @return {number}
  */
-const invertTree = function(root) {
-  if (root == null) return root
-  ;[root.left, root.right] = [invertTree(root.right), invertTree(root.left)]
-  return root
+const kthSmallest = function(root, k) {
+  function inorder(root) {
+    if (!root) return null
+    const left = inorder(root.left)
+    if (left !== null) return left
+    if (--k <= 0) return root.val
+    return inorder(root.right)
+  }
+  return inorder(root)
 }
 
 const TreeNode = require('../structs/TreeNode')
 ;[
-  [4,2,7,1,3,6,9],
-].forEach((array) => {
-  console.log(invertTree(TreeNode.from(array)))
+  [[3,1,7,null,2,5,8,null,null,4,6], 4], // 4
+].forEach(([array, k]) => {
+  console.log(kthSmallest(TreeNode.from(array), k))
 })
 
 // Solution:
-// 遍历每个节点，并交换其左右子树。
+// 中序遍历一棵二叉查找树就像顺序遍历一个排好序的数组。
 
 // Submission Result: Accepted
