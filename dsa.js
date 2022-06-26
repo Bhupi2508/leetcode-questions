@@ -1,68 +1,49 @@
-// 1475. Final Prices With a Special Discount in a Shop
-// Easy   78%
-
-const { pid } = require("process");
+// 1480. Running Sum of 1d Array
+// Easy   95%
 
 
-// Given the array prices where prices[i] is the price of the ith item in a shop.
-// There is a special discount for items in the shop, if you buy the ith item,
-// then you will receive a discount equivalent to prices[j] where j is the
-// minimum index such that j > i and prices[j] <= prices[i], otherwise, you will
-// not receive any discount at all.
-// Return an array where the ith element is the final price you will pay for the
-// ith item of the shop considering the special discount.
+// Given an array nums. We define a running sum of an array as runningSum[i] =
+// sum(nums[0]&hellip;nums[i]).
+// Return the running sum of nums.
 
 // Example 1:
-// Input: prices = [8,4,6,2,3]
-// Output: [4,2,4,2,3]
-// Explanation:
-// For item 0 with price[0]=8 you will receive a discount equivalent to
-// prices[1]=4, therefore, the final price you will pay is 8 - 4 = 4.
-// For item 1 with price[1]=4 you will receive a discount equivalent to
-// prices[3]=2, therefore, the final price you will pay is 4 - 2 = 2.
-// For item 2 with price[2]=6 you will receive a discount equivalent to
-// prices[3]=2, therefore, the final price you will pay is 6 - 2 = 4.
-// For items 3 and 4 you will not receive any discount at all.
+// Input: nums = [1,2,3,4]
+// Output: [1,3,6,10]
+// Explanation: Running sum is obtained as follows: [1, 1+2, 1+2+3, 1+2+3+4].
 // Example 2:
-// Input: prices = [1,2,3,4,5]
+// Input: nums = [1,1,1,1,1]
 // Output: [1,2,3,4,5]
-// Explanation: In this case, for all items, you will not receive any discount at
-// all.
+// Explanation: Running sum is obtained as follows: [1, 1+1, 1+1+1, 1+1+1+1,
+// 1+1+1+1+1].
 // Example 3:
-// Input: prices = [10,1,1,6]
-// Output: [9,0,1,6]
+// Input: nums = [3,1,2,10,1]
+// Output: [3,4,6,16,17]
 
 // Constraints:
-//     1 <= prices.length <= 500
-//     1 <= prices[i] <= 10^3
+//     1 <= nums.length <= 1000
+//     -10^6 <= nums[i] <= 10^6
 
 
 /**
- * @param {number[]} prices
+ * @param {number[]} nums
  * @return {number[]}
  */
-const finalPrices = function(prices) {
-  const n = prices.length
-  for (let i = 0; i < n; i++) {
-    let j = i + 1
-    while (j < n && prices[j] > prices[i]) j++
-    if (j < n) prices[i] -= prices[j]
+const runningSum = function(nums) {
+  for (let i = 1; i < nums.length; i++) {
+    nums[i] += nums[i - 1]
   }
-  return prices
+  return nums
 }
 
 ;[
-  [8,4,6,2,3],
-  [1,2,3,4,5],
-  [10,1,1,6],
-  [8,8,6,7],
-].forEach((prices) => {
-  console.log(finalPrices(prices))
+  [1,2,3,4],
+  [1,1,1,1,1],
+  [3,1,2,10,1]
+].forEach((nums) => {
+  console.log(runningSum(nums))
 })
 
 // Solution:
-// 按照题意
-// 遍历数组，对于每个数，找到其后第一个小于或等于其值的数，
-// 若找到了，该数减去那个数。未找到则跳过。
+// 遍历数组，让 nums[i] = nums[i] + nums[i - 1] 即可。
 
 // Submission Result: Accepted
