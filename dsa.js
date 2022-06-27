@@ -1,58 +1,48 @@
-// 162. Find Peak Element
-// Medium   37%
+// 167. Two Sum II - Input array is sorted
+// Easy   47%
 
 
-// A peak element is an element that is greater than its neighbors.
+// Given an array of integers that is already sorted in ascending order, find two
+// numbers such that they add up to a specific target number.
 
-// Given an input array where num[i] ≠ num[i+1], find a peak element and return
-// its index.
+// The function twoSum should return indices of the two numbers such that they
+// add up to the target, where index1 must be less than index2. Please note that
+// your returned answers (both index1 and index2) are not zero-based.
 
-// The array may contain multiple peaks, in that case return the index to any one
-// of the peaks is fine.
+// You may assume that each input would have exactly one solution and you may not
+// use the same element twice.
 
-// You may imagine that num[-1] = num[n] = -∞.
-
-// For example, in array [1, 2, 3, 1], 3 is a peak element and your function
-// should return the index number 2.
-
-// click to show spoilers.
-
-// Note:
-// Your solution should be in logarithmic complexity.
-
-// Credits:Special thanks to @ts for adding this problem and creating all test
-// cases.
+// Input: numbers={2, 7, 11, 15}, target=9
+// Output: index1=1, index2=2
 
 
 /**
- * @param {number[]} nums
- * @return {number}
+ * @param {number[]} numbers
+ * @param {number} target
+ * @return {number[]}
  */
-const findPeakElement = function(nums) {
-  const n = nums.length
-  let i = 0, j = n - 1
+const twoSum = function(numbers, target) {
+  let i = 0, j = numbers.length - 1
   while (i < j) {
-    const mid = (i + j) >> 1
-    if (nums[mid] < nums[mid + 1]) i = mid + 1
-    else j = mid
+    const sum = numbers[i] + numbers[j]
+    if (sum > target) j--
+    else if (sum < target) i++
+    else return [i + 1, j + 1]
   }
-  return i
+  return [0, 0]
 }
 
 ;[
-  [1,2,3,1],                    // 2
-  [1,2,3,4,5,6,7,8,9,0],        // 8
-  [5,4,3,2,1],                  // 0
-  [1,2,3,4,5,6],                // 5
-].forEach(nums => {
-  console.log(findPeakElement(nums))
+  [[2,7,11,15], 9],                  // [1,2]
+].forEach(args => {
+  console.log(twoSum(...args))
 })
 
 // Solution:
-// 二分查找。
-// 若中位数小于其后一位，说明后面有更大的数，
-// 且有 nums[-1] = nums[n] = -Infinity 做保障，
-// i = mid + 1，继续
-// 否则 j = mid，继续
+// 因为已经排好序
+// 因此使用两个变量来保存数字下标，
+// 从外围开始选择两个数字，计算n[i] + n[j]，若大于target，说明大的数字太大了。
+// 若小于，说明选的小的数字太小了。
+// 若等于，则是答案。
 
 // Submission Result: Accepted
