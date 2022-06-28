@@ -1,43 +1,59 @@
-// 129. Sum Root to Leaf Numbers
-// Medium 37% locked:false
+// 131. Palindrome Partitioning
+// Medium 34% locked:false
 
-// Given a binary tree containing digits from 0-9 only, each root-to-leaf path
-// could represent a number.
+// Clone an undirected graph. Each node in the graph contains a label and a list
+// of its neighbors.
 
-// An example is the root-to-leaf path 1->2->3 which represents the number 123.
+// OJ's undirected graph serialization:
 
-// Find the total sum of all root-to-leaf numbers.
+// Nodes are labeled uniquely.
+// We use # as a separator for each node, and , as a separator for node label
+// and each neighbor of the node.
 
-// For example,
+// As an example, consider the serialized graph {0,1,2#1,2#2,2}.
 
-//   1
-//  / \
-// 2   3
+// The graph has a total of three nodes, and therefore contains three parts as
+// separated by #.
 
-// The root-to-leaf path 1->2 represents the number 12.
-// The root-to-leaf path 1->3 represents the number 13.
+// 1. First node is labeled as 0. Connect node 0 to both nodes 1 and 2.
+// 2. Second node is labeled as 1. Connect node 1 to node 2.
+// 3. Third node is labeled as 2. Connect node 2 to node 2 (itself), thus
+// forming a self-cycle.
 
-// Return the sum = 12 + 13 = 25.
+// Visually, the graph looks like the following:
+
+//        1
+//       / \
+//      /   \
+//     0 --- 2
+//          / \
+//          \_/
+
 
 /**
- * Definition for a binary tree node.
- * function TreeNode(val) {
- *     this.val = val;
- *     this.left = this.right = null;
+ * Definition for undirected graph.
+ * function UndirectedGraphNode(label) {
+ *     this.label = label;
+ *     this.neighbors = [];   // Array of UndirectedGraphNode
  * }
  */
-/**
- * @param {TreeNode} root
- * @return {number}
- */
-const sumNumbers = function(root) {
-  if (root === null) return 0
-  const recursion = (tree, val) => {
-    const cur = val * 10 + tree.val
-    if (!tree.left && !tree.right) return cur
-    return (tree.left ? recursion(tree.left, cur) : 0) +
-      (tree.right ? recursion(tree.right, cur) : 0)
-  }
 
-  return recursion(root, 0)
+/**
+ * @param {UndirectedGraphNode} graph
+ * @return {UndirectedGraphNode}
+ */
+const cloneGraph = function(graph) {
+  if (graph === null) return graph
+  const nodes = {}
+  const cloneNode = node => {
+    const clone = new UndirectedGraphNode(node.label)
+    nodes[clone.label] = clone
+    for (let n of node.neighbors) {
+      clone.neighbors.push(
+        nodes[n.label] ? nodes[n.label] : cloneNode(n)
+      )
+    }
+    return clone
+  }
+  return cloneNode(graph)
 }
