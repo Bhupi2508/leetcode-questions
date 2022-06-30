@@ -1,41 +1,52 @@
-// 461. Hamming Distance
-// Easy 69% locked:false
+// 462. Minimum Moves to Equal Array Elements II
+// Medium   51%
 
-// The Hamming distance between two integers is the number of positions at which
-// the corresponding bits are different.
 
-// Given two integers x and y, calculate the Hamming distance.
+// Given a non-empty integer array, find the minimum number of moves required to
+// make all array elements equal, where a move is incrementing a selected element
+// by 1 or decrementing a selected element by 1.
 
-// Note:
-// 0 ≤ x, y < 2^31.
+// You may assume the array's length is at most 10,000.
 
 // Example:
 
-// Input: x = 1, y = 4
+// Input:
+// [1,2,3]
 
-// Output: 2
+// Output:
+// 2
 
 // Explanation:
-// 1   (0 0 0 1)
-// 4   (0 1 0 0)
-//        ?   ?
+// Only two moves are needed (remember each move increments or decrements one
+// element):
 
-// The above arrows point to positions where the corresponding bits are
-// different.
+// [1,2,3]  =>  [2,2,3]  =>  [2,2,2]
+
 
 /**
- * @param {number} x
- * @param {number} y
+ * @param {number[]} nums
  * @return {number}
  */
-const hammingDistance = function(x, y) {
-  let res = 0
-  while (x > 0 || y > 0) {
-    if (x % 2 !== y % 2) res++
-    x = x >> 1
-    y = y >> 1
-  }
-  return res
+const minMoves2 = function(nums) {
+  nums.sort((a, b) => a - b)
+  const mid = nums.length >> 1
+  let result = 0
+  for (let num of nums) result += Math.abs(nums[mid] - num)
+  return result
 }
 
-console.log(hammingDistance(1, 2))
+;[
+  [1, 2, 3],                    // 2
+  [1, 5, 12, 16, 21, 22, 27],   // 52
+  [1, 5, 12, 16, 21, 49],      // 68
+].forEach(nums => {
+  console.log(minMoves2(nums))
+})
+
+// Solution:
+// 先排序找到中位数（若长度为偶数，则可选两个数中的任意一个）
+// 将其他数全部移到与中位数相同的数即可。
+
+// TODO: #462 为何选中位数为对齐数？
+
+// Submission Result: Accepted
