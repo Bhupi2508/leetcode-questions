@@ -1,103 +1,70 @@
-// 863. All Nodes Distance K in Binary Tree
-// Medium   35%
+// 867. Transpose Matrix
+// Easy   63%
 
 
-// We are given a binary tree (with root node root), a target node, and an
-// integer value `K`.
-// Return a list of the values of all nodes that have a distance K from the
-// target node.  The answer can be returned in any order.
+// Given a matrix A, return the transpose of A.
+// The transpose of a matrix is the matrix flipped over it's main diagonal,
+// switching the row and column indices of the matrix.
 
 // Example 1:
-// Input: root = [3,5,1,6,2,0,8,null,null,7,4], target = 5, K = 2
-// Output: [7,4,1]
-// Explanation:
-// The nodes that are a distance 2 from the target node (with value 5)
-// have values 7, 4, and 1.
-
-//      3
-//     / \
-//    5  1
-//   /\  /\
-//  6 2 0 8
-//   /\
-//  7 4
-
-// Note that the inputs "root" and "target" are actually TreeNodes.
-// The descriptions of the inputs above are just serializations of these objects.
+// Input: [[1,2,3],[4,5,6],[7,8,9]]
+// Output: [[1,4,7],[2,5,8],[3,6,9]]
+// Example 2:
+// Input: [[1,2,3],[4,5,6]]
+// Output: [[1,4],[2,5],[3,6]]
 
 // Note:
-//   1. The given tree is non-empty.
-//   2. Each node in the tree has unique values 0 <= node.val <= 500.
-//   3. The target node is a node in the tree.
-//   4. 0 <= K <= 1000.
+//     1 <= A.length <= 1000
+//     1 <= A[0].length <= 1000
 
 
 /**
- * Definition for a binary tree node.
- * function TreeNode(val) {
- *   this.val = val;
- *   this.left = this.right = null;
- * }
+ * @param {number[][]} A
+ * @return {number[][]}
  */
-
-/**
- * @param {TreeNode} root
- * @param {TreeNode} target
- * @param {number} K
- * @return {number[]}
- */
-const distanceK = function(root, target, K) {
-  const result = []
-  function distanceTarget(node, k) {
-    if (node) {
-      if (k === 0) {
-        result.push(node.val)
-      } else if (k > 0) {
-        distanceTarget(node.left, k - 1)
-        distanceTarget(node.right, k - 1)
-      }
+const transpose = function(A) {
+  const N = A.length, M = A[0].length
+  const res = []
+  for (let i = 0; i < M; i++) {
+    res[i] = []
+    for (let j = 0; j < N; j++) {
+      res[i].push(A[j][i])
     }
   }
-  distanceTarget(target, K)
-
-  function distanceRoot(node) {
-    if (!node) return -1
-    if (node === target) return K - 1
-    const left = distanceRoot(node.left)
-    if (left === 0) {
-      result.push(node.val)
-      return left - 1
-    } else if (left > 0) {
-      distanceTarget(node.right, left - 1)
-      return left - 1
-    } else {
-      const right = distanceRoot(node.right)
-      if (right === 0) {
-        result.push(node.val)
-        return right - 1
-      } else if (right > 0) {
-        distanceTarget(node.left, right - 1)
-        return right - 1
-      }
-    }
-  }
-  distanceRoot(root)
-
-  return result
+  return res
 }
 
-const TreeNode = require('../structs/TreeNode')
+const inPlace = function(A) {
+  const N = A.length, M = A[0].length
+  const MAX = Math.max(N, M)
+  for (let i = N; i < MAX; i++) A.push([])
+  for (let i = 0; i < MAX; i++) {
+    for (let j = i; j < MAX; j++) {
+      const t = A[i][j]
+      A[i][j] = A[j][i]
+      A[j][i] = t
+    }
+    for (let j = N; j < MAX; j++) A[i].pop()
+  }
+  for (let i = M; i < MAX; i++) A.pop()
+  return A
+}
+
 ;[
-  [[3,5,1,6,2,0,8,null,null,7,4], 5, 2], // [7, 4, 1]
-].forEach(([array, a, b]) => {
-  const root = TreeNode.from(array)
-  const target = root.getNode(a)
-  console.log(distanceK(root, target, b))
+  [[1,2,3],[4,5,6],[7,8,9]], // [[1,4,7],[2,5,8],[3,6,9]]
+  [[1,2,3],[4,5,6]], // [[1,4],[2,5],[3,6]]
+  [[1,2],[3,4],[5,6]],// [[1,3,5],[2,4,6]]
+].forEach((A) => {
+  console.log(transpose(A))
 })
 
 // Solution:
-// 1. 以 target 为根节点，递归地找到距离 target 为 K 的节点，
-// 2. 以 root 为根节点，递归地寻找 target，找到后返回 K - 1，代表需要寻找距离其
-//    父节点距离为 K - 1 的节点，一直先上知道回到根节点。
+// 1. 新建一个数组
+
+// 2. 就地替换
+// 先添加翻转后缺少的行
+// 交换
+// 去除列中多余的数
+// 去除多余的行
 
 // Submission Result: Accepted
