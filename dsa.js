@@ -1,151 +1,50 @@
-// 959. Regions Cut By Slashes
-// Medium   66%
+// 961. N-Repeated Element in Size 2N Array
+// Easy   73%
 
 
-// In a N x N grid composed of 1 x 1 squares, each 1 x 1 square consists of a /,
-// \, or blank space.  These characters divide the square into contiguous
-// regions.
-// (Note that backslash characters are escaped, so a \ is represented as "\\".)
-// Return the number of regions.
+// In a array A of size 2N, there are N+1 unique elements, and exactly one of
+// these elements is repeated N times.
+// Return the element repeated N times.
 
 // Example 1:
-// Input:
-// [
-//   " /",
-//   "/ "
-// ]
-// Output: 2
-// Explanation: The 2x2 grid is as follows:
-
-// Example 2:
-// Input:
-// [
-//   " /",
-//   "  "
-// ]
-// Output: 1
-// Explanation: The 2x2 grid is as follows:
-
-// Example 3:
-// Input:
-// [
-//   "\\/",
-//   "/\\"
-// ]
-// Output: 4
-// Explanation: (Recall that because \ characters are escaped, "\\/" refers to
-// \/, and "/\\" refers to /\.)
-// The 2x2 grid is as follows:
-
-// Example 4:
-// Input:
-// [
-//   "/\\",
-//   "\\/"
-// ]
-// Output: 5
-// Explanation: (Recall that because \ characters are escaped, "/\\" refers to
-// /\, and "\\/" refers to \/.)
-// The 2x2 grid is as follows:
-
-// Example 5:
-// Input:
-// [
-//   "//",
-//   "/ "
-// ]
+// Input: [1,2,3,3]
 // Output: 3
-// Explanation: The 2x2 grid is as follows:
+// Example 2:
+// Input: [2,1,2,5,3,2]
+// Output: 2
+// Example 3:
+// Input: [5,1,5,2,5,3,5,4]
+// Output: 5
 
 // Note:
-//     1 <= grid.length == grid[0].length <= 30
-//     grid[i][j] is either '/', '\', or ' '.
+//     4 <= A.length <= 10000
+//     0 <= A[i] < 10000
+//     A.length is even
 
 
 /**
- * @param {string[]} grid
+ * @param {number[]} A
  * @return {number}
  */
-const regionsBySlashes = function(grid) {
-  const n = grid.length, m = []
-  for (let i = 0; i < n; i++) {
-    m.push([], [], [])
-    for (let j = 0; j < n; j++) {
-      if (grid[i][j] === '/') m[i * 3][j * 3 + 2] = m[i * 3 + 1][j * 3 + 1] = m[i * 3 + 2][j * 3] = true
-      if (grid[i][j] === '\\') m[i * 3][j * 3] = m[i * 3 + 1][j * 3 + 1] = m[i * 3 + 2][j * 3 + 2] = true
-    }
+const repeatedNTimes = function(A) {
+  let i = 0, j = 0
+  while (i === j || A[i] !== A[j]) {
+    i = (Math.random() * A.length) >> 0
+    j = (Math.random() * A.length) >> 0
   }
-
-  function dfs(i, j) {
-    if (0 <= i && i < n * 3 && 0 <= j && j < n * 3 && !m[i][j]) {
-      m[i][j] = true
-      dfs(i - 1, j)
-      dfs(i, j + 1)
-      dfs(i + 1, j)
-      dfs(i, j - 1)
-    }
-  }
-
-  let res = 0
-  for (let i = 0; i < n * 3; i++) {
-    for (let j = 0; j < n * 3; j++) {
-      if (!m[i][j]) {
-        dfs(i, j)
-        res++
-      }
-    }
-  }
-  return res
+  return A[i]
 }
 
 ;[
-  [
-    ' /',
-    '/ ',
-  ], // 2
-  [
-    ' /',
-    '  ',
-  ], // 1
-  [
-    '\\/',
-    '/\\',
-  ], // 4
-  [
-    '/\\',
-    '\\/',
-  ], // 5
-  [
-    '//',
-    '/ ',
-  ], // 3
-].forEach((grid) => {
-  console.log(regionsBySlashes(grid))
+  [1, 2, 3, 3], // 3
+  [2, 1, 2, 5, 3, 2], // 2
+  [5, 1, 5, 2, 5, 3, 5, 4], // 5
+  [2, 1, 2, 5, 3, 2], // 2
+].forEach((A) => {
+  console.log(repeatedNTimes(A))
 })
 
 // Solution:
-// 将矩阵扩大为原来的3倍，再使用广度遍历法，找到不同区块的数量
-// 扩大时
-// '/' 变为
-// '  1'
-// ' 1 '
-// '1  '
-// '\\' 变为
-// '1  '
-// ' 1 '
-// '  1'
+// 随机取两个数，若相同则为重复n遍的数。
 
-// 示例
-// 如 [
-//     '\\/',
-//     '/\\',
-//    ]
-// 变为
-// '1    1'
-// ' 1  1 '
-// '  11  '
-// '  11  '
-// ' 1  1 '
-// '1    1'
-
-// Submission Result: Accepted
+// Submission Result: Accept
