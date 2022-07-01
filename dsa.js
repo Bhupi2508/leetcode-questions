@@ -1,67 +1,56 @@
-// 1009. Complement of Base 10 Integer
-// Easy   60%
+// 1010. Pairs of Songs With Total Durations Divisible by 60
+// Easy   47%
 
 
-// Every non-negative integer N has a binary representation.  For example, 5 can
-// be represented as "101" in binary, 11 as "1011" in binary, and so on.  Note
-// that except for N = 0, there are no leading zeroes in any binary
-// representation.
-// The complement of a binary representation is the number in binary you get when
-// changing every 1 to a 0 and 0 to a 1.  For example, the complement of "101" in
-// binary is "010" in binary.
-// For a given number N in base-10, return the complement of it's binary
-// representation as a base-10 integer.
+// In a list of songs, the i-th song has a duration of time[i] seconds.
+// Return the number of pairs of songs for which their total duration in seconds
+// is divisible by 60.  Formally, we want the number of indices i < j with
+// (time[i] + time[j]) % 60 == 0.
 
 // Example 1:
-// Input: 5
-// Output: 2
-// Explanation: 5 is "101" in binary, with complement "010" in binary, which is 2
-// in base-10.
+// Input: [30,20,150,100,40]
+// Output: 3
+// Explanation: Three pairs have a total duration divisible by 60:
+// (time[0] = 30, time[2] = 150): total duration 180
+// (time[1] = 20, time[3] = 100): total duration 120
+// (time[1] = 20, time[4] = 40): total duration 60
 // Example 2:
-// Input: 7
-// Output: 0
-// Explanation: 7 is "111" in binary, with complement "000" in binary, which is 0
-// in base-10.
-// Example 3:
-// Input: 10
-// Output: 5
-// Explanation: 10 is "1010" in binary, with complement "0101" in binary, which
-// is 5 in base-10.
+// Input: [60,60,60]
+// Output: 3
+// Explanation: All three pairs have a total duration of 120, which is divisible
+// by 60.
 
 // Note:
-//     0 <= N < 10^9
-//     This question is the same as 476:
-// https://leetcode.com/problems/number-complement/
+//     1 <= time.length <= 60000
+//     1 <= time[i] <= 500
 
 
 /**
- * @param {number} N
+ * @param {number[]} time
  * @return {number}
  */
-const bitwiseComplement = function(N) {
-  let X = 1
-  while (N > X) X = X * 2 + 1
-  return X - N
+const numPairsDivisibleBy60 = function(time) {
+  let result = 0
+  const hash = {}
+  for (let t of time) {
+    result += hash[(600 - t) % 60] || 0
+    hash[t % 60] = (hash[t % 60] || 0) + 1
+  }
+  return result
 }
 
 ;[
-  0,      // 1
-  5,      // 2
-  7,      // 0
-  10,     // 5
-  8,      // 7
-].forEach((N) => {
-  console.log(bitwiseComplement(N))
+  [30,20,150,100,40],  // 3
+  [60,60,60],          // 3
+].forEach((time) => {
+  console.log(numPairsDivisibleBy60(time))
 })
 
 // Solution:
-// 1. 直接
-// 使用过 N % 2 和 N >>> 1 可从左到右依次获得 N 的二进制数
-// 再利用 ^ 异或运算符来完成 01 转换
-// 最后利用 result += (0|1) * 2**i 来完成倒序二进制的值计算
+// 两层for循环，直接计算 time[i] + time[j]
+// TO(n*n)-SO(1)
 
-// 2. 互补
-// input + output = 111...11
-// 111...11的位数与input相同
+// 同 1.two-sum.js 中的思想，使用 hash 保存互补数
+// TO(n)-SO(n)
 
 // Submission Result: Accepted
