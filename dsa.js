@@ -1,58 +1,74 @@
-// 561. Array Partition I
-// Easy   66%
+// 563. Binary Tree Tilt
+// Easy   47%
 
 
-// Given an array of 2n integers, your task is to group these integers into n
-// pairs of integer, say (a1, b1), (a2, b2), ..., (an, bn) which makes sum of
-// min(ai, bi) for all i from 1 to n as large as possible.
+// Given a binary tree, return the tilt of the whole tree.
 
-// Example 1:
+// The tilt of a tree node is defined as the absolute difference between the sum
+// of all left subtree node values and the sum of all right subtree node values.
+// Null node has tilt 0.
 
-// Input: [1,4,3,2]
+// The tilt of the whole tree is defined as the sum of all nodes' tilt.
 
-// Output: 4
-// Explanation: n is 2, and the maximum sum of pairs is 4 = min(1, 2) + min(3,
-// 4).
+// Example:
+
+// Input:
+//          1
+//        /   \
+//       2     3
+// Output: 1
+// Explanation:
+// Tilt of node 2 : 0
+// Tilt of node 3 : 0
+// Tilt of node 1 : |2-3| = 1
+// Tilt of binary tree : 0 + 0 + 1 = 1
 
 // Note:
 
-// n is a positive integer, which is in the range of [1, 10000].
-// All the integers in the array will be in the range of [-10000, 10000].
+// The sum of node values in any subtree won't exceed the range of 32-bit
+// integer.
+// All the tilt values won't exceed the range of 32-bit integer.
 
 
 /**
- * @param {number[]} nums
+ * Definition for a binary tree node.
+ * function TreeNode(val) {
+ *   this.val = val
+ *   this.left = this.right = null
+ * }
+ */
+
+/**
+ * @param {TreeNode} root
  * @return {number}
  */
-const arrayPairSum = function(nums) {
-  const n = nums.length
-  nums.sort((a, b) => a - b)
-  let result = 0
-  for (let i = 0; i < n; i++) {
-    if (i % 2 === 0) result += nums[i]
+const findTilt = function(root) {
+  function iter(root) {
+    if (root == void 0) return [0, 0]
+    const left = iter(root.left),
+          right = iter(root.right)
+    return [
+      left[0] + right[0] + Math.abs(left[1] - right[1]),
+      left[1] + right[1] + root.val
+    ]
   }
-  return result
+  return iter(root)[0]
 }
 
+const TreeNode = require('../structs/TreeNode')
 ;[
-  [1,4,3,2],                    // 4
-].forEach(nums => {
-  console.log(arrayPairSum(nums))
+  [1,2,3],             // 1
+  [1,2,3,4,null,5],    // 11
+  [1,2,null,3,4],      // 10
+].forEach((array) => {
+  console.log(findTilt(TreeNode.from(array)))
 })
 
 // Solution:
-// 要分成两个元素一组，且选择组中较小的那个元素，并将每组选择的元素相加。
-// 还要保证在所有分组的可能性选择最大的那个。
-
-// 如何确保总和最大呢？
-// 首先数组里最大的数是不可能选的，因为这个数无论在那个组中都不会被选到。
-// 但是选择第二大的数是有可能的，只要它和最大的数在一个组。
-// 然后在剩余的元素中继续让最大的两个数在一组，这样总能选到第二大的数。
-// 这样就能确保总和是最大的。
-
-// 先将数组按递升顺序排序。
-// 如果只有两个元素，则是第一个元素，
-// 如果有四个元素，则只能选第一和第三，
-// 以此类推，选择奇数位元素。
+// 在每个节点中，累积其左右子树的总和的差的绝对值。
+// 这时，不仅要记录数差的绝对值的总和，还要记录子树的所有值的总和。
+// 注意：两个完全不同的总和，必须特别区分。
+// 一个是累积子树所有节点的左右子树的差的绝对值的总和，即答案
+// 另一个是累积子树的所有值的总和。
 
 // Submission Result: Accepted
