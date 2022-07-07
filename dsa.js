@@ -1,90 +1,74 @@
-// 1237. Find Positive Integer Solution for a Given Equation
-// Easy   69%
+// 1252. Cells with Odd Values in a Matrix
+// Easy   78%
 
-// Given a function  f(x, y) and a value z, return all positive integer pairs x
-// and y where f(x,y) == z.
-// The function is constantly increasing, i.e.:
-//     f(x, y) < f(x + 1, y)
-//     f(x, y) < f(x, y + 1)
-// The function interface is defined like this:
 
-// interface CustomFunction {
-// public:
-//   // Returns positive integer f(x, y) for any given positive integer x and y.
-//   int f(int x, int y);
-// };
-
-// For custom testing purposes you're given an integer function_id and a target z
-// as input, where function_id represent one function from an secret internal
-// list, on the examples you'll know only two functions from the list.
-// You may return the solutions in any order.
+// Given n and m which are the dimensions of a matrix initialized by zeros and
+// given an array indices where indices[i] = [ri, ci]. For each pair of [ri, ci]
+// you have to increment all cells in row ri and column ci by 1.
+// Return the number of cells with odd values in the matrix after applying the
+// increment to all indices.
 
 // Example 1:
-// Input: function_id = 1, z = 5
-// Output: [[1,4],[2,3],[3,2],[4,1]]
-// Explanation: function_id = 1 means that f(x, y) = x + y
+// Input: n = 2, m = 3, indices = [[0,1],[1,1]]
+// Output: 6
+//
+// 0 0 0   0,1   1 2 1   1,1   1 3 1
+// 0 0 0  ---->  0 1 0  ---->  1 3 1
+//
+// Explanation: Initial matrix = [[0,0,0],[0,0,0]].
+// After applying first increment it becomes [[1,2,1],[0,1,0]].
+// The final matrix will be [[1,3,1],[1,3,1]] which contains 6 odd numbers.
+
 // Example 2:
-// Input: function_id = 2, z = 5
-// Output: [[1,5],[5,1]]
-// Explanation: function_id = 2 means that f(x, y) = x * y
+// Input: n = 2, m = 2, indices = [[1,1],[0,0]]
+// Output: 0
+//
+// 0 0   1,1   0 1   0,0   2 2
+// 0 0  ---->  1 2  ---->  2 2
+//
+// Explanation: Final matrix = [[2,2],[2,2]]. There is no odd number in the final
+// matrix.
 
 // Constraints:
-//     1 <= function_id <= 9
-//     1 <= z <= 100
-//     It's guaranteed that the solutions of f(x, y) == z will be on the range 1
-// <= x, y <= 1000
-//     It's also guaranteed that f(x, y) will fit in 32 bit signed integer if 1
-// <= x, y <= 1000
+//     1 <= n <= 50
+//     1 <= m <= 50
+//     1 <= indices.length <= 100
+//     0 <= indices[i][0] < n
+//     0 <= indices[i][1] < m
+
 
 /**
- * // This is the CustomFunction's API interface.
- * // You should not implement it, or speculate about its implementation
- * function CustomFunction() {
- *     @param {integer, integer} x, y
- *     @return {integer}
- *     this.f = function(x, y) {
- *         ...
- *     };
- * };
+ * @param {number} n
+ * @param {number} m
+ * @param {number[][]} indices
+ * @return {number}
  */
-
-/**
- * @param {CustomFunction} customfunction
- * @param {integer} z
- * @return {integer[][]}
- */
-const findSolution = function (customfunction, z) {
-  const queue = [[1, 1, true]]
-  const res = []
-  while (queue.length) {
-    const [i, j, isLeft] = queue.shift()
-    const r = customfunction.f(i, j)
-    if (r === z) {
-      res.push([i, j])
-    } else if (r < z) {
-      if (isLeft) queue.push([i, j + 1, true])
-      queue.push([i + 1, j, false])
+const oddCells = function(n, m, indices) {
+  const matrix = Array(n)
+  for (let i = 0; i < n; i++) matrix[i] = Array(m).fill(0)
+  for (let indice of indices) {
+    for (let i = 0; i < m; i++) matrix[indice[0]][i]++
+    for (let i = 0; i < n; i++) matrix[i][indice[1]]++
+  }
+  let res = 0
+  for (let i = 0; i < n; i++) {
+    for (let j = 0; j < m; j++) {
+      if (matrix[i][j] % 2) res++
     }
   }
   return res
 }
 
 ;[
-  [{ f: (x, y) => x + y }, 5],
-  [{ f: (x, y) => x * y }, 5],
-].forEach(([f, z]) => {
-  console.log(findSolution(f, z))
+  [2, 3, [[0,1],[1,1]]],
+  [2, 2, [[1,1],[0,0]]],
+].forEach(([n, m, indices]) => {
+  console.log(oddCells(n, m, indices))
 })
 
 // Solution:
-//           1,1
-//          /   \
-//       2,1    1,2
-//       /   \     \
-//    3,1    2,2   1,3
-//    /  \     \     \
-// 4,1   3,2    2,3   1,4
-// 递归广度遍历BFS，其中右子节点只遍历右子树
-// 使用 queue 队列和循环遍历实现递归
+// 创建一个矩阵，直接执行操作，最后统计即可。
+
+// TODO #1252 使用时间和空间复杂度更低的方法
 
 // Submission Result: Accepted
