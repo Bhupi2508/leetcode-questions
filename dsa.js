@@ -1,26 +1,90 @@
 /**
- * key: num1[i] * num2[j] will be placed at indices result[i + j, i + j + 1]
- * 
- * @param {string} num1
- * @param {string} num2
- * @return {string}
+ * permutation of A[1..n] equals to
+ * A[1] + permutation of (A[1..n] - A[1])
+ * A[2] + permutation of (A[1..n] - A[2])
+ * ...
+ * A[n] + permutation of (A[1..n] - A[n])
+ * Everytime, swap the beginning element with current element, and do the permutation
+ * Once the passed nums array is changed, we should have a deep copy of the array and push
+ * it to the final results array.
+ *
+ * @param {number[]} nums
+ * @return {number[][]}
  */
-var multiply = function(num1, num2) {
-    if (num1 === '0' || num2 === '0') return '0';
-    var result = [];
-    for (var i = 0; i < num1.length + num2.length; i++) {
-        result.push(0);
+var permute = function(nums) {
+    if (nums.length === 0) return nums;
+    var results = [];
+    permuteHelper(0, nums, results);
+    return results;
+};
+
+var permuteHelper = function(start, nums, results) {
+    if (start === nums.length) {
+        results.push(nums.slice());
+        return;
     }
 
-    for (var i = num1.length - 1; i >= 0 ; i--) {
-        for (var j = num2.length - 1; j >= 0 ; j--) {
-            var digitResult = parseInt(num1[i]) * parseInt(num2[j]);
-            digitResult += result[i+j+1];
-            result[i+j+1] = digitResult % 10;
-            result[i+j] += Math.floor(digitResult / 10);
+    for (var i = start; i < nums.length; i++) {
+        swap(nums, start, i);
+        permuteHelper(start + 1, nums, results);
+        swap(nums, start, i);
+    }
+};
+
+var swap = function(nums, i, j) {
+    if (i === j) return;
+    var tmp = nums[i];
+    nums[i] = nums[j];
+    nums[j] = tmp;
+};
+
+// A iterative version
+// for example: nums=[1,2,3]
+// step1: [1]
+// step2: inserst 2 to [1], two possibilities: [2,1], [1,2]
+// step2: inserst 3 to [1,2] and [2,1],
+// Three possibilities for each: [3,2,1], [2,3,1], [2,1,3] & [3,1,2], [1,3,2], [1,2,3]
+var permute = function(nums) {
+    if (nums.length === 0) return nums;
+    var results = [[nums[0]]];
+    for (var i = 1; i < nums.length; i++) {
+        var newResults = [];
+        for (var m = 0; m < results.length; m++) {
+            for (var j = 0; j <= i; j++) {
+                // still need a deep copy of results[m],
+                // otherwise, a change to list will affect results array.
+                var list = results[m].slice();
+                list.splice(j, 0, nums[i]);
+                newResults.push(list);
+            }
         }
+        results = newResults;
     }
-    if (result[0] === 0) result.shift();
 
-    return result.join('');
+    return results;
+};
+
+// Backtracking. 
+var permute = function(nums) {
+    var result = [];
+    var results = [];
+    var isVisited = [];
+    dfsHelper(nums, isVisited, result, results);
+    return results;
+};
+
+var dfsHelper = function(nums, isVisited, result, results) {
+    if (result.length === nums.length) {
+        results.push(result.slice());
+        return;
+    }
+
+    for (var i = 0; i < nums.length; i++) {
+        if (isVisited[i]) continue;
+        isVisited[i] = true;
+        result.push(nums[i]);
+        dfsHelper(nums, isVisited, result, results);
+        result.pop();
+        isVisited[i] = false;
+    }
 };
