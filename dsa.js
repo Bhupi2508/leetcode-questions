@@ -1,80 +1,73 @@
-// 1351. Count Negative Numbers in a Sorted Matrix
-// Easy   77%
+// 1356. Sort Integers by The Number of 1 Bits
+// Easy   68%
 
 
-// Given a m * n matrix grid which is sorted in non-increasing order both
-// row-wise and column-wise.
-// Return the number of negative numbers in grid.
+// Given an integer array arr. You have to sort the integers in the array in
+// ascending order by the number of 1's in their binary representation and in
+// case of two or more integers have the same number of 1's you have to sort them
+// in ascending order.
+// Return the sorted array.
 
 // Example 1:
-// Input: grid = [[4,3,2,-1],[3,2,1,-1],[1,1,-1,-2],[-1,-1,-2,-3]]
-// Output: 8
-// Explanation: There are 8 negatives number in the matrix.
+// Input: arr = [0,1,2,3,4,5,6,7,8]
+// Output: [0,1,2,4,8,3,5,6,7]
+// Explantion: [0] is the only integer with 0 bits.
+// [1,2,4,8] all have 1 bit.
+// [3,5,6] have 2 bits.
+// [7] has 3 bits.
+// The sorted array by bits is [0,1,2,4,8,3,5,6,7]
 // Example 2:
-// Input: grid = [[3,2],[1,0]]
-// Output: 0
+// Input: arr = [1024,512,256,128,64,32,16,8,4,2,1]
+// Output: [1,2,4,8,16,32,64,128,256,512,1024]
+// Explantion: All integers have 1 bit in the binary representation, you should
+// just sort them in ascending order.
 // Example 3:
-// Input: grid = [[1,-1],[-1,-1]]
-// Output: 3
+// Input: arr = [10000,10000]
+// Output: [10000,10000]
 // Example 4:
-// Input: grid = [[-1]]
-// Output: 1
+// Input: arr = [2,3,5,7,11,13,17,19]
+// Output: [2,3,5,17,7,11,13,19]
+// Example 5:
+// Input: arr = [10,100,1000,10000]
+// Output: [10,100,10000,1000]
 
 // Constraints:
-//     m == grid.length
-//     n == grid[i].length
-//     1 <= m, n <= 100
-//     -100 <= grid[i][j] <= 100
+//     1 <= arr.length <= 500
+//     0 <= arr[i] <= 10^4
 
 
 /**
- * @param {number[][]} grid
- * @return {number}
+ * @param {number[]} arr
+ * @return {number[]}
  */
-const countNegatives = function(grid) {
-  const m = grid.length, n = grid[0].length
-  let res = 0
-  for (let i = 0; i < m && grid[i][0] >= 0; i++) {
-    for (let j = 0; j < n && grid[i][j] >= 0; j++) res++
-  }
-  return m * n - res
-}
-
-const better = function(grid) {
-  let m = grid.length, n = grid[0].length, res = 0, c = 0
-  while (m > 0 && c < n) {
-    if (grid[m - 1][c] < 0) {
-      res += n - c
-      m--
-    } else {
-      c++
+const sortByBits = function(arr) {
+  const countBits = (n) => {
+    let c = 0
+    while (n > 0) {
+      if (n % 2) c++
+      n >>>= 1
     }
+    return c
   }
-  return res
+  return arr
+    .map((v) => ({ v: v, b: countBits(v) }))
+    .sort((a, b) => a.b - b.b || a.v - b.v)
+    .map((v) => v.v)
 }
 
 ;[
-  [[4,3,2,-1],[3,2,1,-1],[1,1,-1,-2],[-1,-1,-2,-3]],
-  [[3,2],[1,0]],
-  [[1,-1],[-1,-1]],
-  [[-1]],
-].forEach((grid) => {
-  console.log(countNegatives(grid))
-  console.log(better(grid))
+  [0,1,2,3,4,5,6,7,8],
+  [1024,512,256,128,64,32,16,8,4,2,1],
+  [10000,10000],
+  [2,3,5,7,11,13,17,19],
+  [10,100,1000,10000],
+].forEach((arr) => {
+  console.log(sortByBits(arr))
 })
 
 // Solution:
-// 1. 直接计算，或数非负数个数再用总数减。
-
-// 2. 充分利用非递增的规律
-// 矩阵的大致布局如下：
-// +++++++
-// +++++--
-// ++-----
-// +------
-// -------
-// 可以发现，从下到上每行的负数依次减少，即从下到上每行的第一个负数的下标依次增加。
-// 通过第一个负数的位置和每行的长度可以计算出该行的负数的个数。
-// 因此可以从下到上遍历，而遍历每行是，记录第一个负数的位置，在遍历下一行时，从该位置开始即可。
+// 先将数组的每个数拓展为一个对象，记录该数及该数的 1-bit 的数量，
+// 使用 对象中的 1-bit 数量和该数进行排序，
+// 最后再将对象转换成数字。
 
 // Submission Result: Accepted
