@@ -1,46 +1,54 @@
 /**
- * Key: use first row to store the zero state for each column exclude the first col,
- * use first col to store the zero state for each row exclude the first row
- * use two variable to mark whether the first row and the first column has zeros.
- * set the matrix with zeros with the states.
- *
  * @param {number[][]} matrix
- * @return {void} Do not return anything, modify matrix in-place instead.
+ * @param {number} target
+ * @return {boolean}
  */
-var setZeroes = function(matrix) {
-    var firstRowZero = false;
-    var firstColZero = false;
+var searchMatrix = function(matrix, target) {
+    var low = 0;
     var rows = matrix.length;
     var cols = matrix[0].length;
+    var high = rows * cols - 1;
 
-    for (var i = 0; i < rows; i++) {
-        for (var j = 0; j < cols; j++) {
-            if (matrix[i][j] === 0) {
-                if (i === 0) firstRowZero = true;
-                if (j === 0) firstColZero = true;
-                matrix[i][0] = 0;
-                matrix[0][j] = 0;
-            }
-        }
+    while (low <= high) {
+        var mid = low + Math.floor((high - low) / 2);
+        var midNumber = findElementByIndex(matrix, mid, rows, cols);
+        if (target < midNumber) high = mid - 1;
+        else if (target > midNumber) low = mid + 1;
+        else return true;
     }
 
-    for (var i = 1; i < rows; i++) {
-        for (var j = 1; j < cols; j++) {
-            if (matrix[i][0] === 0 || matrix[0][j] === 0) {
-                matrix[i][j] = 0;
-            }
-        }
-    }
+    return false;
+};
 
-    if (firstRowZero) {
-        for (var i = 0; i < cols; i++) {
-            matrix[0][i] = 0;
-        }
-    }
+var findElementByIndex = function(matrix, index, m, n) {
+    var row = Math.floor(index / n);
+    var col = index - n * row;
+    return matrix[row][col];
+};
 
-    if (firstColZero) {
-        for (var i = 0; i < rows; i++) {
-            matrix[i][0] = 0;
+// second try
+var searchMatrix = function(matrix, target) {
+    var low = 0;
+    var rows = matrix.length;
+    var cols = matrix[0].length;
+    var high = rows * cols - 1;
+    while (low <= high) {
+        var mid = low + Math.floor((high - low) / 2);
+        var midElement = findElementByIndex(matrix, mid, cols);
+        if (midElement === target) {
+            return true;
+        } else if (midElement > target) {
+            high = mid - 1;
+        } else {
+            low = mid + 1;
         }
     }
+    return false;
+};
+
+// only need n (columns).
+var findElementByIndex = function(matrix, index, n) {
+    var row = Math.floor(index / n);
+    var col = Math.floor(index % n);
+    return matrix[row][col];
 };
