@@ -1,55 +1,53 @@
-// 42. Trapping Rain Water
-// Hard   37%
+// 43. Multiply Strings
+// Medium   27%
 
-// Given n non-negative integers representing an elevation map where the width
-// of each bar is 1, compute how much water it is able to trap after raining.
+// Given two non-negative integers num1 and num2 represented as strings, return
+// the product of num1 and num2.
 
-// For example,
-// Given [0,1,0,2,1,0,1,3,2,1,2,1], return 6.
+// Note:
 
-
-// The above elevation map is represented by array [0,1,0,2,1,0,1,3,2,1,2,1].
-// In this case, 6 units of rain water (blue section) are being trapped. Thanks
-// Marcos for contributing this image!
+// 1. The length of both num1 and num2 is < 110.
+// 2. Both num1 and num2 contains only digits 0-9.
+// 3. Both num1 and num2 does not contain any leading zero.
+// 4. You must not use any built-in BigInteger library or convert the inputs to
+// integer directly.
 
 
 /**
- * @param {number[]} height
- * @return {number}
+ * @param {string} num1
+ * @param {string} num2
+ * @return {string}
  */
-const trap = function(height) {
-  const n = height.length
-  let result = 0, i = 0, j = n - 1, min = 0
-  while (i < j) {
-    if (height[i] <= min) {
-      result += min - height[i]
-      i++
-    } else if (height[j] <= min) {
-      result += min - height[j]
-      j--
-    } else {
-      min = Math.min(height[i], height[j])
+const multiply = function(num1, num2) {
+  const n = num1.length, m = num2.length
+  const result = Array(n + m).fill(0)
+  for (let i = n - 1; i >= 0; i--) {
+    for (let j = m - 1; j >= 0; j--) {
+      const product = num1[i] * num2[j] + result[i + j + 1]
+      result[i + j + 1] = product % 10
+      result[i + j] += Math.trunc(product / 10)
     }
   }
-  return result
+  while (result[0] === 0 && result.length > 1) result.shift()
+  return result.join('')
 }
 
 ;[
-  [0,1,0,2,1,0,1,3,2,1,2,1],
-  [1,2],
-  [4,2,3],
-  [6,4,2,0,3,2,0,3,1,4,5,3,2,7,5,3,0,1,2,1,3,4,6,8,1,3],
-].forEach(height => {
-  console.log(trap(height))
+  ['13', '17'],                 // 221
+  ['98', '98'],                 // 8904
+  ['0', '0'],                   // 0
+  ['123', '456'],               // 56088
+].forEach(args => {
+  console.log(multiply(...args))
 })
 
 // Solution:
-// 从两边开始，向中间遍历。
-// 记录一个变量，其值为当前遍历过得数中较高的可作为容器边界的两个数中较小的一个。
-// 因为容器是以小的一边的边界来计算容量的。
+// 先分配足够的空间来保存每一位数。
+// 两个数的长度分别为 n 和 m，则其乘积的最长长度为 n+m。
+// 因此分配 n+m 个空间就足够了。
 
-// 在遍历过程中
-// 小于小边界的将会计为容量，
-// 大于小边界，则将改变较小边界。
+// 运算的方式类似于竖式计算。
+// 每次将乘积的个位保留在对应位置，进位保存在其前一个位置。
+// 每次算两个一位数乘积时，都加上其对应位置原来保留的数。
 
 // Submission Result: Accepted
