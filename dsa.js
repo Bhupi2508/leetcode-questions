@@ -1,34 +1,40 @@
 /**
- * !!can always use Math.trunc() to get the integer part of a number
- * @param {string} s
- * @return {number}
+ * @see http://www.cs.utexas.edu/~moore/best-ideas/mjrty/index.html
+ * @param {number[]} nums
+ * @return {number[]}
  */
-var calculate = function(s) {
-    var stack = [],
-        i, num = 0, sign = '+';
+var majorityElement = function(nums) {
+    var n1 = null;
+    var n2 = null;
+    var c1 = 0;
+    var c2 = 0;
 
-    for (i = 0; i < s.length; i++) {
-        if (!isNaN(s[i]) && s[i] !== ' ') {
-            num = num * 10 + parseInt(s[i], 10);
-        }
-        if ((isNaN(s[i])) || i === s.length - 1) {
-            if (sign === '+') {
-                stack.push(num);
-            } else if (sign === '-') {
-                stack.push(-num);
-            } else if (sign === '*') {
-                stack.push(parseInt(stack.pop(), 10) * num);
-            } else if (sign === '/') {
-                stack.push(Math.trunc(parseInt(stack.pop(), 10) / num));
-            }
-            sign = s[i];
-            num = 0;
+    for (var i = 0; i < nums.length; i++) {
+        if (n1 !== null && n1 === nums[i]) {
+            c1++;
+        } else if (n2 !== null && n2 === nums[i]) {
+            c2++;
+        } else if (c1 === 0) {
+            n1 = nums[i];
+            c1++;
+        } else if (c2 === 0) {
+            n2 = nums[i];
+            c2++;
+        } else {
+            c1--;
+            c2--;
         }
     }
 
-    for (i = 0; i < stack.length; i++) {
-       num += stack[i];
+    c1 = 0;
+    c2 = 0;
+    for (var i = 0; i < nums.length; i++) {
+        if (nums[i] === n1) c1++;
+        if (nums[i] === n2) c2++;
     }
 
-    return num;
+    var result = [];
+    if (c1 > Math.floor(nums.length / 3)) result.push(n1);
+    if (c2 > Math.floor(nums.length / 3)) result.push(n2);
+    return result;
 };
