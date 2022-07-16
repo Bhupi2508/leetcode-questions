@@ -1,56 +1,61 @@
-// 77. Combinations
-// Medium   40%
+// 78. Subsets
+// Medium   41%
 
-// Given two integers n and k, return all possible combinations of k numbers out of 1 ... n.
+// Given a set of distinct integers, nums, return all possible subsets.
+
+// Note: The solution set must not contain duplicate subsets.
 
 // For example,
-// If n = 4 and k = 2, a solution is:
+// If nums = [1,2,3], a solution is:
 
 // [
-//   [2,4],
-//   [3,4],
+//   [3],
+//   [1],
+//   [2],
+//   [1,2,3],
+//   [1,3],
 //   [2,3],
 //   [1,2],
-//   [1,3],
-//   [1,4],
+//   []
 // ]
 
 
 /**
- * @param {number} n
- * @param {number} k
+ * @param {number[]} nums
  * @return {number[][]}
  */
-const combine = function(n, k) {
+const subsets = function(nums) {
+  const n = nums.length
   const res = []
-  const iter = (comb, i) => {
-    if (comb.length === k) res.push([...comb])
+
+  const combine = (array, m, i) => {
+    if (array.length === m) res.push(array.map(v => nums[v]))
     else {
-      for (; i <= n; i++) {
-        comb.push(i)
-        iter(comb, i + 1)
-        comb.pop()
+      for (; i < n; i++) {
+        array.push(i)
+        combine(array, m, i + 1)
+        array.pop()
       }
     }
   }
-  iter([], 1)
+  for (let i = 0; i <= n; i++) {
+    combine([], i, 0)
+  }
+
   return res
 }
 
 ;[
-  [2, 1],
-  [4, 2],
-  [5, 3],
-].forEach(args => {
-  console.log(combine(...args))
+  [],
+  [2, 3, 4, 5],
+  [1, 2, 3],
+].forEach(nums => {
+  console.log(subsets(nums))
 })
 
 // Solution:
-// 求组合数，即求出从数字 1~n 中任取 k 个不同的数的全部组合。
-// 使用 DFS 来解决。
-// 每个组合中的数都按从小到大的顺序进行选择。
-// 每个位置上的数字不断按从小到大的顺序进行更换。
-// 这样可以防止出现重复的组合。
-// DFS 确保遍历到每一个组合。
+// 求一个数组的所有子集（包括空集和本身）。
+// 使用 77-combinations 中的组合函数。
+// 分别找出长度为 0 到数组长度的所有组合。
 
 // Submission Result: Accepted
