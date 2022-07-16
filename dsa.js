@@ -1,86 +1,73 @@
-// 979. Distribute Coins in Binary Tree
-// Medium   68%
+// 985. Sum of Even Numbers After Queries
+// Easy   62%
 
 
-// Given the root of a binary tree with N nodes, each node in the tree has
-// node.val coins, and there are N coins total.
-// In one move, we may choose two adjacent nodes and move one coin from one node
-// to another.  (The move may be from parent to child, or from child to parent.)
-// Return the number of moves required to make every node have exactly one coin.
+// We have an array A of integers, and an array queries of queries.
+// For the i-th query val = queries[i][0], index = queries[i][1], we add val to
+// A[index].  Then, the answer to the i-th query is the sum of the even values of
+// A.
+// (Here, the given index = queries[i][1] is a 0-based index, and each query
+// permanently modifies the array A.)
+// Return the answer to all queries.  Your answer array should have answer[i] as
+// the answer to the i-th query.
 
 // Example 1:
-// Input: [3,0,0]
-// Output: 2
-// Explanation: From the root of the tree, we move one coin to its left child,
-// and one coin to its right child.
-// Example 2:
-// Input: [0,3,0]
-// Output: 3
-// Explanation: From the left child of the root, we move two coins to the root
-// [taking two moves].  Then, we move one coin from the root of the tree to the
-// right child.
-// Example 3:
-// Input: [1,0,2]
-// Output: 2
-// Example 4:
-// Input: [1,0,0,null,3]
-// Output: 4
+// Input: A = [1,2,3,4], queries = [[1,0],[-3,1],[-4,0],[2,3]]
+// Output: [8,6,2,4]
+// Explanation:
+// At the beginning, the array is [1,2,3,4].
+// After adding 1 to A[0], the array is [2,2,3,4], and the sum of even values is
+// 2 + 2 + 4 = 8.
+// After adding -3 to A[1], the array is [2,-1,3,4], and the sum of even values
+// is 2 + 4 = 6.
+// After adding -4 to A[0], the array is [-2,-1,3,4], and the sum of even values
+// is -2 + 4 = 2.
+// After adding 2 to A[3], the array is [-2,-1,3,6], and the sum of even values
+// is -2 + 6 = 4.
 
 // Note:
-//     1<= N <= 100
-//     0 <= node.val <= N
+//     1 <= A.length <= 10000
+//     -10000 <= A[i] <= 10000
+//     1 <= queries.length <= 10000
+//     -10000 <= queries[i][0] <= 10000
+//     0 <= queries[i][1] < A.length
 
 
 /**
- * Definition for a binary tree node.
- * function TreeNode(val, left, right) {
- * this.val = (val===undefined ? 0 : val)
- *     this.left = (left===undefined ? null : left)
- *     this.right = (right===undefined ? null : right)
- * }
+ * @param {number[]} A
+ * @param {number[][]} queries
+ * @return {number[]}
  */
-/**
- * @param {TreeNode} root
- * @return {number}
- */
-const distributeCoins = function(root) {
-  let res = 0
-  function postorder(root) {
-    if (root === null) return 0
-    const left = postorder(root.left)
-    const right = postorder(root.right)
-    res += Math.abs(left) + Math.abs(right)
-    return left + right + root.val - 1
+const sumEvenAfterQueries = function(A, queries) {
+  const result = []
+  let sum = A.reduce((s, v) => s += v % 2 ? 0 : v, 0)
+  for (let q of queries) {
+    if (A[q[1]] % 2 === 0) sum -= A[q[1]]
+    A[q[1]] += q[0]
+    if (A[q[1]] % 2 === 0) sum += A[q[1]]
+    result.push(sum)
   }
-  postorder(root)
-  return res
+  return result
 }
 
-const TreeNode = require('../structs/TreeNode')
 ;[
-  [3,0,0],  // 2
-  [0,3,0],  // 3
-  [1,0,2],  // 2
-  [1,0,0,null,3], // 4
-  [1,0,0,4,1,0,1], // 8
-  [4,0,null,null,0,null,0], // 6
-].forEach((array) => {
-  console.log(distributeCoins(TreeNode.from(array)))
+  [[1,2,3,4], [[1,0],[-3,1],[-4,0],[2,3]]], // [8, 6, 2, 4]
+].forEach(([A, queries]) => {
+  console.log(sumEvenAfterQueries(A, queries))
 })
 
 // Solution:
-// 使用后序遍历的方法，将左右子树缺少的或多余的硬币的值相加，得到该节点需要移动硬币的次数。
-//            [1]
-//          /     \
-//         2      -2
-//        /         \
-//      [0]         [0]
-//      / \         / \
-//     3   0      -1   0
-//    /     \     /     \
-//  [4]     [1] [0]     [1]
-//
-// 3 + 0 + 2 + (-(-2)) + (-(-1)) + 0 = 8
-//
+// 开始时先算所有偶数的和。
+// 在每次改变数时，有以下 4 种情况：
+// 1. 偶变偶，sum += q[0]
+// 2. 偶变奇，sum -= A[q[1]]
+// 3. 奇变偶，sum += A[q[1]] + q[0]
+// 4. 奇变奇，sum 不变
+
+// 更好的编程方式
+// 在数值变前和变后，判断数的奇偶，并进行操作
+// 1. 变前为偶数则 sum 减去该数，奇数不做处理
+// 2. 改变数值
+// 3. 变后为偶数则 sum 加上该数，奇数不做处理
 
 // Submission Result: Accepted
