@@ -1,71 +1,62 @@
-// 96. Unique Binary Search Trees
-// Medium   41%
+// 98. Validate Binary Search Tree
+// Medium 23% locked:false
 
-// Given n, how many structurally unique BST's (binary search trees) that store
-// values 1...n?
+// Given a binary tree, determine if it is a valid binary search tree (BST).
 
-// For example,
-// Given n = 3, there are a total of 5 unique BST's.
+// Assume a BST is defined as follows:
 
-// 1         3     3      2      1
-//  \       /     /      / \      \
-//   3     2     1      1   3      2
-//  /     /       \                 \
-// 2     1         2                 3
+// The left subtree of a node contains only nodes with keys less than the node's
+//   - key. The right subtree of a node contains only nodes with keys greater
+//   - than the node's key. Both the left and right subtrees must also be binary
+//   - search trees.
 
+// Example 1:
+
+//   2
+//  / \
+// 1   3
+
+// Binary tree [2,1,3], return true.
+
+// Example 2:
+
+//   1
+//  / \
+// 2   3
+
+// Binary tree [1,2,3], return false.
 
 /**
- * @param {number} n
- * @return {number}
+ * Definition for a binary tree node.
+ * function TreeNode(val) {
+ *   this.val = val;
+ *   this.left = this.right = null;
+ * }
  */
-const numTrees = function(n) {
-  if (n <= 0) return 0
-  const res = [1, 1]            // in order to elegant, set res[0] = 1
-  for (let i = 2; i <= n; i++) {
-    res[i] = 0
-    for (let left = 0; left < i; left++) {
-      const right = i - left - 1
-      res[i] += res[left] * res[right]
-    }
-  }
-  return res[n]
+
+function createTree(array) {
+  if (array === null || array === void 0) return null
+  const root = new TreeNode(array[0])
+  root.left = createTree(array[1])
+  root.right = createTree(array[2])
+  return root
 }
 
-;[
-  0,                            // 0
-  1,                            // 1
-  2,                            // 2
-  3,                            // 5
-  4,                            // 14
-  5,                            // 42
-  6,                            // 132
-].forEach(n => {
-  console.log(numTrees(n))
-})
+/**
+ * @param {TreeNode} root
+ * @return {boolean}
+ */
+const isValidBST = function(root) {
+  const isValid = (root, min, max) => {
+    if (root === null) return true
+    if (root.val <= min || root.val >= max) return false
+    return isValid(root.left, min, root.val) &&
+      isValid(root.right, root.val, max)
+  }
+  return isValid(root, -Infinity, Infinity)
+}
 
-
-// Solution:
-// 0 0
-// 1 1
-// 2 (1*1)+(1*1)=2
-// 3 (1*2)+(1*1)+(2*1)=5
-// 4 (1*5)+(1*2)+(2*1)+(5*1)=14
-// 5 (1*14)+(1*5)+(2*2)+(5*1)+(12*1)=38
-// 6 (1*38)+(1*12)+(2*5)+(5*2)+(12*1)+(38*1)=132
-// ...
-
-// 这与计算斐波那契数是类似的问题，不能使用递归，这样会出现大量重复计算。
-// 于是也和生成斐波那契数一样，使用动态规划。
-
-// 假设有6个节点
-// 在 i=6 的迭代过程中，每个数字都可以作为根节点，
-// 以下是以 3 为根节点时，能够构造的不同的树的解释。
-
-// O   O  @  O  O  O
-//  \ /   |   \   /
-// 左子树  根  右子树
-// F(2)=2    F(3)=5
-
-// F(2) * F(3) = 2 * 5 = 10
-
-// Submission Result: Accepted
+const tree = createTree(
+  [1, [1], null]
+)
+console.log(isValidBST(tree))
