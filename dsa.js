@@ -1,55 +1,82 @@
 /**
- * Definition for a binary tree node.
- * function TreeNode(val) {
+ * Definition for singly-linked list.
+ * function ListNode(val) {
  *     this.val = val;
- *     this.left = this.right = null;
+ *     this.next = null;
  * }
  */
 /**
- * @param {TreeNode} root
- * @return {number[]}
+ * @param {ListNode} l1
+ * @param {ListNode} l2
+ * @return {ListNode}
  */
-var rightSideView = function(root) {
-    if (!root) return [];
-    var result = [];
-    var queue = [root];
 
-    while (queue.length > 0) {
-        result.push(queue[queue.length - 1].val);
-        var nextLevel = [];
-        for (var i = 0; i < queue.length; i++) {
-            if (queue[i].left) {
-                nextLevel.push(queue[i].left);
-            }
-            if (queue[i].right) {
-                nextLevel.push(queue[i].right);
-            }
+// needs improvement, it can be shorter
+var addTwoNumbers = function(l1, l2) {
+    var l3 = new ListNode();
+    var p3 = l3;
+    var addOne = false;
+    var digitSum = 0;
+
+    while (l1 || l2) {
+        var l1Digit = 0;
+        var l2Digit = 0;
+        if (l1) l1Digit = l1.val;
+        if (l2) l2Digit = l2.val;
+        if (addOne) {
+            digitSum = l1Digit + l2Digit + 1;
+        } else {
+            digitSum = l1Digit + l2Digit;
         }
-        queue = nextLevel;
+
+        if (digitSum > 9) {
+            digitSum -= 10;
+            addOne = true;
+        } else {
+            addOne = false;
+        }
+
+        var node = new ListNode(digitSum);
+        l3.next = node;
+        l3 = node;
+        if (l1) l1 = l1.next;
+        if (l2) l2 = l2.next;
     }
 
-    return result;
+    if (addOne) {
+        var node = new ListNode(1);
+        l3.next = node;
+    }
+
+    return p3.next;
 };
 
-// more concise, no need to track each level.
-var rightSideView = function(root) {
-    if (!root) return [];
-    var result = [];
-    var queue = [root];
+// a shorter and smarter Version, from LeetCode community
+var addTwoNumbers = function(l1, l2) {
+    var l3 = new ListNode();
+    var p3 = l3;
+    var digitSum = 0;
 
-    while (queue.length > 0) {
-        result.push(queue[queue.length - 1].val);
-        var queueLength = queue.length;
-        for (var i = 0; i < queueLength; i++) {
-            var node = queue.shift();
-            if (node.left) {
-                queue.push(node.left);
-            }
-            if (node.right) {
-                queue.push(node.right);
-            }
+    while (l1 || l2) {
+        digitSum = Math.floor(digitSum / 10);
+
+        if (l1) {
+            digitSum += l1.val;
+            l1 = l1.next;
         }
+
+        if (l2) {
+            digitSum += l2.val;
+            l2 = l2.next
+        }
+
+        l3.next = new ListNode(digitSum % 10);
+        l3 = l3.next;
     }
 
-    return result;
+    if (Math.floor(digitSum / 10) === 1) {
+        l3.next = new ListNode(1);
+    }
+
+    return p3.next;
 };
