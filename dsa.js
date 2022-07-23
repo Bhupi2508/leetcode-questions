@@ -1,47 +1,63 @@
-// 16. 3Sum Closest
-// Medium 31% locked:false
+// 17. Letter Combinations of a Phone Number
+// Medium   35%
 
-// Given an array S of n integers, find three integers in S such that the sum is
-// closest to a given number, target. Return the sum of the three integers. You
-// may assume that each input would have exactly one solution.
+// Given a digit string, return all possible letter combinations that the number
+// could represent.
 
-// For example, given array S = {-1 2 1 -4}, and target = 1.
+// A mapping of digit to letters (just like on the telephone buttons) is given
+// below.
 
-// The sum that is closest to the target is 2. (-1 + 2 + 1 = 2).
+// Input:Digit string "23"
+// Output: ["ad", "ae", "af", "bd", "be", "bf", "cd", "ce", "cf"].
+
+// Note: Although the above answer is in lexicographical order, your answer
+// could be in any order you want.
 
 /**
- * @param {number[]} nums
- * @param {number} target
- * @return {number}
+ * @param {string} digits
+ * @return {string[]}
  */
-const threeSumClosest = function(nums, target) {
-  nums.sort((a, b) => a - b)
+const letterCombinations = function(digits) {
+  if (digits.length === 0) return []
 
-  const n = nums.length
-  let result = nums[0] + nums[1] + nums[2]
-  for (let i = 0; i < n - 2; i++) {
-    let lo = i + 1, hi = n - 1
-    while (lo < hi) {
-      const sum = nums[lo] + nums[hi] + nums[i]
-      if (sum < target) lo++
-      else if (sum > target) hi--
-      else return target
-
-      if (Math.abs(target - sum) < Math.abs(target - result)) result = sum
+  const LETTERS = [
+    ' ',                        // 0
+    '',                         // 1
+    'abc',                      // 2
+    'def',                      // 3
+    'ghi',                      // 4
+    'jkl',                      // 5
+    'mno',                      // 6
+    'pqrs',                     // 7
+    'tuv',                      // 8
+    'wxyz'                      // 9
+  ]
+  const result = ['']
+  for (let digit of digits) {
+    for (let i = 0, m = result.length; i < m; i++) {
+      const prev = result.shift()
+      for (let letter of LETTERS[digit]) {
+        result.push(prev + letter)
+      }
     }
   }
   return result
 }
 
 ;[
-  [[-1, 2, 1, -4], 1],          // 2
-  [[1, 2, 5, 10, 11], 12],      // 13
-].forEach(args => {
-  console.log(threeSumClosest(...args))
+  '',                           // []
+  '23',
+].forEach(digits => {
+  console.log(letterCombinations(digits))
 })
 
 // Solution:
-// 类似 15-3sum 的算法。
-// 详情看 15-3sum.js 文件。
+// 像是一棵树一样在增长。
+// 每输入一个数，树就的每个分子都增长一层。
+// 利用先进先出队列模拟树的层级生长。
+// 每个输入的数字代表一层。
+// 每进入一层，都记录当前分支的长度，即当前队列的长度。
+// 对该层的每个元素从头弹出队列，并与该层的数字代表的所有字母组合，
+// 然后添加到队尾。
 
 // Submission Result: Accepted
