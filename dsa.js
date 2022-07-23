@@ -1,50 +1,31 @@
 /**
- * search from right to left, find the first number smaller than it's next. (nums[i] < nums[i+1])
- * let's say the index is p;
- * have a second scan from right to left, find the first number bigger than nums[p], say the index is q,
- * swap element at p and q, then reverse all elements from p+1 to the last element of nums.
+ * Key: Bit manipulation. 26 letters, from bit 0 to 25, each bit represent a letter,
+ * so each word can be represented by an 'or |' operation of all bits. The two words
+ * share no common letter only if the represented bits of the two words do not share
+ * a common bit. (use & to solve this problem).
  *
- * @param {number[]} nums
- * @return {void} Do not return anything, modify nums in-place instead.
+ * @param {string[]} words
+ * @return {number}
  */
-var nextPermutation = function(nums) {
-    if (!nums || nums.length === 1) return;
-    var p = nums.length - 1;
-    var q = nums.length - 1;
-
-    for (var i = p - 1; i >= 0; i--) {
-        if (nums[i + 1] > nums[i]) {
-            p = i;
-            break;
+var maxProduct = function(words) {
+    var bytes = [];
+    var maxLength = 0;
+    for (var i = 0; i < words.length; i++) {
+        var bit = 0;
+        for (var j = 0; j < words[i].length; j++) {
+            bit |= 1 << (words[i].charCodeAt(j) - 'a'.charCodeAt(0));
         }
-        p--;
+        bytes[i] = bit;
     }
 
-    for (var i = q; i > p; i--) {
-        if (nums[i] > nums[p]) {
-            var tmp = nums[p];
-            nums[p] = nums[i];
-            nums[i] = tmp;
-            break;
+    for (var i = 0; i < words.length; i++) {
+        for (var j = i + 1; j < words.length; j++) {
+            // the operator priority '===' > '&', so we need () for the & operator
+            if ((bytes[j] & bytes[i]) === 0) {
+                maxLength = Math.max(maxLength, words[i].length * words[j].length);
+            }
         }
-        q--;
     }
 
-    if (p === 0 && q === 0) {
-        reverse(nums, p);
-        return;
-    }
-
-    reverse(nums, p + 1);
-};
-
-var reverse = function(nums, i) {
-    var j = nums.length - 1;
-    while (i < j) {
-        var tmp = nums[i];
-        nums[i] = nums[j];
-        nums[j] = tmp;
-        i++;
-        j--;
-    }
+    return maxLength;
 };
