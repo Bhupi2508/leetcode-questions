@@ -1,37 +1,19 @@
 /**
- * Same idea as 3 sum, just check the abs value of every new 3 sum result and target
- * use a variable 'result' to track minimum result.
+ * key. binary search, why does it work?
+ * explanation: https://leetcode.com/discuss/17793/find-the-maximum-by-binary-search-recursion-and-iteration
  *
  * @param {number[]} nums
- * @param {number} target
  * @return {number}
  */
-var threeSumClosest = function(nums, target) {
-    nums.sort(function(a, b) {
-        return a - b;
-    });
+var findPeakElement = function(nums) {
+    var low = 0;
+    var high = nums.length - 1;
 
-    var result = nums[0] + nums[1] + nums[nums.length - 1];
-
-    for (var i = 0; i < nums.length - 2; i++) {
-        var lo = i + 1;
-        var hi = nums.length - 1;
-        while (lo < hi) {
-            var sum = nums[i] + nums[lo] + nums[hi];
-            if (Math.abs(sum - target) < Math.abs(result - target)) {
-                result = sum;
-                if (result === target) return result;
-            }
-
-            if (sum > target) {
-                hi--;
-            } else {
-                lo++;
-            }
-
-        }
+    while (low < high) {
+        var mid = low + Math.floor((high - low) / 2);
+        if (nums[mid+1] > nums[mid]) low = mid + 1;
+        else high = mid;
     }
 
-    return result;
-
+    return high;
 };
