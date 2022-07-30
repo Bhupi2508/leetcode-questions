@@ -1,53 +1,51 @@
-// 70. Climbing Stairs
-// Easy   40%
+// 71. Simplify Path
+// Medium   25%
 
-// You are climbing a stair case. It takes n steps to reach to the top.
+// Given an absolute path for a file (Unix-style), simplify it.
 
-// Each time you can either climb 1 or 2 steps. In how many distinct ways can
-// you climb to the top?
+// For example,
+// path = "/home/", => "/home"
+// path = "/a/./b/../../c/", => "/c"
 
-// Note: Given n will be a positive integer.
+// click to show corner cases.
+//   Corner Cases:
 
-// Example 1:
-// Input: 2
-// Output:  2
-// Explanation:  There are two ways to climb to the top.
+// Did you consider the case where path = "/../"?
+// In this case, you should return "/".
 
-// 1. 1 step + 1 step
-// 2. 2 steps
-
-
-// Example 2:
-// Input: 3
-// Output:  3
-// Explanation:  There are three ways to climb to the top.
-
-// 1. 1 step + 1 step + 1 step
-// 2. 1 step + 2 steps
-// 3. 2 steps + 1 step
+// Another corner case is the path might contain multiple slashes '/'
+// together, such as "/home//foo/".
+// In this case, you should ignore redundant slashes and return "/home/foo".
 
 /**
- * @param {number} n
- * @return {number}
+ * @param {string} path
+ * @return {string}
  */
-const climbStairs = function(n) {
-  let curr = 1, prev = 0
-  for (let i = 1; i <= n; i++) [curr, prev] = [prev + curr, curr]
-  return curr
+const simplifyPath = function(path) {
+  const stack = []
+  for (let p of path.split('/')) {
+    if (p === '' || p === '.') continue
+    if (p === '..' && stack.length > 0) stack.pop()
+    if (p !== '..') stack.push(p)
+  }
+  return '/' + stack.join('/')
 }
 
 ;[
-  2,                            // 2
-  3,                            // 3
-  7,                            // 21
-].forEach(n => {
-  console.log(climbStairs(n))
+  '/home/',                     // '/home'
+  '/a/./b/../../c/',            // '/c'
+  '/..',                        // '/'
+  '/home//foo/',                // '/home/foo'
+].forEach(path => {
+  console.log(simplifyPath(path))
 })
 
 // Solution:
-// 从第二个台阶开始，每个台阶都可以从下一个台阶或下下个台阶上来，
-// 因此，上到该台阶的走法是到下一个台阶的走法加上下下个的。
-
-// 保存两个变量，进行动态规划。
+// 将路径按“/”拆分成数组，并从头开始遍历数组。
+// 使用一个栈保存路径。
+// 当前文件夹名为 “.” 或 “” 时，忽略掉，（还在该层）
+// 为 “..” 时，且栈不为空时，弹出栈顶，（表示返回上层）
+// 若为其他字符串，则将其入栈。（进入下一层）
+// 最后将栈连接成一个数组。
 
 // Submission Result: Accepted
