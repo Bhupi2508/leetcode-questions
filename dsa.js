@@ -1,47 +1,51 @@
-// 21. Merge Two Sorted Lists
-// Easy   39%
+// 22. Generate Parentheses
+// Medium   45%
 
-//Merge two sorted linked lists and return it as a new list. The new list should
-//be made by splicing together the nodes of the first two lists.
+// Given n pairs of parentheses, write a function to generate all combinations
+// of well-formed parentheses.
+
+// For example, given n = 3, a solution set is:
+
+// [
+//   "((()))",
+//   "(()())",
+//   "(())()",
+//   "()(())",
+//   "()()()"
+// ]
 
 /**
- * Definition for singly-linked list.
- * function ListNode(val) {
- *     this.val = val;
- *     this.next = null;
- * }
+ * @param {number} n
+ * @return {string[]}
  */
-
-/**
- * @param {ListNode} l1
- * @param {ListNode} l2
- * @return {ListNode}
- */
-const mergeTwoLists = function(l1, l2) {
-  if (l1 == null) return l2
-  if (l2 == null) return l1
-
-  if (l1.val < l2.val) {
-    l1.next = mergeTwoLists(l1.next, l2)
-    return l1
-  } else {
-    l2.next = mergeTwoLists(l1, l2.next)
-    return l2
+const generateParenthesis = function(n) {
+  const result = []
+  function iter(s, open, close) {
+    if (close === 0) result.push(s)
+    if (open < close) iter(s + ')', open, close - 1)
+    if (open > 0) iter(s + '(', open - 1, close)
   }
+  iter('', n, n)
+  return result
 }
 
-const ListNode = require('../structs/ListNode')
 ;[
-  [[1, 3], [0, 4]],
-].forEach(([A, B]) => {
-  const l1 = ListNode.from(A),
-        l2 = ListNode.from(B)
-  console.log((mergeTwoLists(l1, l2) || '').toString())
+  0,
+  1,
+  2,
+  3,
+].forEach(n => {
+  console.log(generateParenthesis(n))
 })
 
 // Solution:
-// 递归解法
-// 将两个链表中头节点小的节点作为合并后的头节点，
-// 然后递归出去该节点的两个链表，并将其返回的链表头作为下一个节点。
+// 从构造结果来看，在每个结果字符串中的前k个字符中，
+// 其左括号的数量都大于或等于其右括号的数量。
+// 因此构造过程中，只有左括号的数量超过右括号的数量时，才能添加右括号。
+
+// 使用一个分叉的迭代函数。
+// 参数为叠加的字符串和剩余的左右括号数量。
+// 只有剩余的右括号大于剩余的左括号时，添加右括号。
+// 否则只添加左括号。
 
 // Submission Result: Accepted
