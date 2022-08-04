@@ -1,45 +1,72 @@
-// 415. Add Strings
-// Easy   41%
+// 419. Battleships in a Board
+// Medium   62%
 
+// Given an 2D board, count how many battleships are in it. The battleships are
+// represented with 'X's, empty slots are represented with '.'s. You may assume
+// the following rules:
 
-// Given two non-negative integers num1 and num2 represented as string, return
-// the sum of num1 and num2.
+// - You receive a valid board, made of only battleships or empty slots.
+// - Battleships can only be placed horizontally or vertically. In other words,
+//   they can only be made of the shape 1xN (1 row, N columns) or Nx1 (N rows, 1
+//   column), where N can be of any size.
+// - At least one horizontal or vertical cell separates between two battleships
+//   there are no adjacent battleships.
 
-// Note:
+// Example:
 
-// The length of both num1 and num2 is < 5100.
-// Both num1 and num2 contains only digits 0-9.
-// Both num1 and num2 does not contain any leading zero.
-// You must not use any built-in BigInteger library or convert the inputs to
-// integer directly.
+// X..X
+// ...X
+// ...X
+
+// In the above board there are 2 battleships.
+
+// Invalid Example:
+
+// ...X
+// XXXX
+// ...X
+
+// This is an invalid board that you will not receive - as battleships will
+// always have a cell separating between them.
+
+// Follow up:Could you do it in one-pass, using only O(1) extra memory and
+// without modifying the value of the board?
 
 
 /**
- * @param {string} num1
- * @param {string} num2
- * @return {string}
+ * @param {character[][]} board
+ * @return {number}
  */
-const addStrings = function(num1, num2) {
-  let result = '', carry = 0, i = num1.length - 1, j = num2.length - 1
-  while (i >= 0 || j >= 0) {
-    const sum = ((num1[i--] || '0') - '0') + ((num2[j--] || '0') - '0') + carry
-    result = (sum % 10) + result
-    carry = Math.trunc(sum / 10)
+const countBattleships = function(board) {
+  const rows = board.length, cols = board[0].length
+  let result = 0
+  for (let i = 0; i < rows; i++) {
+    for (let j = 0; j < cols; j++) {
+      if (board[i][j] === '.') continue
+      if (i > 0 && board[i - 1][j] === 'X') continue
+      if (j > 0 && board[i][j - 1] === 'X') continue
+      result++
+    }
   }
-  return (carry || '') + result
+  return result
 }
 
 ;[
-  ['0', '0'],                   // '0'
-  ['123456789', '123456789'],   // '246913578'
-  ['999999', '1'],              // '1000000'
-].forEach(args => {
-  console.log(addStrings(...args))
+  [['X','X','.','X'],
+   ['.','.','.','X'],
+   ['X','.','.','X']],
+  // 3
+
+  [['X','.','.','X'],
+   ['.','.','.','X'],
+   ['.','.','.','X']],
+  // 2
+].forEach(board => {
+  console.log(countBattleships(board))
 })
 
 // Solution:
-// 利用 - '0' 操作获得字符所代表的数字。
-// carry 变量保存进位信息。
-// 结果中，每位字符要用 %10 来获得个位上的数。
+// 只需要数最上或最左的船就行了。
+// 如果上有或左有，说明其不是最上的或最左的。
 
 // Submission Result: Accepted
