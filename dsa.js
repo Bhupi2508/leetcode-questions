@@ -1,62 +1,67 @@
-// 696. Count Binary Substrings
-// Easy 51% locked:false
+// 697. Degree of an Array
+// Easy 48% locked:false
 
 
 
-// Give a string s, count the number of non-empty (contiguous) substrings that
-// have the same number of 0's and 1's, and all the 0's and all the 1's in these
-// substrings are grouped consecutively.
+// Given a non-empty array of non-negative integers nums, the degree of this
+// array is defined as the maximum frequency of any one of its elements.
 
-// Substrings that occur multiple times are counted the number of times they
-// occur.
+// Your task is to find the smallest possible length of a (contiguous) subarray
+// of nums, that has the same degree as nums.
 
 // Example 1:
 
-// Input: "00110011"
-// Output: 6
-// Explanation: There are 6 substrings that have equal number of consecutive 1's
-// and 0's: "0011", "01", "1100", "10", "0011", and "01".
-// Notice that some of these substrings repeat and are counted the number of
-// times they occur.
-// Also, "00110011" is not a valid substring because all the 0's (and 1's) are
-// not grouped together.
+// Input: [1, 2, 2, 3, 1]
+// Output: 2
+// Explanation:
+// The input array has a degree of 2 because both elements 1 and 2 appear twice.
+// Of the subarrays that have the same degree:
+// [1, 2, 2, 3, 1], [1, 2, 2, 3], [2, 2, 3, 1], [1, 2, 2], [2, 2, 3], [2, 2]
+// The shortest length is 2. So return 2.
 
 // Example 2:
 
-// Input: "10101"
-// Output: 4
-// Explanation: There are 4 substrings: "10", "01", "10", "01" that have equal
-// number of consecutive 1's and 0's.
+// Input: [1,2,2,3,1,4,2]
+// Output: 6
 
 // Note:
 
-// s.length will be between 1 and 50,000.
-// s will only consist of "0" or "1" characters.
+// nums.length will be between 1 and 50,000.
+// nums[i] will be an integer between 0 and 49,999.
 
 
 
 /**
- * @param {string} s
+ * @param {number[]} nums
  * @return {number}
  */
-const countBinarySubstrings = function(s) {
-  const length = s.length
-  let result = 0, ping = 0, pong = 0
+const findShortestSubArray = function(nums) {
+  const length = nums.length
+  if (length === 0) return 0
+
+  const hash = {}
+  let result = Infinity,
+      maxFreq = 0
   for (let i = 0; i < length; i++) {
-    if (s[i] === '0') {
-      pong = (i === 0 || s[i - 1] === '1') ? 1 : pong + 1
-      result += (pong <= ping) ? 1 : 0
+    const key = nums[i]
+    if (hash[key]) {
+      hash[key].push(i)
     } else {
-      ping = (i === 0 || s[i - 1] === '0') ? 1 : ping + 1
-      result += (ping <= pong) ? 1 : 0
+      hash[key] = [i]
+    }
+
+    const array = hash[key],
+          len = array.length
+    if (len >= maxFreq) {
+      const width = array[len - 1] - array[0] + 1
+      result = (len === maxFreq ? Math.min(result, width) : width)
+      maxFreq = len
     }
   }
 
   return result
 }
 
-console.log(countBinarySubstrings('00110011'))
-console.log(countBinarySubstrings('10101'))
-console.log(countBinarySubstrings('1'))
+console.log(findShortestSubArray([1, 2, 2, 3, 1, 4, 2]))
 
 // Submission Result: Accepted
