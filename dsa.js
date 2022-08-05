@@ -1,65 +1,56 @@
-// 38. Count and Say
-// Easy   35%
+// 39. Combination Sum
+// Medium   39%
 
-// The count-and-say sequence is the sequence of integers with the first five
-// terms as following:
+// Given a set of candidate numbers (C) (without duplicates) and a target number
+// (T), find all unique combinations in C where the candidate numbers sums to T.
 
-// 1.     1
-// 2.     11
-// 3.     21
-// 4.     1211
-// 5.     111221
+// The same repeated number may be chosen from C unlimited number of times.
 
-// 1 is read off as "one 1" or 11.
-// 11 is read off as "two 1s" or 21.
-// 21 is read off as "one 2, then one 1" or 1211.
+// Note:
 
-// Given an integer n, generate the nth term of the count-and-say sequence.
+// All numbers (including target) will be positive integers.
+//   The solution set must not contain duplicate combinations.
 
-// Note: Each term of the sequence of integers will be represented as a string.
+// For example, given candidate set [2, 3, 6, 7] and target 7,
+// A solution set is:
 
-// Example 1:
-
-// Input: 1
-// Output: "1"
-
-// Example 2:
-
-// Input: 4
-// Output: "1211"
+// [
+//   [7],
+//   [2, 2, 3]
+// ]
 
 
 /**
- * @param {number} n
- * @return {string}
+ * @param {number[]} candidates
+ * @param {number} target
+ * @return {number[][]}
  */
-const countAndSay = function(n) {
-  if (n < 1) return ''
-  let result = '1'
-  while (--n) {
-    let t = '', first = -1
-    for (let i = 0, m = result.length; i < m; i++) {
-      if (result[i] !== result[i + 1]) {
-        t += (i - first) + result[i]
-        first = i
-      }
+const combinationSum = function(candidates, target) {
+  candidates.sort((a, b) => b - a)
+  const result = []
+  function iter(i, target, array) {
+    for (; i >= 0; i--) {
+      const c = candidates[i]
+      if (c > target) break
+      if (c === target) result.push([...array, c])
+      array.push(c)
+      iter(i, target - c, array)
+      array.pop()
     }
-    result = t
   }
+
+  iter(candidates.length - 1, target, [])
   return result
 }
 
 ;[
-  1,                            // '1'
-  2,                            // '11'
-  3,                            // '21'
-  4,                            // '1211'
-  5,                            // '111221'
-].forEach(n => {
-  console.log(countAndSay(n))
+  [[2, 3, 6, 7], 7],            // [[7], [2,2,3]]
+].forEach(args => {
+  console.log(combinationSum(...args))
 })
 
 // Solution:
-// 每次数一遍字符串。
+// 因为每个数都能重复使用，因此使用类似深度遍历。
+// 为了方便遍历，先排序数组。
 
 // Submission Result: Accepted
