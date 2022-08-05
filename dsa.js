@@ -1,60 +1,52 @@
-// 202. Happy Number
-// Easy   40%
+// 203. Remove Linked List Elements
+// Easy   32%
 
 
-// Write an algorithm to determine if a number is "happy".
+// Remove all elements from a linked list of integers that have value val.
 
-// A happy number is a number defined by the following process: Starting with any
-// positive integer, replace the number by the sum of the squares of its digits,
-// and repeat the process until the number equals 1 (where it will stay), or it
-// loops endlessly in a cycle which does not include 1. Those numbers for which
-// this process ends in 1 are happy numbers.
+// Example
+// Given: 1 --> 2 --> 6 --> 3 --> 4 --> 5 --> 6,  val = 6
+// Return: 1 --> 2 --> 3 --> 4 --> 5
 
-// Example: 19 is a happy number
-
-// 1^2 + 9^2 = 82
-// 8^2 + 2^2 = 68
-// 6^2 + 8^2 = 100
-// 1^2 + 0^2 + 0^2 = 1
-
-// Credits:Special thanks to @mithmatt and @ts for adding this problem and
-// creating all test cases.
+// Credits:Special thanks to @mithmatt for adding this problem and creating all
+// test cases.
 
 
 /**
- * @param {number} n
- * @return {boolean}
+ * Definition for singly-linked list.
+ * function ListNode(val) {
+ *     this.val = val;
+ *     this.next = null;
+ * }
  */
-const isHappy = function(n) {
-  const hash = {}
 
-  while (hash[n] == null) {
-    hash[n] = true
-
-    let sum = 0
-    while (n > 0) {
-      sum += Math.pow(n % 10, 2)
-      n = Math.trunc(n / 10)
-    }
-    if (sum === 1) return true
-
-    n = sum
+/**
+ * @param {ListNode} head
+ * @param {number} val
+ * @return {ListNode}
+ */
+const removeElements = function(head, val) {
+  const prev = new ListNode()
+  prev.next = head
+  let node = prev
+  while (node.next) {
+    if (node.next.val === val) node.next = node.next.next
+    else node = node.next
   }
-
-  return false
+  return prev.next
 }
 
+const ListNode = require('../structs/ListNode')
 ;[
-  19,                           // true
-  7,                            // true
-  2,                            // false
-].forEach(n => {
-  console.log(isHappy(n))
+  [[1, 2, 6, 3, 4, 5, 6], 6],        // [1,2,3,4,5]
+  [[1], 1],                          // []
+  [[1,1], 1],                        // []
+].forEach(([array, val]) => {
+  console.log((removeElements(ListNode.from(array), val) || '').toString())
 })
 
-
 // Solution:
-// 用哈希保存出现过的数字，若再次出现则会循环，返回 false
-// 否则继续计算，直达算出 1 。
+// 在链表中要删除一个元素，必须要保留上一个元素的引用。
+// 添加一个空的头节点处理起来会更方便。
 
 // Submission Result: Accepted
