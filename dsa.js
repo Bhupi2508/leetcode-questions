@@ -1,58 +1,74 @@
-// 951. Flip Equivalent Binary Trees
-// Medium   66%
+// 953. Verifying an Alien Dictionary
+// Easy   55%
 
 
-// For a binary tree T, we can define a flip operation as follows: choose any
-// node, and swap the left and right child subtrees.
-// A binary tree X is flip equivalent to a binary tree Y if and only if we can
-// make X equal to Y after some number of flip operations.
-// Write a function that determines whether two binary trees are flip equivalent.
-//  The trees are given by root nodes root1 and root2.
+// In an alien language, surprisingly they also use english lowercase letters,
+// but possibly in a different order. The order of the alphabet is some
+// permutation of lowercase letters.
+// Given a sequence of words written in the alien language, and the order of the
+// alphabet, return true if and only if the given words are sorted
+// lexicographicaly in this alien language.
 
 // Example 1:
-// Input: root1 = [1,2,3,4,5,6,null,null,null,7,8], root2 =
-// [1,3,2,null,6,4,5,null,null,null,null,8,7]
+// Input: words = ["hello","leetcode"], order = "hlabcdefgijkmnopqrstuvwxyz"
 // Output: true
-// Explanation: We flipped at nodes with values 1, 3, and 5.
+// Explanation: As 'h' comes before 'l' in this language, then the sequence is
+// sorted.
 
-// Note:
-//     Each tree will have at most 100 nodes.
-//     Each value in each tree will be a unique integer in the range [0, 99].
+// Example 2:
+// Input: words = ["word","world","row"], order = "worldabcefghijkmnpqstuvxyz"
+// Output: false
+// Explanation: As 'd' comes after 'l' in this language, then words[0] >
+// words[1], hence the sequence is unsorted.
 
+// Example 3:
+// Input: words = ["apple","app"], order = "abcdefghijklmnopqrstuvwxyz"
+// Output: false
+// Explanation: The first three characters "app" match, and the second string is
+// shorter (in size.) According to lexicographical rules "apple" > "app", because
+// 'l' > '&empty;', where '&empty;' is defined as the blank character which is
+// less than any other character (More info).
+
+// Constraints:
+//     1 <= words.length <= 100
+//     1 <= words[i].length <= 20
+//     order.length == 26
+//     All characters in words[i] and order are English lowercase letters.
 
 
 /**
- * Definition for a binary tree node.
- * function TreeNode(val, left, right) {
- * this.val = (val===undefined ? 0 : val)
- *     this.left = (left===undefined ? null : left)
- *     this.right = (right===undefined ? null : right)
- * }
- */
-/**
- * @param {TreeNode} root1
- * @param {TreeNode} root2
+ * @param {string[]} words
+ * @param {string} order
  * @return {boolean}
  */
-const flipEquiv = function(root1, root2) {
-  if (root1 === null || root2 === null) return root1 === root2
-  return root1.val === root2.val && (
-    (flipEquiv(root1.left, root2.left) && flipEquiv(root1.right, root2.right)) ||
-    (flipEquiv(root1.left, root2.right) && flipEquiv(root1.right, root2.left))
-  )
+const isAlienSorted = function(words, order) {
+  const map = {}
+  for (let i = 0; i < order.length; i++) map[order[i]] = i
+  for (let i = 0; i < words.length - 1; i++) {
+    const l = Math.max(words[i].length, words[i + 1].length)
+    for (let j = 0; j < l; j++) {
+      const a = map[words[i][j]] || -1
+      const b = map[words[i + 1][j]] || -1
+      if (a > b) return false
+      if (a < b) break
+    }
+  }
+  return true
 }
 
-const TreeNode = require('../structs/TreeNode')
 ;[
-  [[1,2,3,4,5,6,null,null,null,7,8], [1,3,2,null,6,4,5,null,null,null,null,8,7]],
-].forEach((arr) => {
-  console.log(flipEquiv(TreeNode.from(arr[0]), TreeNode.from(arr[1])))
+  [['hello','leetcode'], 'hlabcdefgijkmnopqrstuvwxyz'],   // true
+  [["word","world","row"], 'worldabcefghijkmnpqstuvxyz'], // false
+  [["apple","app"], 'abcdefghijklmnopqrstuvwxyz'],        // false
+].forEach(([words, order]) => {
+  console.log(isAlienSorted(words, order))
 })
 
 // Solution:
-// 使用递归算法，
-// 1. 比较它们当前节点值是否相等
-// 2. 比较它们的左子树是否相等，右子树是否相等
-// 3. 比较 r1 的左子树与 r2 的右子树是否相等， r1 的右子树与 r2 的左子树是否相等
+// 将字母表变为哈希表，字母为键，序号为值。
+// 然后前一个字符串和后一个字符串比较，
+// 从第一个字符开始比较，若两个字符相同，则比较下一个，
+// 若不同，则比较其在哈希表的值，前一个小于后一个，比较下一对字符串，
+// 否则返回 false
 
 // Submission Result: Accepted
