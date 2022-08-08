@@ -1,32 +1,21 @@
-// Q: Given a list, rotate the list to the right by k places, where k is non-negative.
-// k places means k steps ?? So, if k is bigger than the length, rotate at length - k % length
-
 /**
- * @param {ListNode} head
- * @param {number} k
- * @return {ListNode}
+ * Let t be total movements from (1, 1) to (m, n), t = m - 1 + n - 1;
+ * Let k = m - 1 (the right movements)
+ * then the total path is all combinations (m - 1) movements from (m + n - 2)
+ * And C(t, k) = t! / (t-k)! * k! = (t * (t - 1) ... (t - k + 1)) / (1 * ... * k)
+ *
+ * @param {number} m
+ * @param {number} n
+ * @return {number}
  */
-var rotateRight = function(head, k) {
-    if (!head || !head.next) return head;
-    var headCopy = head;
-    var first = head;
-    var second = head;
-    var i = 1;
-    while (first.next) {
-        first = first.next;
-        i++;
-    }
-    var j = i - k % i;
-    // if the steps eqauls to i (the length) return original list.
-    if (j === i) return head;
+var uniquePaths = function(m, n) {
+    var t = m + n - 2;
+    var k = m - 1;
+    var res = 1;
 
-    while (j > 1) {
-        second = second.next;
-        j--;
+    for (var i = 1; i <= k; i++) {
+        res *= (t - i + 1) / i
     }
-    head = second.next;
-    second.next = first.next;
-    first.next = headCopy;
 
-    return head;
+    return res;
 };
