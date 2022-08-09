@@ -1,32 +1,18 @@
 /**
- * @param {number[]} nums
+ * @param {number[]} citations
  * @return {number}
  */
-var missingNumber = function(nums) {
-  var nSum = 0.5 * nums.length * (nums.length + 1);
-  var numsSum = 0;
-  for (var i = 0; i < nums.length; i++) {
-    numsSum += nums[i];
-  }
-  return nSum - numsSum;
-};
+// sort first. 
+var hIndex = function(citations) {
+    citations.sort(function(a, b) {
+        return a - b;
+    });
 
-var missingNumber = function(nums) {
-    var length = nums.length;
-    var total = 0.5 * length * (length + 1);
-    var numSum = 0;
-    for (var i = 0; i < length; i++) {
-        numSum += nums[i];
+    var result = 0;
+    for (var i = 0, length = citations.length; i < length; i++) {
+        var min = Math.min(citations[i], length - i);
+        result = Math.max(result, min);
     }
 
-    return total - numSum;
-};
-
-// solution 2 use bit manipulation
-var missingNumber = function(nums) {
-  var missNum = 0;
-  for (var i = 0; i < nums.length; i++) {
-    missNum ^= (i + 1) ^nums[i];
-  }
-  return missNum;
+    return result;
 };
