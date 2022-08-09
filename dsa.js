@@ -1,61 +1,60 @@
-// 535. Encode and Decode TinyURL
-// Medium   74%
+// 537. Complex Number Multiplication
+// Medium   63%
 
+// Given two strings representing two complex numbers.
 
-// Note: This is a companion problem to the System Design problem: Design
-// TinyURL.
+// You need to return a string representing their multiplication. Note i^2 = -1
+// according to the definition.
 
-// TinyURL is a URL shortening service where you enter a URL such as
-// https://leetcode.com/problems/design-tinyurl and it returns a short URL such
-// as http://tinyurl.com/4e9iAk.
+// Example 1:
 
-// Design the encode and decode methods for the TinyURL service. There is no
-// restriction on how your encode/decode algorithm should work. You just need to
-// ensure that a URL can be encoded to a tiny URL and the tiny URL can be decoded
-// to the original URL.
+// Input: "1+1i", "1+1i"
+// Output: "0+2i"
+// Explanation: (1 + i) * (1 + i) = 1 + i2 + 2 * i = 2i, and you need convert it
+// to the form of 0+2i.
 
+// Example 2:
 
-const map = []
+// Input: "1+-1i", "1+-1i"
+// Output: "0+-2i"
+// Explanation: (1 - i) * (1 - i) = 1 + i2 - 2 * i = -2i, and you need convert it
+// to the form of 0+-2i.
+
+// Note:
+
+// The input strings will not have extra blank.
+// The input strings will be given in the form of a+bi, where the integer a and b
+// will both belong to the range of [-100, 100]. And the output should be also in
+// this form.
+
 
 /**
- * Encodes a URL to a shortened URL.
- *
- * @param {string} longUrl
+ * @param {string} a
+ * @param {string} b
  * @return {string}
  */
-const encode = function(longUrl) {
-  map.push(longUrl)
-  return 'http://tinyurl.com/' + (map.length - 1)
+const complexNumberMultiply = function(a, b) {
+  function getRI(s) {
+    const RI = s.slice(0, s.length - 1).split('+')
+    return [parseInt(RI[0]), parseInt(RI[1])]
+  }
+
+  const [aR, aI] = getRI(a), [bR, bI] = getRI(b)
+  return (aR * bR - aI * bI) + '+' + (aR * bI + aI * bR) + 'i'
 }
 
-/**
- * Decodes a shortened URL to its original URL.
- *
- * @param {string} shortUrl
- * @return {string}
- */
-const decode = function(shortUrl) {
-  const array = shortUrl.split('/')
-  const number = parseInt(array[array.length - 1])
-  return map[number]
-}
-
-/**
- * Your functions will be called as such:
- * decode(encode(url));
- */
 ;[
-  'https://leetcode.com/problems/design-tinyurl',
-].forEach(s => {
-  console.log(s)
-  const short = encode(s)
-  console.log(short)
-  const long = decode(short)
-  console.log(long)
+  ['1+1i', '1+1i'],             // '0+2i'
+  ['1+-1i', '1+-1i'],           // '0+-2i'
+].forEach(args => {
+  console.log(complexNumberMultiply(...args))
 })
 
 // Solution:
-// 用数字来表示url,
-// 并用数组来存储原来的url。
+//   (a+bi)(c+di)
+// = a*c + a*di + bi*c + bi*di
+// = a*c + (a*d)i + (b*c)i + (i*i)*b*d
+// = a*c + (a*d)i + (b*c)i - b*d
+// = (a*c - b*d) + (a*d + b*c)i
 
 // Submission Result: Accepted
