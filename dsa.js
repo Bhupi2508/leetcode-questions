@@ -1,52 +1,68 @@
-// 942. DI String Match
-// Easy   71%
+// 944. Delete Columns to Make Sorted
+// Easy   70%
 
 
-// Given a string S that only contains "I" (increase) or "D" (decrease), let N =
-// S.length.
-// Return any permutation A of [0, 1, ..., N] such that for all i = 0, ..., N-1:
-//     If S[i] == "I", then A[i] < A[i+1]
-//     If S[i] == "D", then A[i] > A[i+1]
+// We are given an array A of N lowercase letter strings, all of the same length.
+// Now, we may choose any set of deletion indices, and for each string, we delete
+// all the characters in those indices.
+// For example, if we have an array A = ["abcdef","uvwxyz"] and deletion indices
+// {0, 2, 3}, then the final array after deletions is ["bef", "vyz"], and the
+// remaining columns of A are ["b","v"], ["e","y"], and ["f","z"].  (Formally,
+// the c-th column is [A[0][c], A[1][c], ..., A[A.length-1][c]].)
+// Suppose we chose a set of deletion indices D such that after deletions, each
+// remaining column in A is in non-decreasing sorted order.
+// Return the minimum possible value of D.length.
 
 // Example 1:
-// Input: "IDID"
-// Output: [0,4,1,3,2]
+// Input: ["cba","daf","ghi"]
+// Output: 1
+// Explanation:
+// After choosing D = {1}, each column ["c","d","g"] and ["a","f","i"] are in
+// non-decreasing sorted order.
+// If we chose D = {}, then a column ["b","a","h"] would not be in non-decreasing
+// sorted order.
 // Example 2:
-// Input: "III"
-// Output: [0,1,2,3]
+// Input: ["a","b"]
+// Output: 0
+// Explanation: D = {}
 // Example 3:
-// Input: "DDI"
-// Output: [3,2,0,1]
+// Input: ["zyx","wvu","tsr"]
+// Output: 3
+// Explanation: D = {0, 1, 2}
 
 // Note:
-//     1 <= S.length <= 10000
-//     S only contains characters "I" or "D".
+//     1 <= A.length <= 100
+//     1 <= A[i].length <= 1000
 
 
 /**
- * @param {string} S
- * @return {number[]}
+ * @param {string[]} A
+ * @return {number}
  */
-const diStringMatch = function(S) {
-  let p = 0, q = S.length
-  const result = []
-  for (let c of S) result.push(c == 'I' ? p++ : q--)
-  result.push(p)
+const minDeletionSize = function(A) {
+  let result = 0, p = A.length, q = A[0].length
+  for (let i = 0; i < q; i++) {
+    for (let j = 1; j < p; j++) {
+      if (A[j - 1][i] > A[j][i]) {
+        result++
+        break
+      }
+    }
+  }
   return result
 }
 
 ;[
-  'IDID', // [0,4,1,3,2]
-  'III',  // [0,1,2,3]
-  'DDI',  // [3,2,0,1]
-].forEach((S) => {
-  console.log(diStringMatch(S))
+  ['cba','daf','ghi'], // 1
+  ['a','b'],           // 0
+  ['zyx','wvu','tsr'], // 3
+].forEach((A) => {
+  console.log(minDeletionSize(A))
 })
 
 // Solution:
-// 先将 p 和 q 指向数列 [0, 1, ..., N] 的两端，从两端开始取数，
-// 遍历字符串
-// 若字符为 'I'，则将 最左端的数（最小）插入，这样就确保了无论后一位是什么数，都会大于该数。
-// 若字符不为 'I' （为 'D'），则将 最右端的数（最大）插入，理由同上（小于）。
+// 一列一列遍历，
+// 若为上一个大于下一个，则 result + 1, 跳出循环，
+// 遍历下一列。
 
 // Submission Result: Accepted
