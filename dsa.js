@@ -1,52 +1,30 @@
 /**
- * Key:
- * Quick select algorithm, choose last element of the array as the pivot.
- * Move all smaller elements than the pivot to the left of the pivot,
- * move all bigger elements than the pivot to the right of the pivot,
- * repeat this process until the pivot is K
- * O(N)? worst O(N^2)
+ * Key: backtracking, similar to subsets
+ * Only save combinations with length k
  *
- * @param {number[]} nums
  * @param {number} k
- * @return {number}
+ * @param {number} n
+ * @return {number[][]}
  */
-var findKthLargest = function(nums, k) {
-    k = nums.length - k;
-    var start = 0;
-    var end = nums.length - 1;
-    while (start <= end) {
-        var pivot = partition(nums, start, end);
-        if (k === pivot) {
-            return nums[pivot];
-        }
-        else if (k < pivot) {
-            end = pivot - 1;
-        } else {
-            start = pivot + 1;
-        }
-    }
+var combinationSum3 = function(k, n) {
+    var nums = [];
+    for (var i = 1; i <= 9; i++) nums[i] = i;
+    var result = [];
+    var results = [];
+    helper(0, k, n, nums, result, results);
+    return results;
 };
 
-var partition = function(nums, start, end) {
-    var left = start;
-    var right = end;
-    var pivot = end;
-    while (true) {
-        while (left < right && nums[left] < nums[pivot]) {
-            left++;
-        }
-        while (left < right && nums[right] >= nums[pivot]) {
-            right--;
-        }
-        if (left === right) break;
-        swap(nums, left, right);
+var helper = function(start, k, n, nums, result, results) {
+    if (n === 0 && k === 0) {
+        results.push(result.slice());
+        return results;
     }
-    swap(nums, right, end);
-    return right;
-};
 
-var swap = function(nums, i, j) {
-    var tmp = nums[i];
-    nums[i] = nums[j];
-    nums[j] = tmp;
+    for (var i = start; i < nums.length; i++) {
+        if (n < 0) break;
+        result.push(nums[i]);
+        helper(i + 1, k - 1, n - nums[i], nums, result, results);
+        result.pop(nums[i])
+    }
 };
