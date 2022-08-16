@@ -1,64 +1,45 @@
-// 19. Remove Nth Node From End of List
-// Medium   33%
+// 20. Valid Parentheses
+// Easy   33%
 
-// Given a linked list, remove the nth node from the end of list and return its
-// head.
+// Given a string containing just the characters '(', ')', '{', '}', '[' and
+// ']', determine if the input string is valid.
 
-// For example,
-
-// Given linked list: 1->2->3->4->5, and n = 2.
-
-// After removing the second node from the end, the linked list becomes
-// 1->2->3->5.
-
-// Note:
-// Given n will always be valid.
-//   Try to do this in one pass.
+// The brackets must close in the correct order, "()" and "()[]{}" are all valid
+// but "(]" and "([)]" are not.
 
 /**
- * Definition for singly-linked list.
- * function ListNode(val) {
- *     this.val = val;
- *     this.next = null;
- * }
+ * @param {string} s
+ * @return {boolean}
  */
-
-/**
- * @param {ListNode} head
- * @param {number} n
- * @return {ListNode}
- */
-const removeNthFromEnd = function(head, n) {
-  const start = new ListNode()
-  let slow = start, fast = start
-  slow.next = head
-
-  for (let i = 0; i <= n; i++) {
-    fast = fast.next
+const isValid = function(s) {
+  const stack = []
+  for (let v of s) {
+		if (v === '(') stack.push(')')
+		else if (v === '{') stack.push('}')
+		else if (v === '[') stack.push(']')
+		else if (stack.length === 0 || stack.pop() !== v) return false
   }
 
-  while (fast) {
-    fast = fast.next
-    slow = slow.next
-  }
-  slow.next = slow.next.next
-
-  return start.next
+  return stack.length === 0
 }
 
-const ListNode = require('../structs/ListNode')
 ;[
-  [[1, 2], 2],      // [2]
-  [[1,2,3,4,5], 2], // [1,2,3,5]
-].forEach(([A, n]) => {
-  console.log((removeNthFromEnd(ListNode.from(A), n) || '').toString())
+  '(',                          // false
+  '()',                         // true
+  '([)]',                       // false
+  '(]',                         // false
+  '()[]{}',                     // true
+].forEach((s) => {
+  console.log(isValid(s))
 })
 
 // Solution:
-// 使用前后差双前进法：
-// 遍历过程中保存两个节点，两节点之间总是相差n个节点。
-// 后一个节点从链表头（即第一个节点）开始，前一个节点从第n + 1个节点开始。
-// 当前节点前进到了链表的末尾时，后节点就到了倒数第n - 1个节点处，
-// 此时，后节点将其前一个节点删除就完成任务了。
+// 这类匹配问题一般使用栈来解决。
+
+// 遇到一个左符号，将右符号弹入栈顶，
+// 遇到一个右符号，则从栈顶弹出一个符号，比较两个符号是否相同，
+// 相同则继续
+// 否则返回结果 false。
+// 最后检查栈是否为空，是则返回 true, 否则 false。
 
 // Submission Result: Accepted
