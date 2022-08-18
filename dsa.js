@@ -1,57 +1,109 @@
-// 75. Sort Colors
-// Medium   38%
+// 76. Minimum Window Substring
+// Hard 25% locked:false
 
-// Given an array with n objects colored red, white or blue, sort them so that
-// objects of the same color are adjacent, with the colors in the order red,
-// white and blue.
+// Given a string S and a string T, find the minimum window in S which will
+// contain all the characters in T in complexity O(n).
 
-// Here, we will use the integers 0, 1, and 2 to represent the color red, white,
-// and blue respectively.
+// For example,
+// S = "ADOBECODEBANC"
+// T = "ABC"
 
-// Note: You are not suppose to use the library's sort function for this
-// problem.
+// Minimum window is "BANC".
 
-// click to show follow up.
+// Note: If there is no such window in S that covers all characters in T, return
+// the empty string "".
 
-// Follow up: A rather straight forward solution is a two-pass algorithm using
-// counting sort. First, iterate the array counting number of 0's, 1's, and 2's,
-// then overwrite array with total number of 0's, then 1's and followed by 2's.
-
-// Could you come up with an one-pass algorithm using only constant space?
+// If there are multiple such windows, you are guaranteed that there will always
+// be only one unique minimum window in S.
 
 /**
- * @param {number[]} nums
- * @return {void} Do not return anything, modify nums in-place instead.
+ * @param {string} s
+ * @param {string} t
+ * @return {string}
  */
-const sortColors = function(nums) {
-  const n = nums.length
-  const swap = (a, b) => [nums[a], nums[b]] = [nums[b], nums[a]]
-  for (let i = 0, redNum = 0, WhiteNum = 0; i < n; i++) {
-    if (nums[i] === 0) {
-      if (nums[redNum] === 1) WhiteNum--
-      swap(redNum++, i)
+const minWindow = function(s, t) {
+  const n = s.length, m = t.length
+  const map = {}
+  for(let c of t) map[c] = map[c] ? map[c] + 1 : 1
+  let counter = m, begin = 0, end = 0, d = Infinity, head = 0
+  while (end < n) {
+    if (map[s[end++]]-- > 0) counter--
+    while (counter === 0) {
+      if (end - begin < d) d = end - (head = begin)
+      if (map[s[begin++]]++ === 0) counter++
     }
-    if (nums[i] === 1) swap(redNum + WhiteNum++, i)
   }
+
+  return d === Infinity ? '' : s.substr(head, d)
 }
+//console.log(minWindow('bba', 'ab'))
+console.log(minWindow('ADOBECODEBANC', 'BDE'))
 
-;[
-  [2,0,1,2,1,2,0],
-].forEach(nums => {
-  console.log(nums)
-  sortColors(nums)
-  console.log(nums)
-})
+const exceededTime = function(s, t) {
+  const n = s.length, m = t.length
+  if (n === 0 || m === 0) return ''
 
-// Solution:
-// 使用两个变量，分别记录当前已排序的数组中的 0 的个数和 1 的个数。
-// 遍历整个数组。
-// 若当前位置的数字为 0 ，则检查已排序的数组中的 0 后是否为 1 ，
-// 若为 1 ，则将 1 的个数减去一个，
-// 因为，下一步是将 0 与已排序的数组的所有 0 后的数字交换，
-// 这样，已排序中的数组中的 0 的个数会加一，而 1 的个数会减一，
-// 如果不是 1 ，也交换，但不必将 1 的个数减一，而 2 的个数并不需要记录；
-// 若当前位置的数字为 1（可能原来是0，与已排序的数组中的 1 交换了），
-// 则将该数与已排序的数组中的所有 1 后的数字交换，并将 1 的个数加一。
+  const map = {}
+  for (let c of t) map[c] = map[c] ? map[c] + 1 : 1
+  console.log(map)
+  let start = -1, width = n
+  for (let i = 0; i <= n - m; i++) {
+    if (map[s[i]]) {
+      console.log(i)
+      const match = Object.assign({}, map)
+      let j = i, len = m
+      for (; j < n && len > 0; j++) {
+        if (match[s[j]] !== void 0 && match[s[j]] !== 0) {
+          match[s[j]]--
+          len--
+        }
+      }
+      if (len === 0 && width >= j - i) {
+        width = j - i
+        start = i
+      }
+    }
+  }
 
-// Submission Result: Accepted
+  return start === -1 ? '' : s.substr(start, width)
+}
+const noWorkVeryWell = function(s, t) {
+  const n = s.length, m = t.length
+  if (n === 0 || m === 0) return ''
+
+  const map = {}, match = {}
+  for (let c of t) map[c] = map[c] ? map[c] + 1 : 1
+  for (let c of s) if (map[c]) match[c] = match[c] ? match[c] + 1 : 1
+
+  if (Object.keys(map).length !== Object.keys(match).length) return ''
+
+  let len = 0
+  for (let k in match) {
+    match[k] -= map[k]
+    if (match[k] < 0) return ''
+    len += match[k]
+  }
+
+  const nextMatch = (i, d) => {
+    while (match[s[i]] === void 0) i += d ? 1 : - 1
+    return i
+  }
+
+  let i = nextMatch(0, true), j = nextMatch(n - 1, false)
+  for (; len > 0; len--) {
+    let p = i, q = j
+    while (p < q && p - i === j - q) {
+      p = nextMatch(p + 1, true)
+      q = nextMatch(q - 1, false)
+    }
+    if (match[s[i]] === 0 || (match[s[j]] !== 0 && p - i <= j - q)) {
+      match[s[j]]--
+      j = nextMatch(j - 1, false)
+    } else {
+      match[s[i]]--
+      i = nextMatch(i + 1, true)
+    }
+  }
+
+  return s.substring(i, j + 1)
+}
