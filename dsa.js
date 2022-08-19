@@ -1,30 +1,32 @@
-/**
- * @see inline comments
- *
- * @param {number} n
- * @param {number} k
- * @return {string}
- */
-var getPermutation = function(n, k) {
-    var nums = [];
-    for (var i = 0; i < n; i ++) {
-        nums.push(i + 1);
-    }
-    k--;
-    var mod = 1;
-    for (i = 1; i < n; i++) {
-        mod *= i;
-    }
-    var result = '';
-    for (i = 0; i < n; i++) {
-        // find the index of current number's first digit
-        var index = Math.floor(k / mod);
-        k = k % mod;
-        result += nums[index];
-        // remove this used number from nums.
-        nums.splice(index, 1);
-        mod = Math.floor(mod / (n - i - 1));
-    }
+// Q: Given a list, rotate the list to the right by k places, where k is non-negative.
+// k places means k steps ?? So, if k is bigger than the length, rotate at length - k % length
 
-    return result;
+/**
+ * @param {ListNode} head
+ * @param {number} k
+ * @return {ListNode}
+ */
+var rotateRight = function(head, k) {
+    if (!head || !head.next) return head;
+    var headCopy = head;
+    var first = head;
+    var second = head;
+    var i = 1;
+    while (first.next) {
+        first = first.next;
+        i++;
+    }
+    var j = i - k % i;
+    // if the steps eqauls to i (the length) return original list.
+    if (j === i) return head;
+
+    while (j > 1) {
+        second = second.next;
+        j--;
+    }
+    head = second.next;
+    second.next = first.next;
+    first.next = headCopy;
+
+    return head;
 };
