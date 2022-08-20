@@ -1,59 +1,58 @@
-// 590. N-ary Tree Postorder Traversal
-// Easy   71%
+// 594. Longest Harmonious Subsequence
+// Easy   41%
 
 
-// Given an n-ary tree, return the postorder traversal of its nodes' values.
-// Nary-Tree input serialization is represented in their level order traversal,
-// each group of children is separated by the null value (See examples).
+// We define a harmonious array is an array where the difference between its
+// maximum value and its minimum value is exactly 1.
 
-// Follow up:
-// Recursive solution is trivial, could you do it iteratively?
+// Now, given an integer array, you need to find the length of its longest
+// harmonious subsequence among all its possible subsequences.
 
 // Example 1:
-// Input: root = [1,null,3,2,4,null,5,6]
-// Output: [5,6,3,2,4,1]
-// Example 2:
-// Input: root =
-// [1,null,2,3,4,5,null,null,6,7,null,8,null,9,10,null,null,11,null,12,null,13,null,null,14]
-// Output: [2,6,14,11,7,3,12,8,4,13,9,10,5,1]
 
-// Constraints:
-//     The height of the n-ary tree is less than or equal to 1000
-//     The total number of nodes is between [0, 10^4]
+// Input: [1,3,2,2,5,2,3,7]
+// Output: 5
+// Explanation: The longest harmonious subsequence is [3,2,2,2,3].
+
+// Note:
+// The length of the input array will not exceed 20,000.
 
 
 /**
- * // Definition for a Node.
- * function Node(val,children) {
- *this.val = val;
- *    this.children = children;
- * };
+ * @param {number[]} nums
+ * @return {number}
  */
-
-/**
- * @param {Node} root
- * @return {number[]}
- */
-const postorder = function(root) {
-  if (root === null) return []
-  const res = []
-  function postorder(node) {
-    for (let c of node.children) postorder(c)
-    res.push(node.val)
+const findLHS = function(nums) {
+  nums.sort((a, b) => a - b)
+  let result = 0, prev = 0, curr = 0
+  for (let i = 0, n = nums.length; i < n; i++) {
+    const diff = i ? nums[i] - nums[i - 1] : 0
+    prev = diff ? (diff === 1 ? curr : 0) : prev
+    curr = diff ? 1 : curr + 1
+    if (prev) result = Math.max(result, prev + curr)
   }
-  postorder(root)
-  return res
+  return result
 }
 
 ;[
-  [1,null,3,2,4,null,5,6],
-].forEach(() => {
-
+  [1,3,2,2,5,2,3,7],            // 5
+  [],                           // 0
+  [1,1,1,1],                    // 0
+].forEach(nums => {
+  console.log(findLHS(nums))
 })
 
 // Solution:
-// 1. 后序遍历，递归
-// 2. 使用栈
-// TODO: #590 多叉树的构造函数
+
+// 思路：
+// 1. 先排序
+// 2. 遍历排序后的数组
+// 3. 记录前一个数的个数，和当前数的个数
+// 4. 如果当前数和前一个数相差 1，则记录，否则继续
+
+// 实现：
+// 关键在于 prev 的记录，只有当当前数与前一个数相差 1 时才设置为前一个数的个数，
+// 否则记录为 0。
+// 而当 prev 为 0 时，说明数字不满足要求。
 
 // Submission Result: Accepted
