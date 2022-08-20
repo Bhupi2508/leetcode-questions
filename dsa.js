@@ -1,84 +1,70 @@
+// 724. Find Pivot Index
+// Easy   42%
 
-// 720. Longest Word in Dictionary
-// Easy   39%
 
+// Given an array of integers nums, write a method that returns the "pivot" index
+// of this array.
 
-// Given a list of strings words representing an English Dictionary, find the
-// longest word in words that can be built one character at a time by other words
-// in words.  If there is more than one possible answer, return the longest word
-// with the smallest lexicographical order.
-//   If there is no answer, return the empty string.
+// We define the pivot index as the index where the sum of the numbers to the
+// left of the index is equal to the sum of the numbers to the right of the
+// index.
+
+// If no such index exists, we should return -1. If there are multiple pivot
+// indexes, you should return the left-most pivot index.
 
 // Example 1:
 
 // Input:
-// words = ["w","wo","wor","worl", "world"]
-// Output: "world"
+// nums = [1, 7, 3, 6, 5, 6]
+// Output: 3
 // Explanation:
-// The word "world" can be built one character at a time by "w", "wo", "wor", and
-// "worl".
+// The sum of the numbers to the left of index 3 (nums[3] = 6) is equal to the
+// sum of numbers to the right of index 3.
+// Also, 3 is the first index where this occurs.
 
 // Example 2:
 
 // Input:
-// words = ["a", "banana", "app", "appl", "ap", "apply", "apple"]
-// Output: "apple"
+// nums = [1, 2, 3]
+// Output: -1
 // Explanation:
-// Both "apply" and "apple" can be built from other words in the dictionary.
-// However, "apple" is lexicographically smaller than "apply".
+// There is no index that satisfies the conditions in the problem statement.
 
 // Note:
 
-// All the strings in the input will only contain lowercase letters.
-// The length of words will be in the range [1, 1000].
-// The length of words[i] will be in the range [1, 30].
+// The length of nums will be in the range [0, 10000].
+// Each element nums[i] will be an integer in the range [-1000, 1000].
 
 
 /**
- * @param {string[]} words
- * @return {string}
+ * @param {number[]} nums
+ * @return {number}
  */
-const longestWord = function(words) {
-  const group = {}
-  for (let word of words) {
-    const layer = word.length - 1
-    if (!group[layer]) group[layer] = []
-    group[layer].push(word)
+const pivotIndex = function(nums) {
+  const n = nums.length
+  let left = 0, right = 0
+  for (let i = 0; i < n; i++) right += nums[i]
+  for (let i = 0; i < n; i++) {
+    right -= nums[i]
+    if (left === right) return i
+    left += nums[i]
   }
-  console.log(group);
-
-  function iter(chars, layer) {
-    if (!group[layer]) return chars
-    let result = chars
-    for (let word of group[layer]) {
-      if (word.indexOf(chars) === 0) {
-        const next = iter(word, layer + 1)
-        if (result === chars ||
-            (next.length === result.length && result > next) ||
-            (next.length > result.length)) result = next
-      }
-    }
-    return result
-  }
-
-  return iter('', 0)
+  return -1
 }
 
 ;[
-  ['w','wo','wor','worl', 'world', 'longestWord'], // 'world'
-  ['a', 'banana', 'app', 'appl', 'ap', 'apply', 'apple'], // 'apple'
-  ["b","br","bre","brea","break","breakf","breakfa","breakfas","breakfast",
-   "l","lu","lun","lunc","lunch","d","di","din","dinn","dinne","dinner"],
-  // 'breakfast'
-  ["m","mo","moc","moch","mocha","l","la","lat","latt","latte",
-   "c","ca","cat"],             // 'latte'
-].forEach(words => {
-  console.log(longestWord(words))
+  [1,7,3,6,5,6],                // 3
+  [1,2,3],                      // -1
+].forEach(nums => {
+  console.log(pivotIndex(nums))
 })
 
 // Solution:
-// 先按字符的长度分层。
-// 从空字符开始，每次进入一层，若该层存在有以从下一层字符开头的，则添加该单词进入下一层，
-// 最后返回该找到的最长单词且字符代码和最小的单词。
+// left 和 right 变量分别保存左右的和。
+// 从第一个元素开始遍历。
+// left 初始化为0，right初始化为整个数组的和。
+// 每遍历一个元素，先从right中减去该元素，再判断right和left是否相等，再将该元素
+// 加到left中，为下一次比较做准备。
+
 
 // Submission Result: Accepted
