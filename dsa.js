@@ -1,77 +1,90 @@
-// 832. Flipping an Image
-// Easy   75%
+// 833. Find And Replace in String
+// Medium   38%
 
 
-// Given a binary matrix A, we want to flip the image horizontally, then invert
-// it, and return the resulting image.
-// To flip an image horizontally means that each row of the image is reversed.
-// For example, flipping [1, 1, 0] horizontally results in [0, 1, 1].
-// To invert an image means that each 0 is replaced by 1, and each 1 is replaced
-// by 0. For example, inverting [0, 1, 1] results in [1, 0, 0].
+// To some string S, we will perform some replacement operations that replace
+// groups of letters with new ones (not necessarily the same size).
+
+// Each replacement operation has 3 parameters: a starting index i, a source word
+// x and a target word y.  The rule is that if x starts at position i in the
+// original string S, then we will replace that occurrence of x with y.  If not,
+// we do nothing.
+
+// For example, if we have S = "abcd" and we have some replacement operation i =
+// 2, x = "cd", y = "ffff", then because "cd" starts at position 2 in the
+// original string S, we will replace it with "ffff".
+
+// Using another example on S = "abcd", if we have both the replacement operation
+// i = 0, x = "ab", y = "eee", as well as another replacement operation i = 2, x
+// = "ec", y = "ffff", this second operation does nothing because in the original
+// string S[2] = 'c', which doesn't match x[0] = 'e'.
+
+// All these operations occur simultaneously.  It's guaranteed that there won't
+// be any overlap in replacement: for example, S = "abc", indexes = [0, 1],
+// sources = ["ab","bc"] is not a valid test case.
+
 // Example 1:
-// Input: [[1,1,0],[1,0,1],[0,0,0]]
-// Output: [[1,0,0],[0,1,0],[1,1,1]]
-// Explanation: First reverse each row: [[0,1,1],[1,0,1],[0,0,0]].
-// Then, invert the image: [[1,0,0],[0,1,0],[1,1,1]]
+// Input: S = "abcd", indexes = [0,2], sources = ["a","cd"], targets =
+// ["eee","ffff"]
+// Output: "eeebffff"
+// Explanation: "a" starts at index 0 in S, so it's replaced by "eee".
+// "cd" starts at index 2 in S, so it's replaced by "ffff".
+
 // Example 2:
-// Input: [[1,1,0,0],[1,0,0,1],[0,1,1,1],[1,0,1,0]]
-// Output: [[1,1,0,0],[0,1,1,0],[0,0,0,1],[1,0,1,0]]
-// Explanation: First reverse each row:
-// [[0,0,1,1],[1,0,0,1],[1,1,1,0],[0,1,0,1]].
-// Then invert the image: [[1,1,0,0],[0,1,1,0],[0,0,0,1],[1,0,1,0]]
+// Input: S = "abcd", indexes = [0,2], sources = ["ab","ec"], targets =
+// ["eee","ffff"]
+// Output: "eeecd"
+// Explanation: "ab" starts at index 0 in S, so it's replaced by "eee".
+// "ec" doesn't starts at index 2 in the original S, so we do nothing.
+
 // Notes:
-//     1 <= A.length = A[0].length <= 20
-//     0 <= A[i][j] <= 1
+//     0 <= indexes.length = sources.length = targets.length <= 100
+//     0 < indexes[i] < S.length <= 1000
+//     All characters in given inputs are lowercase letters.
 
 
 /**
- * @param {number[][]} A
- * @return {number[][]}
+ * @param {string} S
+ * @param {number[]} indexes
+ * @param {string[]} sources
+ * @param {string[]} targets
+ * @return {string}
  */
-const flipAndInvertImage = function(A) {
-  const N = A.length
-  for (let i = 0; i < N; i++) {
-    for (let j = 0, k = N - 1; j <= k; j++, k--) {
-      if (k === j) A[i][j] ^= 1
-      else {
-        const t = A[i][j]
-        A[i][j] = A[i][k] ^ 1
-        A[i][k] = t ^ 1
-      }
-    }
+const findReplaceString = function(S, indexes, sources, targets) {
+  const operations = []
+  for (let i = 0; i < indexes.length; i++) {
+    operations.push([indexes[i], sources[i], targets[i]])
   }
-  return A
-}
-
-const awesome = function(A) {
-  const N = A.length
-  for (let row of A) {
-    for (let i = 0; i * 2 < N; i++) {
-      if (row[i] == row[N - i - 1]) row[i] = row[N - i - 1] ^= 1
-    }
+  operations.sort((a, b) => b[0] - a[0])
+  for (let operation of operations) {
+    const index = operation[0]
+    const source = operation[1]
+    const substr = S.substr([index], source.length)
+    S = S.slice(0, index) + (substr === source ? operation[2] : substr) +
+      S.slice(index + source.length)
   }
-  return A
+  return S
 }
 
 ;[
-  [[1,1,0],[1,0,1],[0,0,0]],
-  [[1,1,0,0],[1,0,0,1],[0,1,1,1],[1,0,1,0]],
-].forEach((A) => {
-  // console.log(flipAndInvertImage(A))
-  console.log(awesome(A))
+  ['abcd', [0, 2], ['a', 'cd'], ['eee', 'ffff']], // 'eeebffff'
+  ['abcd', [0, 2], ['ab', 'ec'], ['eee', 'ffff']], // 'eeecd'
+  ['vmokgggqzp', [3,5,1], ['kg','ggq','mo'], ['s','so','bfr']], // 'vbfrssozp'
+].forEach((args) => {
+  console.log(findReplaceString(...args))
 })
 
 // Solution:
-// 1 1 0    <|>    0 1 1   0->1    1 0 0
-// 1 0 1  ------>  1 0 1  ------>  0 1 0
-// 0 0 0           0 0 0   1->0    1 1 1
 
-// 每行镜像转换，并同时将 0/1 转换
-// 注意中间的转换
+// 方法 1：
+// 使用一个数组字符串保存不参与替换的和参与替换的子字符串。
+// 按 indexes 从头到尾的顺序，比较要替换的子字符串，若匹配，则将target放到数组，
+// 否则放原子字符串。
+// 最后将字符串拼合得到答案。
+// 缺陷：操作的下标没有排序，会导致不参与替换的子字符串错乱。
+// 解决方法：先排序操作。
 
-// 神级操作
-// 镜像转换时，需要交换的两个数 a 和 b
-// 当 a==b 时，(即 a=1&&b=1 或 a=0&&b=0)，最终的到的结果为 a==b==^a
-// 当 a!=b 时，最终得到的结果不变。
+// 方法 2：
+// 排序操作，从右到左操作。在原字符串上操作。
 
 // Submission Result: Accepted
