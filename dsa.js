@@ -1,17 +1,12 @@
-// 190. Reverse Bits
-// Easy   29%
+// 191. Number of 1 Bits
+// Easy   39%
 
 
-// Reverse bits of a given 32 bits unsigned integer.
+// Write a function that takes an unsigned integer and returns the number of ’1'
+// bits it has (also known as the Hamming weight).
 
-// For example, given input 43261596 (represented in binary as
-// 00000010100101000001111010011100), return 964176192 (represented in binary as
-// 00111001011110000010100101000000).
-
-// Follow up:
-// If this function is called many times, how would you optimize it?
-
-// Related problem: Reverse Integer
+// For example, the 32-bit integer ’11' has binary representation
+// 00000000000000000000000000001011, so the function should return 3.
 
 // Credits:Special thanks to @ts for adding this problem and creating all test
 // cases.
@@ -19,27 +14,25 @@
 
 /**
  * @param {number} n - a positive integer
- * @return {number} - a positive integer
+ * @return {number}
  */
-const reverseBits = function(n) {
+const hammingWeight = function(n) {
   let result = 0
-  for (let i = 0; i < 32; i++) {
-    result = result * 2 + n % 2
+  while (n) {
+    result += n % 2
     n = n >>> 1
   }
   return result
 }
 
 ;[
-  43261596,                     // 964176192
-  1,                            // 2147483648
-  4294967295,                   // 4294967295
+  11,                           // 3
 ].forEach(n => {
-  console.log(reverseBits(n))
+  console.log(hammingWeight(n))
 })
 
 // Solution:
-// 构造一个新的数字。
-// 像两个栈传递数据一样。
+// %2 运算获得最后一位的比特值
+// >>>1 逻辑右移
 
 // Submission Result: Accepted
