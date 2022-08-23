@@ -1,98 +1,54 @@
-// 48. Rotate Image
-// Medium 39% locked:false
+// 49. Group Anagrams
+// Medium   35%
 
-// You are given an n x n 2D matrix representing an image.
+// Given an array of strings, group anagrams together.
 
-// Rotate the image by 90 degrees (clockwise).
+// For example, given: ["eat", "tea", "tan", "ate", "nat", "bat"],
+// Return:
 
-// Note:
-// You have to rotate the image in-place, which means you have to modify the
-// input 2D matrix directly. DO NOT allocate another 2D matrix and do the
-// rotation.
-
-// Example 1:
-// Given input matrix =
-//   [
-//     [1,2,3],
-//     [4,5,6],
-//     [7,8,9]
-//   ],
-
-// rotate the input matrix in-place such that it becomes:
 // [
-//   [7,4,1],
-//   [8,5,2],
-//   [9,6,3]
+//   ["ate", "eat","tea"],
+//   ["nat","tan"],
+//   ["bat"]
 // ]
 
-// Example 2:
-// Given input matrix =
-//   [
-//     [ 5, 1, 9,11],
-//     [ 2, 4, 8,10],
-//     [13, 3, 6, 7],
-//     [15,14,12,16]
-//   ],
-
-// rotate the input matrix in-place such that it becomes:
-// [
-//   [15,13, 2, 5],
-//   [14, 3, 4, 1],
-//   [12, 6, 8, 9],
-//   [16, 7,10,11]
-// ]
-
+// Note: All inputs will be in lower-case.
 
 /**
- * @param {number[][]} matrix
- * @return {void} Do not return anything, modify matrix in-place instead.
+ * @param {string[]} strs
+ * @return {string[][]}
  */
-const rotate = function(matrix) {
-  const n = matrix.length, m = n >> 1
-  for (let i = 0; i < n; i++) {
-    for (let j = i + 1; j < n; j++) {
-      [matrix[i][j], matrix[j][i]] = [matrix[j][i], matrix[i][j]]
-    }
-    for (let j = 0; j < m; j++) {
-      [matrix[i][j], matrix[i][n - j - 1]] = [matrix[i][n - j - 1], matrix[i][j]]
-    }
+const groupAnagrams = function(strs) {
+  if (strs === null || strs.length === 0) return []
+
+  const hash = {}
+  for (let s of strs) {
+    const key = Array(26).fill(0)
+    for (let c of s) key[c.charCodeAt() - 97]++
+
+    if (hash[key] === void 0) hash[key] = []
+    hash[key].push(s)
   }
+
+  const result = []
+  for (let key in hash) result.push(hash[key])
+  return result
 }
 
+
 ;[
-  [
-    [1, 2],
-    [3, 4],
-  ],
-  [
-    [1],
-  ],
-  [
-    [1,2,3],
-    [4,5,6],
-    [7,8,9],
-  ]
-].forEach(matrix => {
-  console.log(matrix)
-  rotate(matrix)
-  console.log(matrix)
+  ['eat', 'tea', 'tan', 'ate', 'nat', 'bat', 'boo','bob'],
+].forEach(strs => {
+  console.log(groupAnagrams(strs))
 })
 
 // Solution:
+// 使用哈希表来保存每个组应该含有的字符串。
+// 分组时，查看每个字符串中的含有的字符及其次数，以此分辨字符串应在哪个组。
 
-// 操作：
-// 1) 上下翻折
-// 2) 左右翻折
-// 3) 沿左上到右下的对角线翻折
-// 4) 沿右上到左下的对角线翻折
+// 查看字符串中含有的字符及其次数的方法
+// 1. 排序字符后，组成的字符串
+// 2. 使用固定长度数组（26，表示26个字母），每个位置的值表示一个字符出现的次数。
 
-
-// 能完成顺时针旋转90度的方法为
-// 1. 先1)后3)
-// 2. 先2)后4)
-// 3. 先3)后2)
-// 4. 先4)后1)
-
-// 该实现中使用了方法4
 
 // Submission Result: Accepted
