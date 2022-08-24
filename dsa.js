@@ -1,68 +1,65 @@
-// 819. Most Common Word
-// Easy   44%
+// 821. Shortest Distance to a Character
+// Easy   66%
 
-// Given a paragraph and a list of banned words, return the most frequent word
-// that is not in the list of banned words.  It is guaranteed there is at least
-// one word that isn't banned, and that the answer is unique.
-// Words in the list of banned words are given in lowercase, and free of
-// punctuation.  Words in the paragraph are not case sensitive.  The answer is in
-// lowercase.
 
-// Example:
-// Input:
-// paragraph = "Bob hit a ball, the hit BALL flew far after it was hit."
-// banned = ["hit"]
-// Output: "ball"
-// Explanation:
-// "hit" occurs 3 times, but it is a banned word.
-// "ball" occurs twice (and no other word does), so it is the most frequent
-// non-banned word in the paragraph.
-// Note that words in the paragraph are not case sensitive,
-// that punctuation is ignored (even if adjacent to words, such as "ball,"),
-// and that "hit" isn't the answer even though it occurs more because it is
-// banned.
+// Given a string S and a character C, return an array of integers representing
+// the shortest distance from the character C in the string.
+// Example 1:
+// Input: S = "loveleetcode", C = 'e'
+// Output: [3, 2, 1, 0, 1, 0, 0, 1, 2, 2, 1, 0]
 
 // Note:
-//     1 <= paragraph.length <= 1000.
-//     0 <= banned.length <= 100.
-//     1 <= banned[i].length <= 10.
-//     The answer is unique, and written in lowercase (even if its occurrences in
-// paragraph may have uppercase symbols, and even if it is a proper noun.)
-//     paragraph only consists of letters, spaces, or the punctuation symbols
-// !?',;.
-//     There are no hyphens or hyphenated words.
-//     Words only consist of letters, never apostrophes or other punctuation
-// symbols.
+//     S string length is in [1, 10000].
+//     C is a single character, and guaranteed to be in string S.
+//     All letters in S and C are lowercase.
+
 
 /**
- * @param {string} paragraph
- * @param {string[]} banned
- * @return {string}
+ * @param {string} S
+ * @param {character} C
+ * @return {number[]}
  */
-const mostCommonWord = function (paragraph, banned) {
-  const words = paragraph.replace(/\!|\?|\'|\,|\;|\./g, ' ').split(/\s+/)
-  const hash = {}
-  let res = ''
-  for (let w of words) {
-    const l = w.toLowerCase()
-    if (!banned.includes(l)) {
-      hash[l] = (hash[l] || 0) + 1
-      if (hash[l] > (hash[res] || 0)) res = l
+const shortestToChar = function(S, C) {
+  const n = S.length
+  const res = Array(n)
+  let d = 10000
+  for (let i = 0; i < n; i++) {
+    res[i] = d++
+    if (S[i] === C) {
+      for (let j = i; j >= 0 && res[j] > i - j; j--) res[j] = i - j
+      d = 1
     }
+  }
+  return res
+}
+const better = function(S, C) {
+  let n = S.length, res = Array(n), pos = -n
+  for (let i = 0; i < n; i++) {
+    if (S[i] === C) pos = i
+    res[i] = i - pos
+  }
+  for (let i = pos - 1; i >= 0; i--) {
+    if (S[i] === C) pos = i
+    res[i] = Math.min(res[i], pos - i)
   }
   return res
 }
 
 ;[
-  ['Bob hit a ball, the hit BALL flew far after it was hit.', ['hit']],
-  ['a, a, a, a, b,b,b,c, c', ['a']],
-].forEach(([paragraph, banned]) => {
-  console.log(mostCommonWord(paragraph, banned))
+  ['loveleetcode', 'e'],
+].forEach(([S, C]) => {
+  console.log(shortestToChar(S, C))
+  console.log(better(S, C))
 })
 
-// Solption:
-// 先将标点符号转换成空格，再以空格将段落分成一个个单词
-// 使用一个 HashMap 记录除了禁止的每个单词的个数
-// 返回次数最大的一个
+// Solution:
+// 1. 回溯
+// 在未遇到 C 时，先填充最大值（占位，如 10000）
+// 遇到 C 后，回溯填充之前的位置 j ，填入 i-j，直到遇到一个更小的值，
+// 并将 d=1，并在之后依次填充 d，d+1，d+2...，直至遇到下一个 C。
+
+// 2. 两个方向遍历
+// 先从头开始遍历一遍，填入两个 C 之间的递减的值，
+// 再从最后一个 C 向前遍历，将填入递增的值。
 
 // Submission Result: Accepted
