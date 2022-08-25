@@ -1,60 +1,78 @@
-// 917. Reverse Only Letters
-// Easy   57%
+// 921. Minimum Add to Make Parentheses Valid
+// Medium   73%
 
 
-// Given a string S, return the "reversed" string where all characters that are
-// not a letter stay in the same place, and all letters reverse their positions.
+// Given a string S of '(' and ')' parentheses, we add the minimum number of
+// parentheses ( '(' or ')', and in any positions ) so that the resulting
+// parentheses string is valid.
+// Formally, a parentheses string is valid if and only if:
+//     It is the empty string, or
+//     It can be written as AB (A concatenated with B), where A and B are valid
+// strings, or
+//     It can be written as (A), where A is a valid string.
+// Given a parentheses string, return the minimum number of parentheses we must
+// add to make the resulting string valid.
 
 // Example 1:
-// Input: "ab-cd"
-// Output: "dc-ba"
+// Input: "())"
+// Output: 1
 // Example 2:
-// Input: "a-bC-dEf-ghIj"
-// Output: "j-Ih-gfE-dCba"
+// Input: "((("
+// Output: 3
 // Example 3:
-// Input: "Test1ng-Leet=code-Q!"
-// Output: "Qedo1ct-eeLg=ntse-T!"
+// Input: "()"
+// Output: 0
+// Example 4:
+// Input: "()))(("
+// Output: 4
 
 // Note:
-//     S.length <= 100
-//     33 <= S[i].ASCIIcode <= 122
-//     S doesn't contain \ or "
+//     S.length <= 1000
+//     S only consists of '(' and ')' characters.
+
 
 
 /**
  * @param {string} S
- * @return {string}
+ * @return {number}
  */
-const reverseOnlyLetters = function(S) {
-  function isLetters(c) {
-    return ('a' <= c && c <= 'z') || ('A' <= c && c <= 'Z')
+const minAddToMakeValid = function(S) {
+  const stack = []
+  for (let c of S) {
+    if (c === '(') stack.push(c)
+    else if (stack[stack.length - 1] === '(') stack.pop()
+    else stack.push(c)
   }
-  S = S.split('')
-  let i = 0, j = S.length - 1
-  while (i < j) {
-    if (!isLetters(S[i])) {
-      i++
-    } else if (!isLetters(S[j])) {
-      j--
-    } else {
-      const t = S[i]
-      S[i] = S[j]
-      S[j] = t
-      i++
-      j--
-    }
+  return stack.length
+}
+
+const better = function(S) {
+  let left = 0, right = 0
+  for (let c of S) {
+    if (c === '(') left++
+    else if (left > 0) left--
+    else right++
   }
-  return S.join('')
+  return left + right
 }
 
 ;[
-  'ab-cd',                // 'dc-ba'
-  'a-bC-dEf-ghIj',        // 'j-Ih-gfE-dCba'
-  'Test1ng-Leet=code-Q!', // 'Qedo1ct-eeLg=ntse-T!'
+  '())',  // 1
+  '(((',  // 3
+  '()',   // 0
+  '()))((', // 4
 ].forEach((S) => {
-  console.log(reverseOnlyLetters(S))
+  console.log(minAddToMakeValid(S))
+  console.log(better(S))
 })
 
 // Solution:
+// 1. 使用栈
+// 遍历字符串，遇到 ( 时入栈，
+// 遇到 ) 时，且当栈顶为 ( 时出栈，否则入栈。
+// 最后返回栈的高度。即 栈中没有匹配的 （ 和 ）的数量和
 
-// Submission Result: Accept
+// 2. 不使用栈，使用两个变量来模拟栈
+// 因为只需记录全部未匹配的右括号和剩余的左括号。
+
+// Submission Result: Accepted
