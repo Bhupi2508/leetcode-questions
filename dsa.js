@@ -1,55 +1,60 @@
-// 788. Rotated Digits
-// Easy   57%
+// 796. Rotate String
+// Easy   50%
 
 
-// X is a good number if after rotating each digit individually by 180 degrees,
-// we get a valid number that is different from X.  Each digit must be rotated -
-// we cannot choose to leave it alone.
-// A number is valid if each digit remains a digit after rotation. 0, 1, and 8
-// rotate to themselves; 2 and 5 rotate to each other (on this case they are
-// rotated in a different direction, in other words 2 or 5 gets mirrored); 6 and
-// 9 rotate to each other, and the rest of the numbers do not rotate to any other
-// number and become invalid.
-// Now given a positive number N, how many numbers X from 1 to N are good?
-// Example:
-// Input: 10
-// Output: 4
-// Explanation:
-// There are four good numbers in the range [1, 10] : 2, 5, 6, 9.
-// Note that 1 and 10 are not good numbers, since they remain unchanged after
-// rotating.
+// We are given two strings, A and B.
+// A shift on A consists of taking string A and moving the leftmost character to
+// the rightmost position. For example, if A = 'abcde', then it will be 'bcdea'
+// after one shift on A. Return True if and only if A can become B after some
+// number of shifts on A.
+// Example 1:
+// Input: A = 'abcde', B = 'cdeab'
+// Output: true
+// Example 2:
+// Input: A = 'abcde', B = 'abced'
+// Output: false
 // Note:
-//     N  will be in range [1, 10000].
+//     A and B will have length at most 100.
 
 
 /**
- * @param {number} N
- * @return {number}
+ * @param {string} A
+ * @param {string} B
+ * @return {boolean}
  */
-const rotatedDigits = function(N) {
-  let res = 0
-  for (let i = 1; i <= N; i++) {
-    let n = i, p = false, q = true
-    while (n > 0 && q) {
-      const j = n % 10
-      if (j === 2 || j === 5 || j === 6 || j === 9) p = true
-      if (j === 3 || j === 4 || j === 7) q = false
-      n = Math.floor(n / 10)
-    }
-    if (p && q) res++
+const rotateString = function(A, B) {
+  if (A === B) return true
+  if (A.length !== B.length) return false
+  let i = 0, j = 0, n = A.length
+  while ((i = B.indexOf(A[0], j)) > 0) {
+    if (B.substring(i, n) + B.substring(0, i) === A) return true
+    j = i + 1
   }
-  return res
+  return false
+}
+
+const amazing = function(A, B) {
+  return A.length === B.length && (A + A).includes(B)
 }
 
 ;[
-  10, // 4
-  20, // 9
-].forEach((N) => {
-  console.log(rotatedDigits(N))
+  ['abcde', 'cdeab'], // true
+  ['abcde', 'abced'], // false
+  ['abcde', 'abcde'], // true
+  ['abcde', 'abcd'],  // false
+  ['abcabe', 'beabca'], // true
+  ['abcabe', 'bcabea'], // true
+].forEach(([A, B]) => {
+  console.log(rotateString(A, B))
+  console.log(rotateString(A, B))
 })
 
 // Solution:
-// 当出现数字 3，4，7 时，一定不是
-// 至少包含（2，5，6，9）中的一个
+// 平凡的方法
+// 找到 A 的第一个字符的在 B 中的位置，找到后重新拆分并拼接 B 字符串，并判断新字符串是否与 A
+// 相同，相同返回 true，不同则寻找下一个出现的位置进行判断，直到 B 中再无该字符。
+
+// 令人赞叹的方法!!!
+// 判断 A+A 中是否包含有 B
 
 // Submission Result: Accepted
