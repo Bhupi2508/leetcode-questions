@@ -1,39 +1,105 @@
-// 219. Contains Duplicate II
-// Easy   32%
+// 225. Implement Stack using Queues
+// Easy   33%
 
 
-// Given an array of integers and an integer k, find out whether there are two
-// distinct indices i and j in the array such that nums[i] = nums[j] and the
-// absolute difference between i and j is at most k.
+// Implement the following operations of a stack using queues.
+
+// push(x) -- Push element x onto stack.
+
+// pop() -- Removes the element on top of the stack.
+
+// top() -- Get the top element.
+
+// empty() -- Return whether the stack is empty.
+
+// Notes:
+// You must use only standard operations of a queue -- which means only push to
+// back, peek/pop from front, size, and is empty operations are valid.
+
+// Depending on your language, queue may not be supported natively. You may
+// simulate a queue by using a list or deque (double-ended queue), as long as you
+// use only standard operations of a queue.
+
+// You may assume that all operations are valid (for example, no pop or top
+// operations will be called on an empty stack).
+
+// Credits:Special thanks to @jianchao.li.fighter for adding this problem and all
+// test cases.
 
 
 /**
- * @param {number[]} nums
- * @param {number} k
- * @return {boolean}
+ * Initialize your data structure here.
  */
-const containsNearbyDuplicate = function(nums, k) {
-  const n = nums.length, hash = {}
-  for (let i = 0; i < n; i++) {
-    const num = nums[i]
-    if (hash[num] != null && i - hash[num] <= k) return true
-    hash[num] = i
-  }
-  return false
+const MyStack = function() {
+  this.queue = []
+  this.size = 0
 }
 
-;[
-  [[1,2,3,4,1,4,2,5,3], 0],     // false
-  [[1,2,3,4,1,4,2,5,3], 1],     // false
-  [[1,2,3,4,1,4,2,5,3], 2],     // true
-  [[-1,-1], 1],                 // true
-].forEach(args => {
-  console.log(containsNearbyDuplicate(...args))
-})
+/**
+ * Push element x onto stack.
+ * @param {number} x
+ * @return {void}
+ */
+MyStack.prototype.push = function(x) {
+  this.queue.push(x)
+  this.size = this.queue.length
+}
+
+/**
+ * Removes the element on top of the stack and returns that element.
+ * @return {number}
+ */
+MyStack.prototype.pop = function() {
+  const tmp = []
+  for (let i = this.size; i > 1; i--) {
+    tmp.push(this.queue.shift())
+  }
+
+  const result = this.queue.shift()
+  this.queue = tmp
+  this.size = tmp.length
+
+  return result
+}
+
+/**
+ * Get the top element.
+ * @return {number}
+ */
+MyStack.prototype.top = function() {
+  const tmp = []
+  for (let i = this.size; i > 1; i--) {
+    tmp.push(this.queue.shift())
+  }
+
+  const result = this.queue.shift()
+  tmp.push(result)
+  this.queue = tmp
+
+  return result
+}
+
+/**
+ * Returns whether the stack is empty.
+ * @return {boolean}
+ */
+MyStack.prototype.empty = function() {
+  return this.size === 0
+}
+
+/**
+ * Your MyStack object will be instantiated and called as such:
+ * var obj = Object.create(MyStack).createNew()
+ * obj.push(x)
+ * var param_2 = obj.pop()
+ * var param_3 = obj.top()
+ * var param_4 = obj.empty()
+ */
+
 
 // Solution:
-// 用一个哈希保存一个字符最后一次出现的位置，
-// 每次遇到这个字符是先和哈希用的该字符比较位置，若小于或等于 k，则返回 true。
-// 否则返回 false。
+// 栈和队列的 push 及 empty 函数的实现是相同的。
+// 栈的 pop 和 top 函数的实现需要用一个新的暂时队列来完成。
+// 将原队列的元素pop到暂时队列中，再去最后一个做回返回值。
 
 // Submission Result: Accepted
