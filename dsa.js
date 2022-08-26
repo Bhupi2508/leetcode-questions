@@ -1,80 +1,33 @@
-// 79. Word Search
-// Medium 27% locked:false
+// 80. Remove Duplicates from Sorted Array II
+// Medium 36% locked:false
 
-// Given a 2D board and a word, find if the word exists in the grid.
+// Follow up for "Remove Duplicates": What if duplicates are allowed at most
+// twice?
 
-// The word can be constructed from letters of sequentially adjacent cell, where
-// "adjacent" cells are those horizontally or vertically neighboring. The same
-// letter cell may not be used more than once.
+// For example, Given sorted array nums = [1,1,1,2,2,3],
 
-// For example,
-// Given board =
-
-// [
-//   ['A','B','C','E'],
-//   ['S','F','C','S'],
-//   ['A','D','E','E']
-// ]
-
-// word = "ABCCED", -> returns true,
-// word = "SEE", -> returns true,
-// word = "ABCB", -> returns false.
+// Your function should return length = 5, with the first five elements of nums
+// being 1, 1, 2, 2 and 3. It doesn't matter what you leave beyond the new
+// length.
 
 /**
- * @param {character[][]} board
- * @param {string} word
- * @return {boolean}
+ * @param {number[]} nums
+ * @return {number}
  */
-const exist = function(board, word) {
-  const m = board.length, n = board[0].length, w = word.length
-  if (w === 0) return true
-
-  function match(i, j, c) {
-    let isExist = false
-    if (0 <= i && i < m && 0 <= j && j < n) {
-      if (board[i][j] === word[c]) {
-        const tmp = word[c]
-        board[i][j] = true
-        if (next(i, j, c + 1)) isExist = true
-        board[i][j] = tmp
-      }
-    }
-    return isExist
-  }
-
-  const next = (i, j, c) => c >= w ||
-        match(i - 1, j, c) ||
-        match(i, j + 1, c) ||
-        match(i + 1, j, c) ||
-        match(i, j - 1, c)
-
-  for (let i = 0; i < m; i++) {
-    for (let j = 0; j < n; j++) {
-      if (match(i, j, 0)) return true
+const removeDuplicates = function(nums) {
+  let next = true
+  for (let i = 0; i < nums.length; i++) {
+    if (nums[i - 1] !== nums[i]) {
+      next = true
+    } else if (next) {
+      next = false
+    } else {
+      nums.splice(i--, 1)
     }
   }
 
-  return false
+  console.log(nums);
+  return nums.length
 }
 
-
-const board = [
-  ['A','B','C','E'],
-  ['S','F','C','S'],
-  ['A','D','E','E']
-]
-
-;[
-  [board, 'ABCCED'],            // true
-  [board, 'SEE'],               // true
-  [board, 'ABCB'],              // false
-].forEach(args => {
-  console.log(exist(...args))
-})
-
-
-// Solution:
-// 使用 DFS 遍历矩阵。
-// 每匹配一个字符，就在原矩阵中做标记，并在回溯时还原。
-
-// Submission Result: Accepted
+console.log(removeDuplicates([1, 1, 1, 1, 1, 1, 2, 2, 2, 3]))
