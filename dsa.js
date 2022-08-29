@@ -1,53 +1,50 @@
-// 45. Jump Game II
-// Hard   26%
+// 46. Permutations
+// Medium   44%
 
-// Given an array of non-negative integers, you are initially positioned at the
-// first index of the array.
+// Given a collection of distinct numbers, return all possible permutations.
 
-// Each element in the array represents your maximum jump length at that
-// position.
+// For example,
+// [1,2,3] have the following permutations:
 
-// Your goal is to reach the last index in the minimum number of jumps.
-
-// For example:
-// Given array A = [2,3,1,1,4]
-
-// The minimum number of jumps to reach the last index is 2. (Jump 1 result from
-// index 0 to 1, then 3 steps to the last index.)
-
-// Note:
-// You can assume that you can always reach the last index.
+// [
+//   [1,2,3],
+//   [1,3,2],
+//   [2,1,3],
+//   [2,3,1],
+//   [3,1,2],
+//   [3,2,1]
+// ]
 
 /**
  * @param {number[]} nums
- * @return {number}
+ * @return {number[][]}
  */
-const jump = function(nums) {
-  let result = 0, via = 0, max = 0
-  for (let i = 0; i < nums.length - 1; i++) {
-    max = Math.max(max, i + nums[i])
-    if (via === i) {
-      result++
-      via = max
+const permute = function(nums) {
+  const result = [], n = nums.length
+  function iter(used) {
+    if (used.length === n) result.push([...used])
+    else {
+      for (let num of nums) {
+        if (!used.includes(num)) {
+          used.push(num)
+          iter(used)
+          used.pop(num)
+        }
+      }
     }
   }
-
+  iter([])
   return result
 }
 
 ;[
-  [3,2,1],                      // 1
-  [2,3,1,1,4],                  // 2
-  [1,3,2,3,0,1,2,1,1],          // 4
-  [1,1,1,1],                    // 3
-  [10,9,8,7,6,5,4,3,2,1,1,0],   // 2
+  [1,2,3],
 ].forEach(nums => {
-  console.log(jump(nums))
+  console.log(permute(nums))
 })
 
 // Solution:
-// 使用贪心算法。
-// 每次都选择一个最远的进行试跳，若过程中还遇到更远的，先保存。
-// 因为被试跳的位置总是先会被遍历，因此，在跳到更远的位置前，都会进行更新。
+// 使用回溯算法遍历整个数组构成的树，
+// 在叶子处，将路径加入答案中。
 
 // Submission Result: Accepted
