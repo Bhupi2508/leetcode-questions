@@ -1,74 +1,75 @@
-// 925. Long Pressed Name
-// Easy   45%
+// 929. Unique Email Addresses
+// Easy   68%
 
 
-// Your friend is typing his name into a keyboard.  Sometimes, when typing a
-// character c, the key might get long pressed, and the character will be typed 1
-// or more times.
-// You examine the typed characters of the keyboard.  Return True if it is
-// possible that it was your friends name, with some characters (possibly none)
-// being long pressed.
+// Every email consists of a local name and a domain name, separated by the @
+// sign.
+// For example, in alice@leetcode.com, alice is the local name, and leetcode.com
+// is the domain name.
+// Besides lowercase letters, these emails may contain '.'s or '+'s.
+// If you add periods ('.') between some characters in the local name part of an
+// email address, mail sent there will be forwarded to the same address without
+// dots in the local name.  For example, "alice.z@leetcode.com" and
+// "alicez@leetcode.com" forward to the same email address.  (Note that this rule
+// does not apply for domain names.)
+// If you add a plus ('+') in the local name, everything after the first plus
+// sign will be ignored. This allows certain emails to be filtered, for example
+// m.y+name@email.com will be forwarded to my@email.com.  (Again, this rule does
+// not apply for domain names.)
+// It is possible to use both of these rules at the same time.
+// Given a list of emails, we send one email to each address in the list.  How
+// many different addresses actually receive mails?
 
 // Example 1:
-// Input: name = "alex", typed = "aaleex"
-// Output: true
-// Explanation: 'a' and 'e' in 'alex' were long pressed.
-// Example 2:
-// Input: name = "saeed", typed = "ssaaedd"
-// Output: false
-// Explanation: 'e' must have been pressed twice, but it wasn't in the typed
-// output.
-// Example 3:
-// Input: name = "leelee", typed = "lleeelee"
-// Output: true
-// Example 4:
-// Input: name = "laiden", typed = "laiden"
-// Output: true
-// Explanation: It's not necessary to long press any character.
+// Input:
+// [
+//   "test.email+alex@leetcode.com",
+//   "test.e.mail+bob.cathy@leetcode.com",
+//   "testemail+david@lee.tcode.com"
+// ]
+// Output: 2
+// Explanation: "testemail@leetcode.com" and "testemail@lee.tcode.com" actually
+// receive mails
 
-// Constraints:
-//     1 <= name.length <= 1000
-//     1 <= typed.length <= 1000
-//     The characters of name and typed are lowercase letters.
+// Note:
+//     1 <= emails[i].length <= 100
+//     1 <= emails.length <= 100
+//     Each emails[i] contains exactly one '@' character.
+//     All local and domain names are non-empty.
+//     Local names do not start with a '+' character.
 
 
 /**
- * @param {string} name
- * @param {string} typed
- * @return {boolean}
+ * @param {string[]} emails
+ * @return {number}
  */
-const isLongPressedName = function(name, typed) {
-  let i = 0, j = 0
-  while (i < name.length || j < typed.length) {
-    if (name[i] == typed[j]) {
-      i++
-      j++
-    } else if (typed[j] == typed[j - 1]) {
-      j++
-    } else {
-      return false
-    }
+const numUniqueEmails = function(emails) {
+  const set = new Set()
+  for (let email of emails) {
+    const names = email.split('@')
+    const domainName = names[1]
+
+    let localName = names[0]
+    localName = localName.split('+')[0]
+    localName = localName.replace(/\./g, '')
+
+    set.add(localName + '@' + domainName)
   }
-  return true
+  return set.size
 }
 
 ;[
-  // ['alex', 'aaleex'],    // true
-  // ['saeed', 'ssaaedd'],  // false
-  // ['leelee', 'lleeelee'],// true
-  // ['laiden', 'laiden'],  // true
-  ['pyplrz', 'ppyypllr'],   // false
-  ['alice', 'alicee']
-].forEach(([name, typed]) => {
-  console.log(isLongPressedName(name, typed))
+  [
+    'test.email+alex@leetcode.com',
+    'test.e.mail+bob.cathy@leetcode.com',
+    'testemail+david@lee.tcode.com'
+  ], // 2
+].forEach((emails) => {
+  console.log(numUniqueEmails(emails))
 })
 
 // Solution:
-// 使用两个变量 i 和 j 来标记遍历 name 和 typed 的字符，
-// 若两个字符相同，则遍历下一个字符，
-// 若不同，则检查 typed[j] 与 typed[j - 1] 是否相同，相同表明该字符时长按产生的，
-// 相同则遍历 typed 的下一个字符，
-// 否则 直接返回false，
-// 直到遍历完两个字符串。
+// 按照题目，处理所有 email 的 local name，保留 domain name，
+// 用 set 来去重。
 
 // Submission Result: Accepted
