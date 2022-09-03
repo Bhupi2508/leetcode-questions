@@ -1,46 +1,38 @@
-// 66. Plus One
-// Easy   38%
+// 67. Add Binary
+// Easy   32%
 
-// Given a non-negative integer represented as a non-empty array of digits, plus
-// one to the integer.
+// Given two binary strings, return their sum (also a binary string).
 
-// You may assume the integer do not contain any leading zero, except the number
-// 0 itself.
-
-// The digits are stored such that the most significant digit is at the head of
-// the list.
+// For example,
+// a = "11"
+// b = "1"
+// Return "100".
 
 /**
- * @param {number[]} digits
- * @return {number[]}
+ * @param {string} a
+ * @param {string} b
+ * @return {string}
  */
-const plusOne = function(digits) {
-  for (let i = digits.length - 1; i >= 0; i--) {
-    if (digits[i] < 9) {
-      digits[i]++
-      return digits
-    }
-    digits[i] = 0
+const addBinary = function(a, b) {
+  let res = '', i = a.length - 1, j = b.length - 1, carry = 0
+  while (i >= 0 || j >= 0 || carry > 0) {
+    carry += (i >= 0 ? a[i--] - '0' : 0)
+    carry += (j >= 0 ? b[j--] - '0' : 0)
+    res = carry % 2 + res
+    carry >>= 1
   }
-  digits[0] = 1
-  digits.push(0)
-  return digits
+  return res
 }
 
 ;[
-  [0],                          // [1]
-  [8, 9, 9],                    // [9, 0, 0]
-  [9, 9, 9],                    // [1, 0, 0, 0]
-].forEach(digits => {
-  console.log(plusOne(digits))
+  ['0', '0'],                   // '0'
+  ['11', '1'],                  // '100'
+].forEach(([a, b]) => {
+  console.log(addBinary(a, b))
 })
 
 // Solution:
-// 从后向前开始检查数组，
-// 若数不为9，则该数加1，并返回数组；
-// 若数为9，则把该数改为0，继续向前检查。
-
-// 直到检查完整个数组，若都为9，则将第一个数改为1，并在数组的最后添加一个0。
-// （因为要保留数组开始的指针）
+// 记录一个进位位。
+// 从两个字符串的末尾开始相加，并加上进位位。
 
 // Submission Result: Accepted
