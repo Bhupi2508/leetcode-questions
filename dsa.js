@@ -1,46 +1,41 @@
-// 28. Implement strStr()
-// Easy   28%
+// 29. Divide Two Integers
+// Medium 15% locked:false
 
-// Implement strStr().
+// Divide two integers without using multiplication, division and mod operator.
 
-// Returns the index of the first occurrence of needle in haystack, or -1 if
-// needle is not part of haystack.
-
-// Example 1:
-// Input: haystack = "hello", needle = "ll"
-// Output: 2
-
-// Example 2:
-// Input: haystack = "aaaaa", needle = "bba"
-// Output: -1
+// If it is overflow, return MAX_INT.
 
 /**
- * @param {string} haystack
- * @param {string} needle
+ * @param {number} dividend
+ * @param {number} divisor
  * @return {number}
  */
-const strStr = function(haystack, needle) {
-  for (let i = 0; ; i++) {
-    for (let j = 0; ; j++) {
-      if (j === needle.length) return i
-      if (i + j === haystack.length) return -1
-      if (needle[j] !== haystack[i + j]) break
-    }
+const divide = function(dividend, divisor) {
+  if (divisor === 0) return 0
+
+  const sign = (dividend > 0) ^ (divisor > 0) // 0 is positive, 1 is negative
+  dividend = Math.abs(dividend)
+  divisor = Math.abs(divisor)
+
+  const memory = [divisor], times = [1]
+  for (let i = 0; memory[i] < dividend; i++) {
+    memory[i + 1] = memory[i] + memory[i]
+    times[i + 1] = times[i] + times[i]
   }
+
+  let result = 0
+  for (let i = memory.length - 1; i >= 0; i--) {
+    console.log(dividend);
+    if (dividend >= memory[i]) {
+      result += sign === 0 ? times[i] : -times[i]
+      dividend -= memory[i]
+    }
+
+    if (result > 0x7fffffff || result < -0x80000000)
+      return sign === 0 ? 0x7fffffff : -0x80000000
+  }
+
+  return result
 }
 
-;[
-  ['hello', 'll'],              // 2
-  ['aaaaa', 'bba'],             // -1
-].forEach(args => {
-  console.log(strStr(...args))
-})
-
-// Solution:
-// i遍历haystack的每个字符
-// j用于比较haystack子字符串与needle是否相同
-// 当j等于needle的长度时，正好完成匹配
-// 当i+j等于haystack的长度时，说明i之后的长度不足以匹配
-// 当子字符串不同时，直接跳过该头字符，换下一个。
-
-// Submission Result: Accepted
+console.log(divide(2147483647, 1)) //
