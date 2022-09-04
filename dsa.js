@@ -1,24 +1,30 @@
 /**
  * @param {TreeNode} root
- * @param {number} sum
- * @return {number[][]}
+ * @return {void} Do not return anything, modify root in-place instead.
  */
-var pathSum = function(root, sum) {
-  var result = [];
-  var results = [];
-  pathSumHelper(root, sum, result, results);
-  return results;
+var flatten = function(root) {
+    if (!root) return;
+    var oRoot = root;
+    flatten(root.left);
+    flatten(root.right);
+    var oRight = oRoot.right;
+    oRoot.right = oRoot.left;
+    oRoot.left = null;
+    while (oRoot.right) oRoot = oRoot.right;
+    oRoot.right = oRight;
 };
 
-var pathSumHelper = function(root, sum, result, results) {
-  if (!root) {
-      return;
-  }
-  result.push(root.val);
-  if (!root.left && !root.right && sum === root.val) {
-      results.push(result.slice());
-  }
-  pathSumHelper(root.left, sum - root.val, result, results);
-  pathSumHelper(root.right, sum - root.val, result, results);
-  result.pop();
+// 2nd try
+var flatten = function(root) {
+    if (!root) return;
+    // save right now
+    var tmp = root.right;
+    flatten(root.left);
+    flatten(root.right);
+    root.right = root.left;
+    root.left = null;
+    while (root.right) {
+        root = root.right;
+    }
+    root.right = tmp;
 };
