@@ -1,69 +1,51 @@
-// 455. Assign Cookies
-// Easy   47%
+// 458. Poor Pigs
+// Easy   40%
 
 
-// Assume you are an awesome parent and want to give your children some cookies.
-// But, you should give each child at most one cookie. Each child i has a greed
-// factor gi, which is the minimum size of a cookie that the child will be
-// content with; and each cookie j has a size sj. If sj >= gi, we can assign the
-// cookie j to the child i, and the child i will be content. Your goal is to
-// maximize the number of your content children and output the maximum number.
+// There are 1000 buckets, one and only one of them contains poison, the rest are
+// filled with water. They all look the same. If a pig drinks that poison it will
+// die within 15 minutes. What is the minimum amount of pigs you need to figure
+// out which bucket contains the poison within one hour.
 
-// Note:
-// You may assume the greed factor is always positive.
-// You cannot assign more than one cookie to one child.
+// Answer this question, and write an algorithm for the follow-up general case.
 
-// Example 1:
+// Follow-up:
 
-// Input: [1,2,3], [1,1]
-
-// Output: 1
-
-// Explanation: You have 3 children and 2 cookies. The greed factors of 3
-// children are 1, 2, 3.
-// And even though you have 2 cookies, since their size is both 1, you could only
-// make the child whose greed factor is 1 content.
-// You need to output 1.
-
-// Example 2:
-
-// Input: [1,2], [1,2,3]
-
-// Output: 2
-
-// Explanation: You have 2 children and 3 cookies. The greed factors of 2
-// children are 1, 2.
-// You have 3 cookies and their sizes are big enough to gratify all of the
-// children,
-// You need to output 2.
+// If there are n buckets and a pig drinking poison will die within m minutes,
+// how many pigs (x) you need to figure out the "poison" bucket within p minutes?
+// There is exact one bucket with poison.
 
 
 /**
- * @param {number[]} g
- * @param {number[]} s
+ * @param {number} buckets
+ * @param {number} minutesToDie
+ * @param {number} minutesToTest
  * @return {number}
  */
-const findContentChildren = function(g, s) {
-  g.sort((a, b) => a - b)
-  s.sort((a, b) => a - b)
-  const m = g.length, n = s.length
-  let result = 0
-  for (let i = 0; result < m && i < n; i++) {
-    if (g[result] <= s[i]) result++
-  }
-  return result
+const poorPigs = function(buckets, minutesToDie, minutesToTest) {
+  let pigs = 0
+  while (Math.pow(minutesToTest / minutesToDie + 1, pigs) < buckets) pigs++
+  return pigs
 }
 
 ;[
-  [[1,2,3], [1,1]],             // 1
-  [[1,2], [1,2,3]],             // 2
-  [[4,4,2,3], [1,1,1]],         // 0
+  [1000, 15, 60],               // 5
 ].forEach(args => {
-  console.log(findContentChildren(...args))
+  console.log(poorPigs(...args))
 })
 
 // Solution:
-// 给两个数组排序，这样孩子就能从最小贪婪的开始满足，饼干可以从最小的开始分发。
-// 孩子能得到满足贪婪的最小的饼干。
+// 若有n只猪，则可将桶摆为n维体，每只猪负责一个象限。
+// n只猪都死在其象限的某个值上，这些在组合起来就能定位到有毒的桶了。
+// 时间定义了每个象限的范围。
+
+// 假设2只猪，一共45分钟，每15分钟试一次，16个桶。
+//  1  2  3  4
+//  5  6  7  8
+//  9 10 11 12
+// 13 14 15 16
+// 一只猪负责行，另一只负责列。每次一行（列）。最后一行（列）不用测试。
+// 比如第一只猪在测试第2行时死掉了，那么一定在这行。
+// 而第二只猪最后都没死，那么就说明有毒的桶在最后一列。即毒桶为8。
 
 // Submission Result: Accepted
