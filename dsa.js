@@ -1,55 +1,86 @@
-// 448. Find All Numbers Disappeared in an Array
-// Easy   51%
+// 451. Sort Characters By Frequency
+// Medium   51%
 
 
-// Given an array of integers where 1 ≤ a[i] ≤ n (n = size of array), some
-// elements appear twice and others appear once.
+// Given a string, sort it in decreasing order based on the frequency of
+// characters.
 
-// Find all the elements of [1, n] inclusive that do not appear in this array.
-
-// Could you do it without extra space and in O(n) runtime? You may assume the
-// returned list does not count as extra space.
-
-// Example:
+// Example 1:
 
 // Input:
-// [4,3,2,7,8,2,3,1]
+// "tree"
 
 // Output:
-// [5,6]
+// "eert"
+
+// Explanation:
+// 'e' appears twice while 'r' and 't' both appear once.
+// So 'e' must appear before both 'r' and 't'. Therefore "eetr" is also a valid
+// answer.
+
+// Example 2:
+
+// Input:
+// "cccaaa"
+
+// Output:
+// "cccaaa"
+
+// Explanation:
+// Both 'c' and 'a' appear three times, so "aaaccc" is also a valid answer.
+// Note that "cacaca" is incorrect, as the same characters must be together.
+
+// Example 3:
+
+// Input:
+// "Aabb"
+
+// Output:
+// "bbAa"
+
+// Explanation:
+// "bbaA" is also a valid answer, but "Aabb" is incorrect.
+// Note that 'A' and 'a' are treated as two different characters.
 
 
 /**
- * @param {number[]} nums
- * @return {number[]}
+ * @param {string} s
+ * @return {string}
  */
-const findDisappearedNumbers = function(nums) {
-  const n = nums.length
-  for (let i = 0; i < n;) {
-    const num = nums[i]
-    if (num !== i + 1 && num !== nums[num - 1]) {
-      [nums[i], nums[num - 1]] = [nums[num - 1], num]
-    } else {
-      i++
-    }
+const frequencySort = function(s) {
+  const hash = {}
+  for (let c of s) hash[c] = (hash[c] || 0) + 1
+
+  const bucket = []
+  for (let key in hash) {
+    const n = hash[key]
+    bucket[n] = (bucket[n] || '') + key.repeat(n)
   }
 
-  const result = []
-  for (let i = 0; i < n; i++) {
-    if (nums[i] !== i + 1) result.push(i + 1)
+  let result = ''
+  for (let i = s.length; i > 0; i--) {
+    if (bucket[i]) result += bucket[i]
   }
+
   return result
 }
 
 ;[
-  [4,3,2,7,8,2,3,1],            // [5,6]
-].forEach(nums => {
-  console.log(findDisappearedNumbers(nums))
+  'tree',                       // 'eetr'
+  'cccaaa',                     // 'cccaaa'
+  'Aabb',                       // 'bbAa'
+].forEach(s => {
+  console.log(frequencySort(s))
 })
 
 // Solution:
-// 在原数组中交换元素。
-// 如果该位置的值与位置号不同，则与该值的位置交换。
-// 遍历该数组的元素，若位置的值与位置不同，则添加到结果中。
+
+// 方法一：
+// 使用哈希表保存每个字符出现的次数，
+// 将次数按降序排序后，构造新字符串。
+
+// 方法二：
+// 同样使用哈希，但不使用排序，而是使用桶（其实类似桶排序思想）
+// 即分配 n+1 个位置，位置i中保存出现次数为i的字符组成的字符串。
 
 // Submission Result: Accepted
