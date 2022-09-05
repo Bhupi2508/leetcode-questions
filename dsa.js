@@ -1,112 +1,65 @@
-// 949. Largest Time for Given Digits
-// Easy   36%
+// 950. Reveal Cards In Increasing Order
+// Medium   74%
 
 
-// Given an array of 4 digits, return the largest 24 hour time that can be made.
-// The smallest 24 hour time is 00:00, and the largest is 23:59.  Starting from
-// 00:00, a time is larger if more time has elapsed since midnight.
-// Return the answer as a string of length 5.  If no valid time can be made,
-// return an empty string.
+// In a deck of cards, every card has a unique integer.  You can order the deck
+// in any order you want.
+// Initially, all the cards start face down (unrevealed) in one deck.
+// Now, you do the following steps repeatedly, until all cards are revealed:
+//  1.Take the top card of the deck, reveal it, and take it out of the deck.
+//  2.If there are still cards in the deck, put the next top card of the deck at
+// the bottom of the deck.
+//  3.If there are still unrevealed cards, go back to step 1.  Otherwise, stop.
+// Return an ordering of the deck that would reveal the cards in increasing
+// order.
+// The first entry in the answer is considered to be the top of the deck.
 
 // Example 1:
-// Input: [1,2,3,4]
-// Output: "23:41"
-// Example 2:
-// Input: [5,5,5,5]
-// Output: ""
+// Input: [17,13,11,2,3,5,7]
+// Output: [2,13,3,11,5,17,7]
+// Explanation:
+// We get the deck in the order [17,13,11,2,3,5,7] (this order doesn't matter),
+// and reorder it.
+// After reordering, the deck starts as [2,13,3,11,5,17,7], where 2 is the top of
+// the deck.
+// We reveal 2, and move 13 to the bottom.  The deck is now [3,11,5,17,7,13].
+// We reveal 3, and move 11 to the bottom.  The deck is now [5,17,7,13,11].
+// We reveal 5, and move 17 to the bottom.  The deck is now [7,13,11,17].
+// We reveal 7, and move 13 to the bottom.  The deck is now [11,17,13].
+// We reveal 11, and move 17 to the bottom.  The deck is now [13,17].
+// We reveal 13, and move 17 to the bottom.  The deck is now [17].
+// We reveal 17.
+// Since all the cards revealed are in increasing order, the answer is correct.
 
 // Note:
-//     A.length == 4
-//     0 <= A[i] <= 9
+//     1 <= A.length <= 1000
+//     1 <= A[i] <= 10^6
+//     A[i] != A[j] for all i != j
 
 
 /**
- * @param {number[]} A
- * @return {string}
+ * @param {number[]} deck
+ * @return {number[]}
  */
-const largestTimeFromDigits = function(A) {
-  const check = (t) => !(t[0] > 2 || (t[0] === 2 && t[1] > 3) || t[2] > 5)
-  const compare = (a, b) => Number.parseInt(a.join('')) - Number.parseInt(b.join(''))
-  let result = []
-  function dfs(start) {
-    if (start > 3) {
-      if (check(A)) {
-        if (result.length === 0) result = [...A]
-        else if (compare(A, result) > 0) result = [...A]
-      }
-    } else {
-      for (let i = start; i < 4; i++) {
-        const temp = A[i]
-        A[i] = A[start]
-        A[start] = temp
-        dfs(start + 1)
-        A[start] = A[i]
-        A[i] = temp
-      }
-    }
+const deckRevealedIncreasing = function(deck) {
+  deck.sort((a, b) => b - a)
+  const res = [deck[0]]
+  for (let i = 1; i < deck.length; i++) {
+    const t = res.pop()
+    res.unshift(deck[i], t)
   }
-  dfs(0)
-  return result.length ? '' + result[0] + result[1] + ':' + result[2] + result[3] : ''
+  return res
 }
 
 ;[
-  [1,2,3,4], // '23:41'
-  [5,5,5,5], // ''
-  [2,3,5,9], // '23:59'
-  [0,0,3,1], // '13:00'
-  [0,4,0,0], // '04:00'
-  [4,2,4,4], // ''
-  [2,0,6,6], // '06:26'
-].forEach((A) => {
-  console.log(largestTimeFromDigits(A))
+  [17,13,11,2,3,5,7],
+].forEach((deck) => {
+  console.log(deckRevealedIncreasing(deck))
 })
 
 // Solution:
-// 基本思路
-// 1. 用递归生成全排列
-// 2. 将合法的数组保存
-// 3. 将合法数组排序
-// 4. 返回最大的
-
-// 优化
-// 保存一个最大的数值与后面的比较即可，无需保存全部合法数组
-
-// 旧的想法
-// 前三个数有限制
-// 第一个 0-2
-// 当第一个为 0 或 1 时，第二个随意
-// 当第一个为 2 时，第二个为 0-3
-// 第三个 0-5
-// 第四个随意
-// 所以，从第一个选起，根据第一个选第二个，再选第三个，最后剩下的为第四个
-// 每选完一个，就判断一次
-
-// 因为在选数的时候，第一个优先选 2，导致后面的数无法组成时间。
-// 如 [2,0,6,6]
-const idea1 = function() {
-  function set(start, max) {
-    for (let val = max; val >= 0; val--) {
-      let i = -1
-      for (let j = start; j < 4 && i === -1; j++) if (A[j] === val) i = j
-      if (i > -1) {
-        A[i] = A[start]
-        A[start] = val
-        break
-      }
-    }
-  }
-
-  set(0, 2)
-  if (A[0] > 2) return ''
-  if (A[0] === 2) {
-    set(1, 3)
-    if (A[1] > 3) return ''
-  } else {
-    set(1, 9)
-  }
-  set(2, 5)
-  if (A[2] > 5) return ''
-  return '' + A[0] + A[1] + ':' + A[2] + A[3]
-}
+// 先从大到小排序。倒序操作：
+// 1. 先从 res 中取出最后一个值，插入到第一个位置；
+// 2. 取当前 deck 的最大值，插入到第一个位置。
 
 // Submission Result: Accepted
