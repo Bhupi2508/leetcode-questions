@@ -1,63 +1,76 @@
-// 1436. Destination City
-// Easy   79%
+// 1441. Build an Array With Stack Operations
+// Easy   69%
 
 
-// You are given the array paths, where paths[i] = [cityAi, cityBi] means there
-// exists a direct path going from cityAi to cityBi. Return the destination city,
-// that is, the city without any path outgoing to another city.
-// It is guaranteed that the graph of paths forms a line without any loop,
-// therefore, there will be exactly one destination city.
+// Given an array target and an integer n. In each iteration, you will read a
+// number from  list = {1,2,3..., n}.
+// Build the target array using the following operations:
+//     Push: Read a new element from the beginning list, and push it in the
+// array.
+//     Pop: delete the last element of the array.
+//     If the target array is already built, stop reading more elements.
+// You are guaranteed that the target array is strictly increasing, only
+// containing numbers between 1 to n inclusive.
+// Return the operations to build the target array.
+// You are guaranteed that the answer is unique.
 
 // Example 1:
-// Input: paths = [["London","New York"],["New York","Lima"],["Lima","Sao
-// Paulo"]]
-// Output: "Sao Paulo"
-// Explanation: Starting at "London" city you will reach "Sao Paulo" city which
-// is the destination city. Your trip consist of: "London" -> "New York" ->
-// "Lima" -> "Sao Paulo".
+// Input: target = [1,3], n = 3
+// Output: ["Push","Push","Pop","Push"]
+// Explanation:
+// Read number 1 and automatically push in the array -> [1]
+// Read number 2 and automatically push in the array then Pop it -> [1]
+// Read number 3 and automatically push in the array -> [1,3]
 // Example 2:
-// Input: paths = [["B","C"],["D","B"],["C","A"]]
-// Output: "A"
-// Explanation: All possible trips are:
-// "D" -> "B" -> "C" -> "A".
-// "B" -> "C" -> "A".
-// "C" -> "A".
-// "A".
-// Clearly the destination city is "A".
+// Input: target = [1,2,3], n = 3
+// Output: ["Push","Push","Push"]
 // Example 3:
-// Input: paths = [["A","Z"]]
-// Output: "Z"
+// Input: target = [1,2], n = 4
+// Output: ["Push","Push"]
+// Explanation: You only need to read the first 2 numbers and stop.
+// Example 4:
+// Input: target = [2,3,4], n = 4
+// Output: ["Push","Pop","Push","Push","Push"]
 
 // Constraints:
-//     1 <= paths.length <= 100
-//     paths[i].length == 2
-//     1 <= cityAi.length, cityBi.length <= 10
-//     cityAi != cityBi
-//     All strings consist of lowercase and uppercase English letters and the
-// space character.
+//     1 <= target.length <= 100
+//     1 <= target[i] <= 100
+//     1 <= n <= 100
+//     target is strictly increasing.
 
 
 /**
- * @param {string[][]} paths
- * @return {string}
+ * @param {number[]} target
+ * @param {number} n
+ * @return {string[]}
  */
-const destCity = function(paths) {
-  const map = {}
-  for (let p of paths) map[p[0]] = p[1]
-  let dest = paths[0][1]
-  while (map[dest]) dest = map[dest]
-  return dest
+const buildArray = function(target, n) {
+  const res = []
+  for (let i = 0, j = 1; j <= n; j++) {
+    if (target[i] === j) {
+      res.push('Push')
+      if (++i >= target.length) break
+    } else {
+      res.push('Push', 'Pop')
+    }
+  }
+  return res
 }
 
 ;[
-  [['London','New York'],['New York','Lima'],['Lima','Sao Paulo']],
-  [['B', 'C'],['D','B'],['C','A']],
-  [['A', 'Z']],
-].forEach((paths) => {
-  console.log(destCity(paths))
+  [[1,3], 3],
+  [[1,2,3], 3],
+  [[1,2], 4],
+  [[2,3,4], 4],
+  [[4,6,8], 12],
+].forEach(([target, n]) => {
+  console.log(buildArray(target, n))
 })
 
 // Solution:
-// 使用 hashMap 解决。
+// 遍历数字 1~n
+// 匹配 target[i] 时，使用 "Push"
+// 若不匹配 使用 "Push" + "Pop"
+// 当 i > target.length 后，结束
 
 // Submission Result: Accepted
