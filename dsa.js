@@ -1,55 +1,82 @@
-// 633. Sum of Square Numbers
-// Easy   32%
+// 637. Average of Levels in Binary Tree
+// Easy   55%
 
-
-// Given a non-negative integer c, your task is to decide whether there're two
-// integers a and b such that a^2 + b^2 = c.
+// Given a non-empty binary tree, return the average value of the nodes on each
+// level in the form of an array.
 
 // Example 1:
 
-// Input: 5
-// Output: True
-// Explanation: 1 * 1 + 2 * 2 = 5
+// Input:
+//     3
+//    / \
+//   9  20
+//     /  \
+//    15   7
+// Output: [3, 14.5, 11]
+// Explanation:
+// The average value of nodes on level 0 is 3,  on level 1 is 14.5, and on level
+// 2 is 11. Hence return [3, 14.5, 11].
 
-// Example 2:
+// Note:
 
-// Input: 3
-// Output: False
+// The range of node's value is in the range of 32-bit signed integer.
 
 
 /**
- * @param {number} c
- * @return {boolean}
+ * Definition for a binary tree node.
+ * function TreeNode(val) {
+ *   this.val = val;
+ *   this.left = this.right = null;
+ * }
  */
-const judgeSquareSum = function(c) {
-  const s = Math.floor(Math.sqrt(c / 2))
-  for (let i = 0; i <= s; i++) {
-    if (Number.isInteger(Math.sqrt(c - i * i))) return true
+
+/**
+ * @param {TreeNode} root
+ * @return {number[]}
+ */
+const averageOfLevels = function(root) {
+  if (root == null) return []
+  const result = []
+  const queue = [root]
+  while (queue.length) {
+    let sum = 0, l = queue.length
+    for (let i = l; i > 0; i--) {
+      const node = queue.shift()
+      sum += node.val
+      if (node.left) queue.push(node.left)
+      if (node.right) queue.push(node.right)
+    }
+    result.push(sum / l)
   }
-  return false
+  return result
 }
 
+
+const old = function(root) {
+  const result = []
+  function iter(root, i) {
+    if (root == null) return
+    if (!result[i]) result[i] = []
+    result[i].push(root.val)
+    iter(root.left, i + 1)
+    iter(root.right, i + 1)
+  }
+  iter(root, 0)
+  return result.map(arr => arr.reduce((sum, i) => sum + i) / arr.length)
+}
+
+const TreeNode = require('../structs/TreeNode')
 ;[
-  5,                            // true
-  3,                            // false
-  2,                            // true
-  32,                           // true
-].forEach(c => {
-  console.log(judgeSquareSum(c))
+  [3,9,20,null,null,15,7], // [3, 14.5, 11]
+].forEach((array) => {
+  console.log(averageOfLevels(TreeNode.from(array)))
 })
 
 // Solution:
-// 已知：非负整数 c, 满足 a^2 + b^2 = c，
-// 求：整数 a，b 是否存在
+// 层遍历？
+// 应该是吧，有个参数i，记录层数。
+// 代码看起来好像还不够优雅。
 
-// 因为 a^2 <= c
-// 所以 0 <= a <= sqrt(c) (b 同理)
-
-// 若假设 a <= b,
-// 则 a^2 <= (c / 2)
-// 则 0 <= a <= sqrt(c / 2)
-
-// 迭代 a 从 0 到 sqrt(c / 2)，计算 b = sqrt(c - a^2)，
-// 如果 b 为整数，则返回 true
+// 使用 先进先出列表 完成层遍历
 
 // Submission Result: Accepted
