@@ -1,53 +1,50 @@
 /**
- * Backtracking. Same idea as combination.
- * @param {string} digits
- * @return {string[]}
+ * Definition for binary tree
+ * function TreeNode(val) {
+ *     this.val = val;
+ *     this.left = this.right = null;
+ * }
  */
-var letterCombinations = function(digits) {
-    var result = [];
-    var results = [];
-    if (!digits || digits.length === 0) return results;
-    combinationHelper(digits, results, result);
-    return results;
+
+/**
+ * @constructor
+ * @param {TreeNode} root - root of the binary search tree
+ */
+// Is there a better solution?
+var BSTIterator = function(root) {
+    this.stack = [];
+    this.pushStack(root);
 };
 
-var map = {
-    "2": "abc",
-    "3": "def",
-    "4": "ghi",
-    "5": "jkl",
-    "6": "mno",
-    "7": "pqrs",
-    "8": "tuv",
-    "9": "wxyz",
-    "0": ""
+/**
+ * @this BSTIterator
+ * @returns {boolean} - whether we have a next smallest number
+ */
+BSTIterator.prototype.hasNext = function() {
+    return this.stack.length > 0 ? true : false;
 };
 
-var combinationHelper = function(digits, results, result) {
-    if (digits.length === 0) {
-        results.push(result.join(''));
-        return;
+/**
+ * @this BSTIterator
+ * @returns {number} - the next smallest number
+ */
+BSTIterator.prototype.next = function() {
+    var small = this.stack.pop();
+    if (small.right) {
+        this.pushStack(small.right);
     }
+    return small.val;
+};
 
-    var letters = map[digits.substring(0, 1)];
-    for (var i = 0; i < letters.length; i++) {
-        result.push(letters[i]);
-        combinationHelper(digits.substring(1), results, result);
-        result.pop();
+BSTIterator.prototype.pushStack = function(node) {
+    while (node) {
+        this.stack.push(node);
+        node = node.left;
     }
 };
 
-// second try
-var combinationHelper = function(digits, results, result) {
-    if (!digits) {
-        results.push(result.join(''));
-        result = [];
-        return;
-    }
-    var letters = map[digits[0]];
-    for (var j = 0; j < letters.length; j++) {
-        result.push(letters[j]);
-        combinationHelper(digits.substring(1), results, result);
-        result.pop();
-    }
-};
+/**
+ * Your BSTIterator will be called like this:
+ * var i = new BSTIterator(root), a = [];
+ * while (i.hasNext()) a.push(i.next());
+*/
