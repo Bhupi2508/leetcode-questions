@@ -1,70 +1,100 @@
-// 724. Find Pivot Index
-// Easy   42%
+// 725. Split Linked List in Parts
+// Medium   50%
 
 
-// Given an array of integers nums, write a method that returns the "pivot" index
-// of this array.
+// Given a (singly) linked list with head node root, write a function to split
+// the linked list into k consecutive linked list "parts".
 
-// We define the pivot index as the index where the sum of the numbers to the
-// left of the index is equal to the sum of the numbers to the right of the
-// index.
+// The length of each part should be as equal as possible: no two parts should
+// have a size differing by more than 1. This may lead to some parts being null.
 
-// If no such index exists, we should return -1. If there are multiple pivot
-// indexes, you should return the left-most pivot index.
+// The parts should be in order of occurrence in the input list, and parts
+// occurring earlier should always have a size greater than or equal parts
+// occurring later.
+
+// Return a List of ListNode's representing the linked list parts that are
+// formed.
+
+// Examples 1->2->3->4, k = 5 // 5 equal parts [ [1], [2], [3], [4], null ]
 
 // Example 1:
 
 // Input:
-// nums = [1, 7, 3, 6, 5, 6]
-// Output: 3
+// root = [1, 2, 3], k = 5
+// Output: [[1],[2],[3],[],[]]
 // Explanation:
-// The sum of the numbers to the left of index 3 (nums[3] = 6) is equal to the
-// sum of numbers to the right of index 3.
-// Also, 3 is the first index where this occurs.
+// The input and each element of the output are ListNodes, not arrays.
+
+// For example, the input root has root.val = 1, root.next.val = 2,
+// \root.next.next.val = 3, and root.next.next.next = null.
+// The first element output[0] has output[0].val = 1, output[0].next = null.
+// The last element output[4] is null, but it's string representation as a
+// ListNode is [].
 
 // Example 2:
 
 // Input:
-// nums = [1, 2, 3]
-// Output: -1
+// root = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], k = 3
+// Output: [[1, 2, 3, 4], [5, 6, 7], [8, 9, 10]]
 // Explanation:
-// There is no index that satisfies the conditions in the problem statement.
+
+// The input has been split into consecutive parts with size difference at most
+// 1, and earlier parts are a larger size than the later parts.
 
 // Note:
-
-// The length of nums will be in the range [0, 10000].
-// Each element nums[i] will be an integer in the range [-1000, 1000].
-
+// The length of root will be in the range [0, 1000].
+// Each value of a node in the input will be an integer in the range [0, 999].
+// k will be an integer in the range [1, 50].
 
 /**
- * @param {number[]} nums
- * @return {number}
+ * Definition for singly-linked list.
+ * function ListNode(val) {
+ *     this.val = val;
+ *     this.next = null;
+ * }
  */
-const pivotIndex = function(nums) {
-  const n = nums.length
-  let left = 0, right = 0
-  for (let i = 0; i < n; i++) right += nums[i]
-  for (let i = 0; i < n; i++) {
-    right -= nums[i]
-    if (left === right) return i
-    left += nums[i]
+
+/**
+ * @param {ListNode} root
+ * @param {number} k
+ * @return {ListNode[]}
+ */
+const splitListToParts = function(root, k) {
+  const result = Array(k)
+  function iter(node, i) {
+    if (node.next == null) {
+      if (k > i) k = i
+      return Math.floor(i / k)
+    }
+    const number = iter(node.next, i + 1)
+    if (number === 1) {
+      result[--k] = node.next
+      node.next = null
+      return Math.floor(i / k)
+    }
+    return number - 1
   }
-  return -1
+
+  if (root) iter(root, 1)
+  result[0] = root
+  return result
 }
 
+const ListNode = require('../structs/ListNode')
 ;[
-  [1,7,3,6,5,6],                // 3
-  [1,2,3],                      // -1
-].forEach(nums => {
-  console.log(pivotIndex(nums))
+  [[1,2,3], 5],
+  [[1,2,3,4,5,6,7,8,9,10,11], 3],
+].forEach(([array, k]) => {
+  const list = ListNode.from(array)
+  splitListToParts(list, k).forEach(h => console.log((h || '').toString()))
 })
 
 // Solution:
-// left 和 right 变量分别保存左右的和。
-// 从第一个元素开始遍历。
-// left 初始化为0，right初始化为整个数组的和。
-// 每遍历一个元素，先从right中减去该元素，再判断right和left是否相等，再将该元素
-// 加到left中，为下一次比较做准备。
-
+// 为数组分配k个空间。
+// 通过递归，获得当前数的为链表中第几个节点（即i）。
+// 当递归到最后一个节点时，若节点数小于k，则将k设置为i，并返回数组下标为k-1的应
+// 该保存的链表的长度。
+// 该长度不断减小，直到长度为1时，将该节点之后的链表保存在下标 k-1 的位置中。
+// 并且更新k，和返回上一个位置应该保存的链表的长度。
 
 // Submission Result: Accepted
