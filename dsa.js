@@ -1,58 +1,44 @@
 /**
- * Key: Traverse from left to right, increase rowStart, means this top row has been visited.
- * Traverse from up to down, decrease colEnd, means this right column has been visited.
- * Traverse from right to left, decrease rowEnd, means this bottom row has been visited.
- * Traverse from down to up, increase colStart, means this left column has been visited.
- * if one row/column left, no circle can be formed, so
- * when the rowStart === rowEnd, there is only this row left to visit, (left -> right)
- * when the colStart === colEnd, there is only this column left to visit, (up -> down)
+ * Key: one scenario return false, is when you meet 0 and the max move can't reach to the end.
+ * becaue no moves can be made when the element is 0.
  *
- * @param {number[][]} matrix
- * @return {number[]}
+ * @param {number[]} nums
+ * @return {boolean}
  */
-var spiralOrder = function(matrix) {
-    if (matrix.length === 0) return matrix;
-    var rowStart = 0;
-    var colStart = 0;
-    var rowEnd = matrix.length - 1;
-    var colEnd = matrix[rowStart].length - 1;
-    var path = [];
-
-    while (rowStart <= rowEnd && colStart <= colEnd) {
-        if (rowStart === rowEnd) {
-            for (var i = colStart; i <= colEnd; i++) {
-                path.push(matrix[rowStart][i]);
-            }
-            break;
-        }
-
-        if (colStart === colEnd) {
-            for (var i = rowStart; i <= rowEnd; i++) {
-                path.push(matrix[i][colEnd]);
-            }
-            break;
-        }
-
-        for (var i = colStart; i <= colEnd; i++) {
-            path.push(matrix[rowStart][i]);
-        }
-        rowStart++;
-
-        for (var i = rowStart; i <= rowEnd; i++) {
-            path.push(matrix[i][colEnd]);
-        }
-        colEnd--;
-
-        for (var i = colEnd; i >= colStart; i--) {
-            path.push(matrix[rowEnd][i]);
-        }
-        rowEnd--;
-
-        for (var i = rowEnd; i >= rowStart; i--) {
-            path.push(matrix[i][colStart]);
-        }
-        colStart++;
+var canJump = function(nums) {
+    var max = 0;
+    for (var i = 0; i < nums.length; i++) {
+        if (i > max) return false;
+        max = Math.max(max, i + nums[i]);
     }
 
-    return path;
+    return true;
 };
+
+// second try, not good
+var canJump = function(nums) {
+    if (nums.length === 1) return true;
+    var maxJump = 0;
+    for (var i = 0; i < nums.length; i++) {
+        maxJump = Math.max(maxJump, nums[i] + i);
+        if (maxJump === i) return false;
+        if (maxJump >= nums.length - 1) return true;
+    }
+
+    return false;
+};
+
+var canJump = function(nums) {
+  if (nums.length < 1) return true;
+  var maxNextJump = nums[0];
+
+  for (var i = 1; i < nums.length; i++) {
+    // jumped one step
+    maxNextJump--;
+    if (maxNextJump < 0) return false;
+    // if steps at positin i is larger than maxNextJump, then nums[i] is the next jump steps.
+    if (maxNextJump < nums[i]) maxNextJump = nums[i];
+  }
+
+  return true;
+}
