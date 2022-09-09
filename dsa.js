@@ -1,85 +1,86 @@
-// 993. Cousins in Binary Tree
-// Easy   52%
+// 994. Rotting Oranges
+// Easy   47%
 
 
-// In a binary tree, the root node is at depth 0, and children of each depth k
-// node are at depth k+1.
-// Two nodes of a binary tree are cousins if they have the same depth, but have
-// different parents.
-// We are given the root of a binary tree with unique values, and the values x
-// and y of two different nodes in the tree.
-// Return true if and only if the nodes corresponding to the values x and y are
-// cousins.
+// In a given grid, each cell can have one of three values:
+//     the value 0 representing an empty cell;
+//     the value 1 representing a fresh orange;
+//     the value 2 representing a rotten orange.
+// Every minute, any fresh orange that is adjacent (4-directionally) to a rotten
+// orange becomes rotten.
+// Return the minimum number of minutes that must elapse until no cell has a
+// fresh orange.  If this is impossible, return -1 instead.
 
 // Example 1:
-// Input: root = [1,2,3,4], x = 4, y = 3
-// Output: false
+// Input: [[2,1,1],[1,1,0],[0,1,1]]
+// Output: 4
 // Example 2:
-// Input: root = [1,2,3,null,4,null,5], x = 5, y = 4
-// Output: true
+// Input: [[2,1,1],[0,1,1],[1,0,1]]
+// Output: -1
+// Explanation:  The orange in the bottom left corner (row 2, column 0) is never
+// rotten, because rotting only happens 4-directionally.
 // Example 3:
-// Input: root = [1,2,3,null,4], x = 2,  y = 3
-// Output: false
+// Input: [[0,2]]
+// Output: 0
+// Explanation:  Since there are already no fresh oranges at minute 0, the answer
+// is just 0.
 
 // Note:
-//     The number of nodes in the tree will be between 2 and 100.
-//     Each node has a unique integer value from 1 to 100.
-
+//     1 <= grid.length <= 10
+//     1 <= grid[0].length <= 10
+//     grid[i][j] is only 0, 1, or 2.
 
 
 /**
- * Definition for a binary tree node.
- * function TreeNode(val) {
- *   this.val = val;
- *   this.left = this.right = null;
- * }
+ * @param {number[][]} grid
+ * @return {number}
  */
-
-/**
- * @param {TreeNode} root
- * @param {number} x
- * @param {number} y
- * @return {boolean}
- */
-const isCousins = function(root, x, y) {
-  const queue = [root]
+const orangesRotting = function(grid) {
   let count = 0
-  while (queue.length > 0 && count === 0) {
-    for (let i = 0, l = queue.length; i < l; i++) {
-      const node = queue.shift()
-      if (node.val === x || node.val === y) count++
-      if (node.left && node.right) {
-        if (node.left.val === x && node.right.val === y) return false
-        if (node.left.val === y && node.right.val === x) return false
-      }
-      if (node.left) queue.push(node.left)
-      if (node.right) queue.push(node.right)
+  let queue = []
+  for (let i = 0; i < grid.length; i++) {
+    for (let j = 0; j < grid[i].length; j++) {
+      if (grid[i][j] === 1) count++
+      if (grid[i][j] === 2) queue.push([i, j])
     }
   }
-  return count === 2
+  function rot(i, j) {
+    if (i >= 0 && j >=0 && i < grid.length && j < grid[0].length && grid[i][j] === 1) {
+      grid[i][j] = 2
+      count--
+      queue.push([i, j])
+    }
+  }
+  let minute = 0
+  while (queue.length > 0) {
+    let len = queue.length
+    while (len-- > 0) {
+      const cell = queue.shift()
+      rot(cell[0] - 1, cell[1])
+      rot(cell[0] + 1, cell[1])
+      rot(cell[0], cell[1] - 1)
+      rot(cell[0], cell[1] + 1)
+    }
+    if (queue.length > 0) minute++
+  }
+  return count === 0 ? minute : -1
 }
 
-const TreeNode = require('../structs/TreeNode')
 ;[
-  [[1,2,3,4], 4, 3], // false
-  [[1,2,3,null,4,null,5], 5, 4], // true
-  [[1,2,3,null,4], 2, 3], // false
-  [[1,2,3,4,null,5,null,6,7,8,9], 6, 8], // true
-  [[1,2,5,3,null,null,6,4], 3, 6], //true
-].forEach(([array, x, y]) => {
-  const root = TreeNode.from(array)
-  console.log(isCousins(root, x, y))
+  [[2,1,1],[1,1,0],[0,1,1]], // 4
+  [[2,1,1],[0,1,1],[1,0,1]], // -1
+  [[0,2]],                   // 0
+  [[2,1,1],[1,1,1],[1,1,2]], // 2
+  [[0]],                     // 0
+].forEach((grid) => {
+  console.log(orangesRotting(grid))
 })
 
 // Solution:
-// 使用 BFS 进行层级遍历，可以判断两个节点是否是在同一个深度的。
+// BFS
+// 找出所有 2，添加到先进先出队列中，使用广度遍历所有 2 的四周，将遍历过的 1 变为 2，
+// 记录遍历的次数
+// 找出所有 1，记录个数，用于判断是否能将所有 1 变为 2
 
-// 关键在于如何判断两个节点是否有同一父节点
-
-// 方法 1 （比较笨）是两个两个节点遍历（包括空节点）
-// 这需要在遍历一个节点时，若节点不为空则同时添加其两个子节点到 queue 中（包括空子节点),
-// 遍历时，找到了 x 或 y，且为左节点，则直接跳过右节点
-
-// 方法2 直接在父节点判断
 
 // Submission Result: Accepted
