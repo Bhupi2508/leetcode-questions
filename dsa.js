@@ -1,57 +1,71 @@
-// 1025. Divisor Game
-// Easy   66%
+// 1029. Two City Scheduling
+// Easy   55%
 
-
-// Alice and Bob take turns playing a game, with Alice starting first.
-// Initially, there is a number N on the chalkboard.  On each player's turn, that
-// player makes a move consisting of:
-//     Choosing any x with 0 < x < N and N % x == 0.
-//     Replacing the number N on the chalkboard with N - x.
-// Also, if a player cannot make a move, they lose the game.
-// Return True if and only if Alice wins the game, assuming both players play
-// optimally.
+// There are 2N people a company is planning to interview. The cost of flying the
+// i-th person to city A is costs[i][0], and the cost of flying the i-th person
+// to city B is costs[i][1].
+// Return the minimum cost to fly every person to a city such that exactly N
+// people arrive in each city.
 
 // Example 1:
-// Input: 2
-// Output: true
-// Explanation: Alice chooses 1, and Bob has no more moves.
-// Example 2:
-// Input: 3
-// Output: false
-// Explanation: Alice chooses 1, Bob chooses 1, and Alice has no more moves.
+// Input: [[10,20],[30,200],[400,50],[30,20]]
+// Output: 110
+// Explanation:
+// The first person goes to city A for a cost of 10.
+// The second person goes to city A for a cost of 30.
+// The third person goes to city B for a cost of 50.
+// The fourth person goes to city B for a cost of 20.
+// The total minimum cost is 10 + 30 + 50 + 20 = 110 to have half the people
+// interviewing in each city.
 
 // Note:
-//     1 <= N <= 1000
-
+//     1 <= costs.length <= 100
+//     It is guaranteed that costs.length is even.
+//     1 <= costs[i][0], costs[i][1] <= 1000
 
 /**
- * @param {number} N
- * @return {boolean}
+ * @param {number[][]} costs
+ * @return {number}
  */
-const divisorGame = function(N) {
-  return N % 2 === 0
+const twoCitySchedCost = function(costs) {
+  costs.sort((a, b) => a[0] - a[1] - (b[0] - b[1]))
+  let min = 0
+  for (let i = 0, l = costs.length; i < l; i++) {
+    min += costs[i][i < l / 2 ? 0 : 1]
+  }
+  return min
 }
 
 ;[
-  2,  // true
-  3,  // false
-].forEach((N) => {
-  console.log(divisorGame(N))
+  [
+    [10, 20],
+    [30, 200],
+    [400, 50],
+    [30, 20],
+  ], // 110
+  [
+    [1, 10],
+    [2, 20],
+  ], // 12
+  [
+    [1, 10],
+    [2, 20],
+    [3, 30],
+    [4, 5],
+  ], // 10 + 2 + 3 + 5 = 20
+].forEach(costs => {
+  console.log(twoCitySchedCost(costs))
 })
 
 // Solution:
-// 方法1
-// 因为每个人决策最优
-// 因此使用递归的算法
-// 假设当前轮到 Alice
-// 在找出所有的因数后，选择使得 N 变为 N - x 后 Bob 如何选都会输的 x
-// 若没有这样的 x，则 Alice 必输
+// 方法1：
+// 使用 countA,countB 来记录到两个城市的人数
+// 按费用差，从大到小排序，遍历时去费用小的城市，直到某个城市的人到达一半
+// TO(nlogn)-SO(n)
 
-// 方法2
-// 通过从1到比较小的数的依次推算，发现：
-// 1) 奇数，Alice 必输
-// 2) 偶数，必赢
-
-// 使用归纳法可以证明
+// 方法2：（1的改进）
+// 按 costs[i][0] - costs[i][1] 从小到大排序
+// 前一半人去城市a, 后一半去城市b
+// TO(nlogn)-SO(n)
 
 // Submission Result: Accepted
