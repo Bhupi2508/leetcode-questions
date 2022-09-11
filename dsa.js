@@ -1,44 +1,60 @@
-// 198. House Robber
-// Easy   39%
+// 202. Happy Number
+// Easy   40%
 
 
-// You are a professional robber planning to rob houses along a street. Each
-// house has a certain amount of money stashed, the only constraint stopping you
-// from robbing each of them is that adjacent houses have security system
-// connected and it will automatically contact the police if two adjacent houses
-// were broken into on the same night.
+// Write an algorithm to determine if a number is "happy".
 
-// Given a list of non-negative integers representing the amount of money of each
-// house, determine the maximum amount of money you can rob tonight without
-// alerting the police.
+// A happy number is a number defined by the following process: Starting with any
+// positive integer, replace the number by the sum of the squares of its digits,
+// and repeat the process until the number equals 1 (where it will stay), or it
+// loops endlessly in a cycle which does not include 1. Those numbers for which
+// this process ends in 1 are happy numbers.
 
-// Credits:Special thanks to @ifanchu for adding this problem and creating all
-// test cases. Also thanks to @ts for adding additional test cases.
+// Example: 19 is a happy number
+
+// 1^2 + 9^2 = 82
+// 8^2 + 2^2 = 68
+// 6^2 + 8^2 = 100
+// 1^2 + 0^2 + 0^2 = 1
+
+// Credits:Special thanks to @mithmatt and @ts for adding this problem and
+// creating all test cases.
 
 
 /**
- * @param {number[]} nums
- * @return {number}
+ * @param {number} n
+ * @return {boolean}
  */
-const rob = function(nums) {
-  const n = nums.length
-  for (let i = 2; i < n; i++) {
-    nums[i] += Math.max(nums[i - 2], (nums[i - 3] || 0))
+const isHappy = function(n) {
+  const hash = {}
+
+  while (hash[n] == null) {
+    hash[n] = true
+
+    let sum = 0
+    while (n > 0) {
+      sum += Math.pow(n % 10, 2)
+      n = Math.trunc(n / 10)
+    }
+    if (sum === 1) return true
+
+    n = sum
   }
-  return n ? Math.max(nums[n - 1], (nums[n - 2] || 0)) : 0
+
+  return false
 }
 
 ;[
-  [5,4,3,2,1,4,2,4],            // 16
-  [1,7,9,4],                    // 11
-  [],                           // 0
-  [0],                          // 0
-].forEach(nums => {
-  console.log(rob(nums))
+  19,                           // true
+  7,                            // true
+  2,                            // false
+].forEach(n => {
+  console.log(isHappy(n))
 })
 
+
 // Solution:
-// 利用累积法。
-// 每到一个房子i，就加上（i - 2) 和 (i - 3) 中累积的最大的那个作为当前最大收益。
+// 用哈希保存出现过的数字，若再次出现则会循环，返回 false
+// 否则继续计算，直达算出 1 。
 
 // Submission Result: Accepted
