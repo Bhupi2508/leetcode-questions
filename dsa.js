@@ -1,71 +1,71 @@
-// 661. Image Smoother
-// Easy 45% locked:false
+// 665. Non-decreasing Array
+// Easy 21% locked:false
 
 
-// Given a 2D integer matrix M representing the gray scale of an image, you need
-// to design a smoother to make the gray scale of each cell becomes the average
-// gray scale (rounding down) of all the 8 surrounding cells and itself.  If a
-// cell has less than 8 surrounding cells, then use as many as you can.
+// Given an array with n integers, your task is to check if it could become
+// non-decreasing by modifying at most 1 element.
+
+// We define an array is non-decreasing if array[i] <= array[i + 1] holds for
+// every i (1 <= i < n).
 
 // Example 1:
 
-// Input:
-// [[1,1,1],
-//  [1,0,1],
-//  [1,1,1]]
-// Output:
-// [[0, 0, 0],
-//  [0, 0, 0],
-//  [0, 0, 0]]
-// Explanation:
-// For the point (0,0), (0,2), (2,0), (2,2): floor(3/4) = floor(0.75) = 0
-// For the point (0,1), (1,0), (1,2), (2,1): floor(5/6) = floor(0.83333333) = 0
-// For the point (1,1): floor(8/9) = floor(0.88888889) = 0
+// Input: [4,2,3]
+// Output: True
+// Explanation: You could modify the first 4 to 1 to get a non-decreasing array.
+
+// Example 2:
+
+// Input: [4,2,1]
+// Output: False
+// Explanation: You can't get a non-decreasing array by modify at most one
+// element.
 
 // Note:
-
-// The value in the given matrix is in the range of [0, 255].
-// The length and width of the given matrix are in the range of [1, 150].
+// The n belongs to [1, 10,000].
 
 
 /**
- * @param {number[][]} M
- * @return {number[][]}
+ * @param {number[]} nums
+ * @return {boolean}
  */
-const imageSmoother = function(M) {
-  if (M.length === 0 || M[0].length === 0) return [[]]
-
-  function smoother(a, b) {
-    let sum = 0, count = 0
-    for (let i = a - 1; i <= a + 1; i++) {
-      for (let j = b - 1; j <= b + 1; j++) {
-        if (M[i] && M[i][j] != void 0) {
-          sum += M[i][j]
-          count++
-        }
-      }
-    }
-    return Math.floor(sum / count)
-  }
-
-  const r = M.length, c = M[0].length, result = Array(r)
-  for (let i = 0; i < r; i++) {
-    result[i] = []
-    for (let j = 0; j < c; j++) {
-      result[i][j] = smoother(i, j)
+const checkPossibility = function(nums) {
+  for (let end = nums.length - 1, i = 0, first = true; i < end; i++) {
+    if (nums[i] > nums[i + 1]) {
+      if (!first) return false
+      if ((nums[i - 1] || -Infinity) > nums[i + 1] &&
+          nums[i] > (nums[i + 2] || Infinity)) return false
+      first = false
     }
   }
-
-  return result
+  return true
 }
 
 ;[
-  [[1,1,1],[1,0,1],[1,1,1]]
-].forEach((m) => {
-  console.log(imageSmoother(m))
+  [],                           // true
+  [-1],                         // true
+  [4, 2, 3],                    // true
+  [4, 2, 1],                    // false
+  [2, 3, 4, 3, 4],              // true
+  [2, 3, 4, 2, 3],              // false
+  [2, 3, 3, 2, 4],              // true
+].forEach((nums) => {
+  console.log(checkPossibility(nums))
 })
 
 // Solution:
-// 似乎没有什么技巧。
+
+// 迭代一次。
+// 变量 first 保证最多只改变一次。
+// 若过程中，没有减小，则检查通过。
+// 否则，第一次遇到减小的值时，判断是否能将改成合适的值（只关心能不能改成，而不
+// 关心改成什么值），能则继续，否则返回 false。
+
+// 关键在于判断能否改成合适的值
+// 只有以下两种情况能改成：
+// 1. nums[i-1] <= nums[i+1]
+//    这种情况 nums[i] 只要改成满足 nums[i-1] <= nums[i] <= nums[i+1] 即可
+// 2. nums[i] <= nums[i+2]
+//    这种情况 nums[i+1] 只要改成满足 nums[i] <= nums[i+1] <= nums[i+2] 即可
 
 // Submission Result: Accepted
