@@ -1,52 +1,67 @@
-// 404. Sum of Left Leaves
-// Easy   47%
+// 405. Convert a Number to Hexadecimal
+// Easy   41%
 
 
-// Find the sum of all left leaves in a given binary tree.
+// Given an integer, write an algorithm to convert it to hexadecimal. For
+// negative integer, two’s complement method is used.
 
-// Example:
+// Note:
 
-//     3
-//    / \
-//   9  20
-//     /  \
-//    15   7
+// All letters in hexadecimal (a-f) must be in lowercase.
+// The hexadecimal string must not contain extra leading 0s. If the number is
+// zero, it is represented by a single zero character '0'; otherwise, the first
+// character in the hexadecimal string will not be the zero character.
+// The given number is guaranteed to fit within the range of a 32-bit signed
+// integer.
+// You must not use any method provided by the library which converts/formats the
+// number to hex directly.
 
-// There are two left leaves in the binary tree, with values 9 and 15
-// respectively. Return 24.
+// Example 1:
+
+// Input:
+// 26
+
+// Output:
+// "1a"
+
+// Example 2:
+
+// Input:
+// -1
+
+// Output:
+// "ffffffff"
 
 
 /**
- * Definition for a binary tree node.
- * function TreeNode(val) {
- *   this.val = val;
- *   this.left = this.right = null;
- * }
+ * @param {number} num
+ * @return {string}
  */
-
-/**
- * @param {TreeNode} root
- * @return {number}
- */
-const sumOfLeftLeaves = function(root) {
-  function iter(root, isLeft) {
-    if (root == null) return 0
-    if (isLeft && !root.left && !root.right) return root.val
-    return iter(root.left, true) + iter(root.right, false)
+const toHex = function(num) {
+  const c = '0123456789abcdef'
+  let n = num < 0 ? num + 0xffffffff + 1 : num,
+      result = ''
+  while (n > 0) {
+    result = c[n % 16] + result
+    n = n >>> 4
   }
-  return iter(root, false)
+  return result === '' ? '0' : result
 }
 
-const TreeNode = require('../structs/TreeNode')
 ;[
-  [3,9,20,null,null,15,7], // 24
-].forEach((array) => {
-  console.log(sumOfLeftLeaves(TreeNode.from(array)))
+  26,                           // '1a'
+  -1,                           // 'ffffffff'
+  -2,                           // 'fffffffe'
+  -268435455,                   // 'f0000001'
+].forEach(num => {
+  console.log(toHex(num))
 })
 
 // Solution:
-// 在遍历过程中加上一个是否为左子节点的标记。
-// 如果是左子节点，且是叶子节点，则返回该节点的值。
-// 否则返回子节点遍历到的左叶子节点的值的总和。
+// 难点在于负数的处理。
+// 对于负数，要取其补码，即反码加一。
+// 因为是 32 位整数，而 JS 的数字是 64 多精度浮点数。
+// 因此，让 负数 加上 0xffffffff 获得 反码，再加一。
+
 
 // Submission Result: Accepted
