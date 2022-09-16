@@ -1,65 +1,48 @@
-// 34. Search for a Range
-// Medium   31%
+// 35. Search Insert Position
+// Easy   39%
 
-// Given an array of integers sorted in ascending order, find the starting and
-// ending position of a given target value.
+// Given a sorted array and a target value, return the index if the target is
+// found. If not, return the index where it would be if it were inserted in
+// order.
 
-// Your algorithm's runtime complexity must be in the order of O(log n).
+// You may assume no duplicates in the array.
 
-// If the target is not found in the array, return [-1, -1].
-
-// For example,
-// Given [5, 7, 7, 8, 8, 10] and target value 8,
-// return [3, 4].
+// Here are few examples.
+// [1,3,5,6], 5 → 2
+// [1,3,5,6], 2 → 1
+// [1,3,5,6], 7 → 4
+// [1,3,5,6], 0 → 0
 
 /**
  * @param {number[]} nums
  * @param {number} target
- * @return {number[]}
+ * @return {number}
  */
-const searchRange = function(nums, target) {
-  const n = nums.length, result = [-1, -1]
-  let i = 0, j = n - 1
-  while (i < j) {
+const searchInsert = function(nums, target) {
+  let i = 0, j = nums.length - 1
+  while (i <= j) {
     const mid = (i + j) >> 1
-    if (nums[mid] < target) i = mid + 1
-    else j = mid
+    if (target < nums[mid]) j = mid - 1
+    else if (target > nums[mid]) i = mid + 1
+    else return mid
   }
-  if (nums[i] !== target) return result
-
-  result[0] = i
-  j = n - 1
-  while (i < j) {
-    const mid = ((i + j) >> 1) + 1
-    if (nums[mid] > target) j = mid - 1
-    else i = mid
-  }
-  result[1] = j
-  return result
+  return (i + j + 1) >> 1
 }
 
 ;[
-  [[5, 7, 7, 8, 8, 10], 8],     // [3, 4]
-  [[5, 7, 7, 8, 8, 10], 9],     // [-1, -1]
+  [[1,3,5,6], 5],               // 2
+  [[1,3,5,6], 2],               // 1
+  [[1,3,5,6], 7],               // 4
+  [[1,3,5,6], 0],               // 0
 ].forEach(args => {
-  console.log(searchRange(...args))
+  console.log(searchInsert(...args))
 })
 
 // Solution:
-// 使用两次二分查找法，分别找出左位置和右位置。
+// 二分查找法
+// 若找到相同的数，则插入该位置（如题意)
+// 若未找到，则插入最后查找到的位置上。
 
-// 找最左位置：
-// 每次检查中位数。
-// 若小于则从其右边一位开始再找；
-// 若大于或等于，则从该位及其左边的开始再找；
-// 直到左右边界相等。
-// 因为要找最左的目标数，找到等于时还不能结束，
-// 左边可能还存在目标数，所以等于时还要继续找。
-// 第一次找到目标数后，其右边界就必然一直都会是目标数
-// 左边界会一直排除非目标数，当左右边界重合时，其位置就是最左的
-
-// 找最右位置：
-// 其左边界从前面找到的最左位置开始，因为前面的都没有必要再看了。
-// 其余与找最左位置类似。
+// 关键在于编码的细节上。
 
 // Submission Result: Accepted
