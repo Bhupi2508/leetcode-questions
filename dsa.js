@@ -1,80 +1,46 @@
-// 65. Valid Number
-// Hard 12% locked:false
+// 66. Plus One
+// Easy   38%
 
-// Validate if a given string is numeric.
+// Given a non-negative integer represented as a non-empty array of digits, plus
+// one to the integer.
 
-// Some examples:
-// "0" => true
-// " 0.1 " => true
-// "abc" => false
-// "1 a" => false
-// "2e10" => true
+// You may assume the integer do not contain any leading zero, except the number
+// 0 itself.
 
-// Note: It is intended for the problem statement to be ambiguous. You should
-// gather all requirements up front before implementing one.
-
-// Update (2015-02-10):
-
-// The signature of the C++ function had been updated. If you still see your
-// function signature accepts a const char * argument, please click the reload
-// button to reset your code definition.
-
-// '' => false
-// ' ' => false
-// ' 1' => true
-// '1   ' => true
-// ' 1 2' => false
-
-// '.12' => true
-// '123.' => true
-// '.' => false
-
-// e or E
-// '1.2e-22' => true
-// '1e1.2' => false
-// '1e2e12' => false
-// '3e' => false
-// 'e3' => false
+// The digits are stored such that the most significant digit is at the head of
+// the list.
 
 /**
- * @param {string} s
- * @return {boolean}
+ * @param {number[]} digits
+ * @return {number[]}
  */
-const isNumber = function(s) {
-  if (s === void 0 || s === null || s.length === 0) return false
-
-  const matchSpace = (i) => {
-    while (s[i] === ' ') i++
-    return i
+const plusOne = function(digits) {
+  for (let i = digits.length - 1; i >= 0; i--) {
+    if (digits[i] < 9) {
+      digits[i]++
+      return digits
+    }
+    digits[i] = 0
   }
-
-  const isDigit = (c) => c !== ' ' && !Number.isNaN(c - '0')
-  const matchInt = (i, sign) => {
-    if (sign && (s[i] === '+' || s[i] === '-')) i++
-    while (isDigit(s[i])) i++
-    return i
-  }
-
-  const n = s.length
-  let i = 0
-  i = matchSpace(i)
-  if (i === n) return false
-
-  let least = false
-  i = matchInt(i, true)
-  if (isDigit(s[i - 1])) least = true
-
-  if (s[i] === '.') {
-    i = matchInt(i + 1, false)
-    if (isDigit(s[i - 1])) least = true
-  }
-  if (least === false) return false
-
-  if (s[i] === 'e') {
-    i = matchInt(i + 1, true)
-    if (!isDigit(s[i - 1])) return false
-  }
-
-  i = matchSpace(i)
-  return i === n
+  digits[0] = 1
+  digits.push(0)
+  return digits
 }
+
+;[
+  [0],                          // [1]
+  [8, 9, 9],                    // [9, 0, 0]
+  [9, 9, 9],                    // [1, 0, 0, 0]
+].forEach(digits => {
+  console.log(plusOne(digits))
+})
+
+// Solution:
+// 从后向前开始检查数组，
+// 若数不为9，则该数加1，并返回数组；
+// 若数为9，则把该数改为0，继续向前检查。
+
+// 直到检查完整个数组，若都为9，则将第一个数改为1，并在数组的最后添加一个0。
+// （因为要保留数组开始的指针）
+
+// Submission Result: Accepted
