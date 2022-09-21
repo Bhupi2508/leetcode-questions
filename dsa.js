@@ -1,67 +1,53 @@
-// 405. Convert a Number to Hexadecimal
-// Easy   41%
+// 406. Queue Reconstruction by Height
+// Medium   55%
 
 
-// Given an integer, write an algorithm to convert it to hexadecimal. For
-// negative integer, two’s complement method is used.
+// Suppose you have a random list of people standing in a queue. Each person is
+// described by a pair of integers (h, k), where h is the height of the person
+// and k is the number of people in front of this person who have a height
+// greater than or equal to h. Write an algorithm to reconstruct the queue.
 
 // Note:
+// The number of people is less than 1,100.
 
-// All letters in hexadecimal (a-f) must be in lowercase.
-// The hexadecimal string must not contain extra leading 0s. If the number is
-// zero, it is represented by a single zero character '0'; otherwise, the first
-// character in the hexadecimal string will not be the zero character.
-// The given number is guaranteed to fit within the range of a 32-bit signed
-// integer.
-// You must not use any method provided by the library which converts/formats the
-// number to hex directly.
-
-// Example 1:
+// Example
 
 // Input:
-// 26
+// [[7,0], [4,4], [7,1], [5,0], [6,1], [5,2]]
 
 // Output:
-// "1a"
-
-// Example 2:
-
-// Input:
-// -1
-
-// Output:
-// "ffffffff"
+// [[5,0], [7,0], [5,2], [6,1], [4,4], [7,1]]
 
 
 /**
- * @param {number} num
- * @return {string}
+ * @param {number[][]} people
+ * @return {number[][]}
  */
-const toHex = function(num) {
-  const c = '0123456789abcdef'
-  let n = num < 0 ? num + 0xffffffff + 1 : num,
-      result = ''
-  while (n > 0) {
-    result = c[n % 16] + result
-    n = n >>> 4
-  }
-  return result === '' ? '0' : result
+const reconstructQueue = function(people) {
+  people.sort((a, b) => a[0] === b[0] ? a[1] - b[1] : b[0] - a[0])
+  const queue = []
+  for (let p of people) queue.splice(p[1], 0, p)
+  return queue
 }
 
 ;[
-  26,                           // '1a'
-  -1,                           // 'ffffffff'
-  -2,                           // 'fffffffe'
-  -268435455,                   // 'f0000001'
-].forEach(num => {
-  console.log(toHex(num))
+  [[7,0], [4,4], [7,1], [5,0], [6,1], [5,2]],
+].forEach(people => {
+  console.log(reconstructQueue(people))
 })
 
 // Solution:
-// 难点在于负数的处理。
-// 对于负数，要取其补码，即反码加一。
-// 因为是 32 位整数，而 JS 的数字是 64 多精度浮点数。
-// 因此，让 负数 加上 0xffffffff 获得 反码，再加一。
+// 1. 排序
+// 按h降序排序，若h相同则k升序排序
+// 如 [[7,0], [4,4], [7,1], [5,0], [6,1], [5,2]] 排序后为
+//    [[7,0], [7,1], [6,1], [5,0], [5,2], [4,4], ]
 
+// 2. 初始化一个新数组，将排序后的数组从第一个开始插入到新数组中。
+// 插入的位置为每个元素的第二个值。
+// 若新数组中该位置已存在有元素，则占用该位置，原来的元素及之后的全部元素向后移
+// 动一位。
+
+// 排好序后的数组中，每个元素的h都高于或等于其后的元素，且k小于h相同时的元素。
+// h越大就越先被插入到新数组中，也就越是会被k相同而h小的元素占用。
 
 // Submission Result: Accepted
