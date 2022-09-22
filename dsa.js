@@ -1,10 +1,11 @@
-// 126. Word Ladder II
-// Hard 14% locked:false
+// 127. Word Ladder
+// Medium 19% locked:false
 
 // Given two words (beginWord and endWord), and a dictionary's word list, find
-// all shortest transformation sequence(s) from beginWord to endWord, such that:
+// the length of shortest transformation sequence from beginWord to endWord,
+// such that:
 
-// 1. Only one letter can be changed at a time
+// 1. Only one letter can be changed at a time.
 // 2. Each transformed word must exist in the word list. Note that beginWord is
 //    not a transformed word.
 
@@ -15,14 +16,12 @@
 // endWord = "cog"
 // wordList = ["hot","dot","dog","lot","log","cog"]
 
-// Return
-//   [
-//     ["hit","hot","dot","dog","cog"],
-//     ["hit","hot","lot","log","cog"]
-//   ]
+// As one shortest transformation is "hit" -> "hot" -> "dot" -> "dog" -> "cog",
+// return its length 5.
 
 // Note:
-//     Return an empty list if there is no such transformation sequence.
+
+//     Return 0 if there is no such transformation sequence.
 //     All words have the same length.
 //     All words contain only lowercase alphabetic characters.
 //     You may assume no duplicates in the word list.
@@ -32,10 +31,11 @@
  * @param {string} beginWord
  * @param {string} endWord
  * @param {string[]} wordList
- * @return {string[][]}
+ * @return {number}
  */
-const findLadders = function(beginWord, endWord, wordList) {
-  if (!wordList.includes(endWord)) return []
+const ladderLength = function(beginWord, endWord, wordList) {
+  // exceeded Time
+  if (!wordList.includes(endWord)) return 0
   const isSame = (a, b) => {
     let n = a.length, m = 0
     for (let i = 0; i < n; i++) {
@@ -52,15 +52,11 @@ const findLadders = function(beginWord, endWord, wordList) {
     }
   }
 
-  let ladders = [], min = Infinity
+  let min = Infinity
   const iter = ladder => {
     const n = ladder.length, end = ladder[n - 1]
     if (n <= min) {
-      if (end === endWord) {
-        if (n === min) ladders.push([...ladder])
-        else if (n < min) ladders = [[...ladder]]
-        min = n
-      }
+      if (end === endWord) min = n
       else {
         for (let word of graph[end]) {
           if (!ladder.includes(word)) {
@@ -74,18 +70,7 @@ const findLadders = function(beginWord, endWord, wordList) {
   }
 
   iter([beginWord])
-  return ladders
+  return min === Infinity ? 0 : min
 }
 
-//console.log(findLadders('hit', 'cog', ["hot","dot","dog","lot","log","cog"]))
-console.log(findLadders("qa", "sq",
-                        ["si","go","se","cm","so","ph","mt","db","mb","sb","kr",
-                         "ln","tm","le","av","sm","ar","ci","ca","br","ti","ba",
-                         "to","ra","fa","yo","ow","sn","ya","cr","po","fe","ho",
-                         "ma","re","or","rn","au","ur","rh","sr","tc","lt","lo",
-                         "as","fr","nb","yb","if","pb","ge","th","pm","rb","sh",
-                         "co","ga","li","ha","hz","no","bi","di","hi","qa","pi",
-                         "os","uh","wm","an","me","mo","na","la","st","er","sc",
-                         "ne","mn","mi","am","ex","pt","io","be","fm","ta","tb",
-                         "ni","mr","pa","he","lr","sq","ye"]))
-//exceeded Time
+console.log(ladderLength('hit', 'cog', ["hot","dot","dog","lot","log","cog"]))
