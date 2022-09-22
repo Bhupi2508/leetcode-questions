@@ -1,98 +1,64 @@
-// 114. Flatten Binary Tree to Linked List
-// Medium   35%
+// 115. Distinct Subsequences
+// Hard   31%
 
-// Given a binary tree, flatten it to a linked list in-place.
+// Given a string S and a string T, count the number of distinct subsequences of
+// S which equals T.
 
-// For example,
-// Given
+// A subsequence of a string is a new string which is formed from the original
+// string by deleting some (can be none) of the characters without disturbing
+// the relative positions of the remaining characters. (ie, "ACE" is a
+// subsequence of "ABCDE" while "AEC" is not).
 
-//     1
-//    / \
-//   2   5
-//  / \   \
-// 3   4   6
-
-// The flattened tree should look like:
-
-//  1
-//   \
-//    2
-//     \
-//      3
-//       \
-//        4
-//         \
-//          5
-//           \
-//            6
-
-// click to show hints.
-//   Hints:
-
-// If you notice carefully in the flattened tree, each node's right child points
-// to the next node of a pre-order traversal.
+// Here is an example:
+// S = "rabbbit", T = "rabbit"
+// Return 3.
 
 /**
- * Definition for a binary tree node.
- * function TreeNode(val) {
- *   this.val = val;
- *   this.left = this.right = null;
- * }
+ * @param {string} s
+ * @param {string} t
+ * @return {number}
  */
+const numDistinct = function(s, t) {
+  const n = s.length, m = t.length
 
-/**
- * @param {TreeNode} root
- * @return {void} Do not return anything, modify root in-place instead.
- */
-const flatten = function(root) {
-  if (root == null) return
-  function iter(tree) {
-    let tail = tree
-    const left = tree.left
-    const right = tree.right
-    if (left != null) {
-      tree.left = null
-      tree.right = left
-      tail = iter(left)
+  const dp = Array(m + 1)
+  dp[0] = Array(n + 1).fill(1)
+
+  for (let i = 0; i < m; i++) {
+    dp[i + 1] = Array(n + 1).fill(0)
+    for (let j = i; j < n; j++) {
+      if (s[j] === t[i]) {
+        dp[i + 1][j + 1] = dp[i][j] + dp[i + 1][j]
+      } else {
+        dp[i + 1][j + 1] = dp[i + 1][j]
+      }
     }
-    if (right != null) {
-      tail.right = right
-      tail = iter(right)
-    }
-    return tail
   }
-  iter(root)
+
+  return dp[m][n]
 }
 
-const TreeNode = require('../structs/TreeNode')
 ;[
-  [1,2,5,3,4,null,6],
-].forEach(array => {
-  const tree = TreeNode.from(array)
-  flatten(tree)
-  console.log(traverRight(tree))
+  ['rabbbit', 'rabbit'],
+].forEach(args => {
+  console.log(numDistinct(...args))
 })
 
-function traverRight(root) {
-  let s = ''
-  while (root) {
-    s += (s ? '->' : s) + root.val
-    root = root.right
-  }
-  return s
-}
-
 // Solution:
-// 采用前序递归遍历的方法。
-// 在递归过程中，已知当前根节点不为空，先保留左右子节点的指针，并将根节点保留在
-// 一个 tail 变量中。
+// 使用动态规划表, 如下。
+//     r a b b b i t
+//  ----------------
+//  |1 1 1 1 1 1 1 1
+// r|0 1 1 1 1 1 1 1
+// a|0 0 1 1 1 1 1 1
+// b|0 0 0 1 2 3 3 3
+// b|0 0 0 0 1 3 3 3
+// i|0 0 0 0 0 0 3 3
+// t|0 0 0 0 0 0 0 3
 
-// 1. 若左子节点不为空，则设置左子节点为空，根的右子节点指向左子节点，然后递归平
-// 铺左子树，并将 tail 设置为平铺后的最后一个节点。
-
-// 2. 若右子节点不为空，则将其设置为 tail 的右子节点，然后递归平铺右子树，并将
-// tail 设置为平铺后的最后一个节点
-
-// 最后返回 tail 变量（即该树的最后一个右子节点）
+// 构造一个 (m+1)*(n+1) 的动态规划表。
+// 当没有匹配字符时，当前可生成的子序列和前一步一样，所以只是复制前一个的值 dp[i + 1][j]。
+// 当匹配时，则需要看该字符在 s 和 t 的位置 j 和 i，之前的所能匹配的个数，即 dp[i][j]，
+// 并加上之前匹配的值，即 dp[i + 1][j]。
 
 // Submission Result: Accepted
