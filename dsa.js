@@ -1,52 +1,48 @@
-// 203. Remove Linked List Elements
-// Easy   32%
+// 204. Count Primes
+// Easy   26%
 
 
-// Remove all elements from a linked list of integers that have value val.
+// Description:
 
-// Example
-// Given: 1 --> 2 --> 6 --> 3 --> 4 --> 5 --> 6,  val = 6
-// Return: 1 --> 2 --> 3 --> 4 --> 5
+// Count the number of prime numbers less than a non-negative number, n.
 
 // Credits:Special thanks to @mithmatt for adding this problem and creating all
 // test cases.
 
 
 /**
- * Definition for singly-linked list.
- * function ListNode(val) {
- *     this.val = val;
- *     this.next = null;
- * }
+ * @param {number} n
+ * @return {number}
  */
-
-/**
- * @param {ListNode} head
- * @param {number} val
- * @return {ListNode}
- */
-const removeElements = function(head, val) {
-  const prev = new ListNode()
-  prev.next = head
-  let node = prev
-  while (node.next) {
-    if (node.next.val === val) node.next = node.next.next
-    else node = node.next
+const countPrimes = function(n) {
+  const primes = Array(n).fill(true)
+  let count = 0
+  for (let i = 2; i < n; i++) {
+    if (primes[i]) {
+      count++
+      for (let j = 2; i * j < n; j++) {
+        primes[i * j] = false
+      }
+    }
   }
-  return prev.next
+  return count
 }
 
-const ListNode = require('../structs/ListNode')
 ;[
-  [[1, 2, 6, 3, 4, 5, 6], 6],        // [1,2,3,4,5]
-  [[1], 1],                          // []
-  [[1,1], 1],                        // []
-].forEach(([array, val]) => {
-  console.log((removeElements(ListNode.from(array), val) || '').toString())
+  0,                            // 0
+  1,                            // 0
+  2,                            // 0
+  3,                            // 1
+  4,                            // 2
+  499979,                       // 41537
+].forEach(n => {
+  console.log(countPrimes(n))
 })
 
 // Solution:
-// 在链表中要删除一个元素，必须要保留上一个元素的引用。
-// 添加一个空的头节点处理起来会更方便。
+// 利用排除法。
+// 先创建一个长度为 n 的数组，若数的值为 true，说明该数为素数，
+// 同时将该数的倍数全部变为 false。
+
 
 // Submission Result: Accepted
