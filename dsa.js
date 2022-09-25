@@ -1,33 +1,42 @@
-// 80. Remove Duplicates from Sorted Array II
-// Medium 36% locked:false
+// 81. Search in Rotated Sorted Array II
+// Medium 32% locked:false
 
-// Follow up for "Remove Duplicates": What if duplicates are allowed at most
-// twice?
+// Follow up for "Search in Rotated Sorted Array":
+// What if duplicates are allowed?
 
-// For example, Given sorted array nums = [1,1,1,2,2,3],
+// Would this affect the run-time complexity? How and why?
 
-// Your function should return length = 5, with the first five elements of nums
-// being 1, 1, 2, 2 and 3. It doesn't matter what you leave beyond the new
-// length.
+// Suppose an array sorted in ascending order is rotated at some pivot unknown
+// to you beforehand.
+
+// (i.e., 0 1 2 4 5 6 7 might become 4 5 6 7 0 1 2).
+
+// Write a function to determine if a given target is in the array.
+
+// The array may contain duplicates.
 
 /**
  * @param {number[]} nums
- * @return {number}
+ * @param {number} target
+ * @return {boolean}
  */
-const removeDuplicates = function(nums) {
-  let next = true
-  for (let i = 0; i < nums.length; i++) {
-    if (nums[i - 1] !== nums[i]) {
-      next = true
-    } else if (next) {
-      next = false
-    } else {
-      nums.splice(i--, 1)
-    }
+const search = function(nums, target) {
+  const n = nums.length
+  if (n === 0) return false
+
+  const binary = (i, j) => {
+    if (i > j) return false
+    const mid = (i + j) >> 1
+    if (target < nums[mid]) {
+      return binary(i, mid - 1) ||
+        ((nums[mid] >= nums[j]) ? binary(mid + 1, j) : false)
+    } else if (target > nums[mid]) {
+      return binary(mid + 1, j) ||
+        ((nums[mid] <= nums[i]) ? binary(i, mid - 1) : false)
+    } else return true
   }
 
-  console.log(nums);
-  return nums.length
+  return binary(0, n - 1)
 }
 
-console.log(removeDuplicates([1, 1, 1, 1, 1, 1, 2, 2, 2, 3]))
+console.log(search([4, 4, 4, 5, 1, 1, 1, 2, 2, 2, 2], 3))
