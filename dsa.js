@@ -1,57 +1,84 @@
-// 86. Partition List
-// Medium   32%
+// 87. Scramble String
+// Hard 29% locked:false
 
-// Given a linked list and a value x, partition it such that all nodes less than
-// x come before nodes greater than or equal to x.
+// Given a string s1, we may represent it as a binary tree by partitioning it to
+// two non-empty substrings recursively.
 
-// You should preserve the original relative order of the nodes in each of the
-// two partitions.
+// Below is one possible representation of s1 = "great":
 
-// For example,
-// Given 1->4->3->2->5->2 and x = 3,
-// return 1->2->2->4->3->5.
+//     great
+//    /    \
+//   gr    eat
+//  / \    /  \
+// g   r  e   at
+//            / \
+//           a   t
+
+// To scramble the string, we may choose any non-leaf node and swap its two
+// children.
+
+// For example, if we choose the node "gr" and swap its two children, it
+// produces a scrambled string "rgeat".
+
+//     rgeat
+//    /    \
+//   rg    eat
+//  / \    /  \
+// r   g  e   at
+//           / \
+//          a   t
+
+// We say that "rgeat" is a scrambled string of "great".
+
+// Similarly, if we continue to swap the children of nodes "eat" and "at", it
+// produces a scrambled string "rgtae".
+
+//     rgtae
+//    /    \
+//   rg    tae
+//  / \    /  \
+// r   g  ta  e
+//       / \
+//      t   a
+
+// We say that "rgtae" is a scrambled string of "great".
+
+// Given two strings s1 and s2 of the same length, determine if s2 is a
+// scrambled string of s1.
+
 
 /**
- * Definition for singly-linked list.
- * function ListNode(val) {
- *     this.val = val;
- *     this.next = null;
- * }
+ * @param {string} s1
+ * @param {string} s2
+ * @return {boolean}
  */
+const isScramble = function(s1, s2) {
+  if (s1.length !== s2.length) return false
 
-/**
- * @param {ListNode} head
- * @param {number} x
- * @return {ListNode}
- */
-const partition = function(head, x) {
-  const node1 = new ListNode(), node2 = new ListNode()
-  let p1 = node1, p2 = node2
-  while (head) {
-    if (head.val < x) {
-      p1 = p1.next = head
-    } else {
-      p2 = p2.next = head
+  const n = s1.length
+  if (n === 0) return true
+
+  const match = (i, k, x, z) => {
+    console.log(i, k, x, z);
+    if (i <= k && x <= z && i - k === x - z) {
+      if (i === k) return s1[i] === s2[x]
+      if (s1.substring(i, k + 1) === s2.substring(x, z + 1)) return true
+
+      const j = (i + k + 1) >> 1, y = (x + z + 1) >> 1
+      if ((i + k) % 2 === 1) {
+        if ((match(i, j - 1, y, z) && match(j, k, x, y - 1)) ||
+            (match(i, j - 1, x, y - 1) && match(j, k, y, z))) return true
+      } else {
+        if ((match(i, j - 1, y + 1, z) && match(j, k, x, y)) ||
+            (match(i, j, y, z) && match(j + 1, k, x, y - 1)) ||
+            (match(i, j - 1, x, y - 1) && match(j, k, y, z)) ||
+            (match(i, j, x, y) && match(j + 1, k, y + 1, z))) return true
+      }
     }
-    head = head.next
+    return false
   }
-  p2.next = null
-  p1.next = node2.next
-  return node1.next
+
+  return match(0, n - 1, 0, n - 1)
 }
 
-const ListNode = require('../structs/ListNode')
-;[
-  [[1], 3],
-  [[1, 4, 3, 2, 5, 2], 3],
-  [[5, 1, 3, 2, 4, 1], 3],
-].forEach(([array, x]) => {
-  console.log((partition(ListNode.from(array), x) || '').toString())
-})
-
-// Solution:
-// 使用两个链表将两部分分别串起来。
-// 再将第二个（大于或等于x）的链表连到第一个（小于x）的链表的末尾。
-// 最后需要将第二个链表的末尾指向 null ，因为末尾节点还可能指向里另一个节点。
-
-// Submission Result: Accepted
+console.log(isScramble('abab', 'aabb'))
