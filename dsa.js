@@ -1,45 +1,47 @@
-// 20. Valid Parentheses
-// Easy   33%
+// 21. Merge Two Sorted Lists
+// Easy   39%
 
-// Given a string containing just the characters '(', ')', '{', '}', '[' and
-// ']', determine if the input string is valid.
-
-// The brackets must close in the correct order, "()" and "()[]{}" are all valid
-// but "(]" and "([)]" are not.
+//Merge two sorted linked lists and return it as a new list. The new list should
+//be made by splicing together the nodes of the first two lists.
 
 /**
- * @param {string} s
- * @return {boolean}
+ * Definition for singly-linked list.
+ * function ListNode(val) {
+ *     this.val = val;
+ *     this.next = null;
+ * }
  */
-const isValid = function(s) {
-  const stack = []
-  for (let v of s) {
-		if (v === '(') stack.push(')')
-		else if (v === '{') stack.push('}')
-		else if (v === '[') stack.push(']')
-		else if (stack.length === 0 || stack.pop() !== v) return false
-  }
 
-  return stack.length === 0
+/**
+ * @param {ListNode} l1
+ * @param {ListNode} l2
+ * @return {ListNode}
+ */
+const mergeTwoLists = function(l1, l2) {
+  if (l1 == null) return l2
+  if (l2 == null) return l1
+
+  if (l1.val < l2.val) {
+    l1.next = mergeTwoLists(l1.next, l2)
+    return l1
+  } else {
+    l2.next = mergeTwoLists(l1, l2.next)
+    return l2
+  }
 }
 
+const ListNode = require('../structs/ListNode')
 ;[
-  '(',                          // false
-  '()',                         // true
-  '([)]',                       // false
-  '(]',                         // false
-  '()[]{}',                     // true
-].forEach((s) => {
-  console.log(isValid(s))
+  [[1, 3], [0, 4]],
+].forEach(([A, B]) => {
+  const l1 = ListNode.from(A),
+        l2 = ListNode.from(B)
+  console.log((mergeTwoLists(l1, l2) || '').toString())
 })
 
 // Solution:
-// 这类匹配问题一般使用栈来解决。
-
-// 遇到一个左符号，将右符号弹入栈顶，
-// 遇到一个右符号，则从栈顶弹出一个符号，比较两个符号是否相同，
-// 相同则继续
-// 否则返回结果 false。
-// 最后检查栈是否为空，是则返回 true, 否则 false。
+// 递归解法
+// 将两个链表中头节点小的节点作为合并后的头节点，
+// 然后递归出去该节点的两个链表，并将其返回的链表头作为下一个节点。
 
 // Submission Result: Accepted
