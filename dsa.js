@@ -1,44 +1,44 @@
 /**
- * Key: one scenario return false, is when you meet 0 and the max move can't reach to the end.
- * becaue no moves can be made when the element is 0.
- *
- * @param {number[]} nums
- * @return {boolean}
+ * @param {number} n
+ * @return {number[][]}
  */
-var canJump = function(nums) {
-    var max = 0;
-    for (var i = 0; i < nums.length; i++) {
-        if (i > max) return false;
-        max = Math.max(max, i + nums[i]);
+var generateMatrix = function(n) {
+    var rowStart = 0;
+    var rowEnd = n - 1;
+    var colStart = 0;
+    var colEnd = n - 1;
+    var matrix = [];
+    for (var j = 0; j < n; j++) matrix.push([]);
+
+    var i = 1;
+    while (i <= n * n) {
+        for (var j = colStart; j <= colEnd; j++) {
+            matrix[rowStart][j] = i++;
+        }
+        rowStart++;
+
+        for (var j = rowStart; j <= rowEnd; j++) {
+            matrix[j][colEnd] = i++;
+        }
+        colEnd--;
+
+
+        if (rowStart <= rowEnd) {
+            for (var j = colEnd; j >= colStart; j--) {
+                matrix[rowEnd][j] = i++;
+            }
+            rowEnd--;
+        }
+
+        if (colStart <= colEnd) {
+            for (var j = rowEnd; j >= rowStart; j--) {
+                matrix[j][colStart] = i++;
+            }
+            colStart++;
+        }
     }
 
-    return true;
+    return matrix;
 };
 
-// second try, not good
-var canJump = function(nums) {
-    if (nums.length === 1) return true;
-    var maxJump = 0;
-    for (var i = 0; i < nums.length; i++) {
-        maxJump = Math.max(maxJump, nums[i] + i);
-        if (maxJump === i) return false;
-        if (maxJump >= nums.length - 1) return true;
-    }
-
-    return false;
-};
-
-var canJump = function(nums) {
-  if (nums.length < 1) return true;
-  var maxNextJump = nums[0];
-
-  for (var i = 1; i < nums.length; i++) {
-    // jumped one step
-    maxNextJump--;
-    if (maxNextJump < 0) return false;
-    // if steps at positin i is larger than maxNextJump, then nums[i] is the next jump steps.
-    if (maxNextJump < nums[i]) maxNextJump = nums[i];
-  }
-
-  return true;
-}
+// a better solution?
