@@ -1,32 +1,47 @@
 /**
- * @param {string} s
- * @return {string[]}
+ * Definition for a binary tree node.
+ * function TreeNode(val) {
+ *     this.val = val;
+ *     this.left = this.right = null;
+ * }
  */
-var restoreIpAddresses = function(s) {
-    var strLength = s.length;
-    var result = [];
-
-    for (var i = 1; i < 4 && i < strLength - 2; i++) {
-        for (var j = i + 1; j < 4 + i && j < strLength - 1; j++) {
-            for (var k = j + 1; k < 4 + j && k < strLength; k++) {
-                var str1 = s.substring(0, i);
-                var str2 = s.substring(i, j);
-                var str3 = s.substring(j, k);
-                var str4 = s.substring(k, strLength);
-                if (isValid(str1) && isValid(str2) && isValid(str3) && isValid(str4)) {
-                    result.push(str1 + "." + str2 + "."+ str3 + "."+ str4);
-                }
-            }
+/**
+ * @param {TreeNode} root
+ * @return {number[]}
+ */
+var inorderTraversal = function(root) {
+    var stack = [];
+    var order = [];
+    while (stack.length > 0 || root) {
+        if (root) {
+            stack.push(root);
+            root = root.left;
+        } else {
+            var node = stack.pop();
+            order.push(node.val);
+            if (node.right) root = node.right;
         }
     }
 
-    return result;
+    return order;
 };
 
-var isValid = function(str) {
-    if ((str[0] === '0' && str.length > 1) || str.length > 3 || parseInt(str) > 255 || str.length === 0) {
-        return false;
-    }
+// more concise and efficient
+// as long as the left child is not empty, push it to the stack
+// once left child reaches to the end (leaf), pop the last left, and visit,
+// then assign its right node to be root, and repeat the process on current root (the right child)
+var inorderTraversal = function(root) {
+    var stack = [];
+    var order = [];
 
-    return true;
+    while (root || stack.length > 0) {
+        while (root) {
+            stack.push(root);
+            root = root.left;
+        }
+        var node = stack.pop();
+        order.push(node.val);
+        root = node.right;
+    }
+    return order;
 };
