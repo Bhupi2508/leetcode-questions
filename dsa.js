@@ -1,62 +1,75 @@
-// 73. Set Matrix Zeroes
-// Medium   36%
+// 74. Search a 2D Matrix
+// Medium 34% locked:false
 
-// Given a m x n matrix, if an element is 0, set its entire row and column to 0.
-// Do it in place.
+// Write an efficient algorithm that searches for a value in an m x n matrix.
+// This matrix has the following properties:
 
-// click to show follow up.
-//   Follow up:
+// 1. Integers in each row are sorted from left to right.
 
-// Did you use extra space?
-// A straight forward solution using O(mn) space is probably a bad idea.
-// A simple improvement uses O(m + n) space, but still not the best solution.
-// Could you devise a constant space solution?
+// 2. The first integer of each row is greater than the last integer of the
+// previous row.
 
+// For example,
+
+// Consider the following matrix:
+
+// [
+//   [1,   3,  5,  7],
+//   [10, 11, 16, 20],
+//   [23, 30, 34, 50]
+// ]
+
+// Given target = 3, return true.
 
 /**
  * @param {number[][]} matrix
- * @return {void} Do not return anything, modify matrix in-place instead.
+ * @param {number} target
+ * @return {boolean}
  */
-const setZeroes = function(matrix) {
+const searchMatrix = function(matrix, target) {
+  if (matrix.length === 0 || matrix[0].length === 0) return false
   const m = matrix.length, n = matrix[0].length
-  let col0 = 1
-  for (let i = 0; i < m; i++) {
-    if (matrix[i][0] === 0) col0 = 0
-    for (let j = 1; j < n; j++) {
-      if (matrix[i][j] === 0) matrix[i][0] = matrix[0][j] = 0
-    }
+  let i = 0, j = m - 1
+  while (i < j) {
+    const mid = Math.trunc((i + j) / 2)
+    if (target < matrix[mid][0]) j = mid - 1
+    else if (target > matrix[mid][0]) i = mid + 1
+    else return true
   }
 
-  for (let i = m - 1; i >= 0; i--) {
-    for (let j = n - 1; j >= 1; j--) {
-      if (matrix[i][0] === 0 || matrix[0][j] === 0) matrix[i][j] = 0
-    }
-    if (col0 === 0) matrix[i][0] = 0
+  let row = (target < matrix[i][0]) ? i - 1 : i
+  if (row < 0) return false
+  ;[i, j] = [0, n - 1]
+  while (i <= j) {
+    const mid = Math.trunc((i + j) / 2)
+    if (target < matrix[row][mid]) j = mid - 1
+    else if (target > matrix[row][mid]) i = mid + 1
+    else return true
   }
+
+  return false
 }
 
-;[
-  [
-    [0, 1, 0],
-    [1, 1, 1],
-    [1, 1, 1]
-  ],
-].forEach(matrix => {
-  console.log(matrix)
-  setZeroes(matrix)
-  console.log(matrix)
-})
 
-// Solution:
-// 方法一：使用另一个矩阵记录0的位置。（直接）
-// Space：O(m*n)
+const treatAsList = function(matrix, target) {
+  if (matrix.length === 0 || matrix[0].length === 0) return false
+  const m = matrix.length, n = matrix[0].length
+  let i = 0, j = m * n - 1
+  while (i <= j) {
+    const mid = (i + j) >> 1,
+          value = matrix[Math.trunc(mid / n)][mid % n]
+    if (target < value) j = mid - 1
+    else if (target > value) i = mid + 1
+    else return true
+  }
+  return false
+}
 
-// 方法二：使用两个数组记录0的位置。
-// Space: O(m+n)
-
-// 方法三：在原矩阵中记录。
-// Space: O(1)
-// 将每行的状态记录在行头，将每列的状态记录在列头。
-// 最后还需要记录第一列的状态在一个变量上。
-
-// Submission Result: Accepted
+const matrix = [
+  [1,   3,  5,  7],
+  [10, 11, 16, 20],
+  [23, 30, 34, 50]
+]
+const n = 20
+console.log(searchMatrix(matrix, n))
+console.log(treatAsList(matrix, n))
