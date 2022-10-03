@@ -1,50 +1,61 @@
-// 88. Merge Sorted Array
-// Easy   32%
+// 89. Gray Code
+// Medium   41%
 
-// Given two sorted integer arrays nums1 and nums2, merge nums2 into nums1 as
-// one sorted array.
+// The gray code is a binary numeral system where two successive values differ
+// in only one bit.
 
-// Note: You may assume that nums1 has enough space (size that is greater or
-// equal to m + n) to hold additional elements from nums2. The number of
-// elements initialized in nums1 and nums2 are m and n respectively.
+// Given a non-negative integer n representing the total number of bits in the
+// code, print the sequence of gray code. A gray code sequence must begin with
+// 0.
+
+// For example, given n = 2, return [0,1,3,2]. Its gray code sequence is:
+
+// 00 - 0
+// 01 - 1
+// 11 - 3
+// 10 - 2
+
+// Note: For a given n, a gray code sequence is not uniquely defined.
+
+// For example, [0,2,3,1] is also a valid gray code sequence according to the
+// above definition.
+
+// For now, the judge is able to judge based on one instance of gray code
+// sequence. Sorry about that.
 
 /**
- * @param {number[]} nums1
- * @param {number} m
- * @param {number[]} nums2
  * @param {number} n
- * @return {void} Do not return anything, modify nums1 in-place instead.
+ * @return {number[]}
  */
-const merge = function(nums1, m, nums2, n) {
-  let p = m - 1, q = n - 1, k = n + m - 1
-  while (q >= 0) {
-    if (p < 0 || nums1[p] <= nums2[q]) {
-      nums1[k--] = nums2[q--]
-    } else {
-      nums1[k--] = nums1[p--]
-    }
+const grayCode = function(n) {
+  if (n < 0) return []
+
+  const res = [0]
+  for (let i = 0; i < n; i++) {
+    res.push(...[...res].reverse().map(v => v + (1 << i)))
   }
+
+  return res
 }
 
 ;[
-  [
-    [1, 2, 2, 0, 0, 0], 3,
-    [4, 5, 6], 3,
-  ],
-  [
-    [3, 4, 9, 11, 0, 0, 0, 0, 0], 4,
-    [1, 5, 8, 10, 16], 5,
-  ],
-].forEach(args => {
-  merge(...args)
-  console.log(args[0])
+  4,
+  2,
+  0,
+].forEach(n => {
+  console.log(grayCode(n))
 })
 
 // Solution:
-// 方法一：
-// 使用插入法，从头开始，找到合适的位置进行插入，后移其后数字。
 
-// 方法二：
-// 从后向前填，从两个数组末尾选择较大的数，并填入第一个数组的末尾。
+// 0 --(逆序)--> 0 --(+1)--> 1 --(插入原数组末尾)-->
+
+// 0 1 --(逆序)--> 1 0 --(+10)--> 11 10  --(插入原数组末尾)-->
+
+// 00 01 11 10 --(逆序)--> 10 11 01 00 --(+100)--> 110 111 101 100 --(插入原数组末尾)-->
+
+// 1. 取原数组 a 的逆序, b
+// 2. b 中每个数值加上 2^(log(b.length) + 1)
+// 3. b 加到 a 的末尾
 
 // Submission Result: Accepted
