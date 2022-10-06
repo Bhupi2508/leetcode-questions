@@ -1,90 +1,96 @@
-// 686. Repeated String Match
-// Easy 31%
+// 687. Longest Univalue Path
+// Easy 32% locked:false
 
 
-// Given two strings A and B, find the minimum number of times A has to be
-// repeated such that B is a substring of it. If no such solution, return -1.
 
-// For example, with A = "abcd" and B = "cdabcdab".
-// Return 3, because by repeating A three times (“abcdabcdabcd”), B is a
-// substring of it; and B is not a substring of A repeated two times
-// ("abcdabcd").
+// Given a binary tree, find the length of the longest path where each node in
+// the path has the same value. This path may or may not pass through the root.
+
+// Note: The length of path between two nodes is represented by the number of
+// edges between them.
+
+// Example 1:
+// Input:
+//     5
+//    / \
+//   4   5
+//  / \   \
+// 1   1   5
+// Output:
+// 2
+
+// Example 2:
+// Input:
+//     1
+//    / \
+//   4   5
+//  / \   \
+// 4   4   5
+// Output:
+// 2
 
 // Note:
-// The length of A and B will be between 1 and 10000.
+// The given binary tree has not more than 10000 nodes. The height of the tree is
+// not more than 1000.
+
+
 
 /**
- * @param {string} A
- * @param {string} B
+ * Definition for a binary tree node.
+ * function TreeNode(val) {
+ *   this.val = val;
+ *   this.left = this.right = null;
+ * }
+ */
+
+/**
+ * @param {TreeNode} root
  * @return {number}
  */
-const repeatedStringMatch = function(A, B) {
-  const alen = A.length, blen = B.length
-  if (alen >= blen && A.includes(B)) return 1
-  let trylen = Math.min(alen, blen), ai = -1
-  while (ai < 0) {
-    ai = A.indexOf(B.slice(0, trylen--), alen - trylen - 1)
-    if (ai < 0 && trylen === 0) return -1
+const longestUnivaluePath = function(root) {
+  let result = 0
+  const iter = function(root) {
+    if (root == null) return { val: null }
+
+    const val = root.val,
+          left = iter(root.left),
+          right = iter(root.right)
+
+    if (left.val === right.val && left.val === val) {
+      result = Math.max(result, left.path + right.path)
+      return { val, path: Math.max(left.path, right.path) + 1 }
+    } else if (left.val === val) {
+      result = Math.max(result, left.path)
+      return { val, path: left.path + 1 }
+    } else if (right.val === val) {
+      result = Math.max(result, right.path)
+      return { val, path: right.path + 1 }
+    }
+
+    return { val, path: 1 }
   }
 
-  let bi = 0, result = 1
-  while (bi < blen) {
-    if (B[bi++] !== A[ai++]) return -1
-    if (ai === alen && bi < blen) {
-      ai = 0
-      result++
-    }
-  }
+  iter(root)
+
   return result
 }
 
+const TreeNode = require('../structs/TreeNode')
 ;[
-  ['abcd', 'cdabcdab'],
-  ['a', 'aa'],
-  ['aa', 'a'],
-  ['bb', 'bbbbbbb'],
-  ['abababaaba', 'aabaaba'],
-  ['abcd', 'abcdb'],
-  ['baa', 'abaab'],
-].forEach(args => {
-  console.log(repeatedStringMatch(...args))
+  [5, 4, 5, 1, 1, 5], // 2
+  [1, 4, 5, 4, 4, 5], // 2
+].forEach((array) => {
+  console.log(longestUnivaluePath(TreeNode.from(array)))
 })
 
+
 // Solution:
-// * 方法1
-// 1. 初始化 result = 1
-// 2. 先找出 B[0] 对应 A 中的哪一个字符，如位置 ai。
-// 3. B 从 0 开始，A 从 ai 开始（首尾相接），一个一个比较。
-// 4. 每次 ai 变为 0，表示已经重复了一遍，result++。
-// 5. 如果对应字符不同，就返回 -1。
-// 注意：result的初始值的设置，与边界问题。
-
-// 无需重复构建字符串，只要改变下标即可，将 A 想象为首位相接的字符串数组。
-
-// 时间复杂度：O(m + n), 常数级
-// 存在问题：如例5，没有找到合适的 B[0] 对应的 A[ai]
-// 解决：尝试从 B 的最长字符开始匹配，依次缩短。
-
-// * 方法2
-// 替换方法1中的第二步，不是字符匹配，而是字符串匹配（B的前段字符串，B[0:i], i < blen)
-// 时间复杂度：O((m * min(m, n) * n), 立方级
-// 存在问题：时间复杂度太大。
-
-// * 方法3
-// 改进 方法2，只遍历最长的匹配。
-// 时间复杂度：O(m * min(m, n)), 平方级
-
-// 只遍历最长的匹配，是否可以完成任务？
-// 假设 A = a_1 + a_2 + a_3, B = b_1 + b_2 + b_3
-// 如果 B 是 A 重复字符串的子字符串，那么 A 和 B 必须符合以下情况：
-// 1. B = a_2 （B 直接是 A 的子字符串)，此时 B 为最长匹配。
-// 2. b_1 = a_3, b_2 = A*, b_3 = a_1 (A 需要重复，形成 ... + a_3 + A* + a_1 + ...)，
-//    此时 b_1 为最长匹配。(A* 表示 A重复0或多遍)
-
-// b_1 = a_2 = a_3 会出现什么情况呢？
-// 如果我们只匹配 b_1 = a_3，即只匹配 A 的最后与 B 的最前的相同长度的字符。
-// 可以想象看两张纸条，一张的前端与另一张的后端重叠。
-// 那么 无论 a_2 等于什么都无所谓。
+// 后序遍历
+// 在每个节点处，根据左右子节点返回的值及自身的值，来计算所要返回的值
+// 有 3 种情况：
+// 1. 3 个节点的值相同，则结合两个子节点累积的最长路径，看是否为当前最长路径，是则记录，
+//    否则不作为。最后返回两个子节点中最长的路径加 1 ，作为该节点的最长路径。
+// 2. 节点的值与左（右）子节点相同，则以左（右）子节点累积的最长路径加 1 ，返回。
+// 3. 没有相同，返回 1 。
 
 // Submission Result: Accepted
-
