@@ -1,47 +1,37 @@
 /**
- * Definition for a binary tree node.
- * function TreeNode(val) {
+ * Definition for singly-linked list.
+ * function ListNode(val) {
  *     this.val = val;
- *     this.left = this.right = null;
+ *     this.next = null;
  * }
  */
 /**
- * key: rightNodes is the stack to track right nodes.
- * @param {TreeNode} root
- * @return {number[]}
+ * @param {ListNode} head
+ * @return {ListNode}
  */
-var preorderTraversal = function(root) {
-    var rightNodes = [];
-    var order = [];
-    while (root || rightNodes.length > 0) {
-        if (root) {
-            order.push(root.val);
-            if (root.right) rightNodes.push(root.right);
-            root = root.left;
+var insertionSortList = function(head) {
+    if (!head) return head;
+    var dummyHead = new ListNode(null);
+    dummyHead.next = head;
+    var first = dummyHead;
+    var second = head;
+
+    while (second.next) {
+        if (second.next.val < second.val) {
+            var smallNode = second.next;
+            second.next = second.next.next;
+            while (first.next && first.next.val < smallNode.val) {
+                first = first.next;
+            }
+            smallNode.next = first.next;
+            first.next = smallNode;
+            first = dummyHead;
         } else {
-          root = rightNodes.pop();
+            second = second.next;
+            if (!second) break;
         }
-    }
-    return order;
-};
 
-// this is a more straightforward method, but slower than first one.
-// stack tracks the node visit order
-var preorderTraversal = function(root) {
-    if (!root) return [];
-    var result = [];
-    var stack = [root];
-
-    while (stack.length > 0) {
-        var node = stack.pop();
-        result.push(node.val);
-        if (node.right) {
-            stack.push(node.right);
-        }
-        if (node.left) {
-            stack.push(node.left);
-        }
     }
 
-    return result;
+    return dummyHead.next;
 };
