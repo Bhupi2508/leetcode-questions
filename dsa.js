@@ -1,60 +1,53 @@
-// 908. Smallest Range I
-// Easy   65%
+// 912. Sort an Array
+// Medium   63%
 
 
-// Given an array A of integers, for each integer A[i] we may choose any x with
-// -K <= x <= K, and add x to A[i].
-// After this process, we have some array B.
-// Return the smallest possible difference between the maximum value of B and the
-// minimum value of B.
+// Given an array of integers nums, sort the array in ascending order.
 
 // Example 1:
-// Input: A = [1], K = 0
-// Output: 0
-// Explanation: B = [1]
+// Input: nums = [5,2,3,1]
+// Output: [1,2,3,5]
 // Example 2:
-// Input: A = [0,10], K = 2
-// Output: 6
-// Explanation: B = [2,8]
-// Example 3:
-// Input: A = [1,3,6], K = 3
-// Output: 0
-// Explanation: B = [3,3,3] or B = [4,4,4]
+// Input: nums = [5,1,1,2,0,0]
+// Output: [0,0,1,1,2,5]
 
-// Note:
-//     1 <= A.length <= 10000
-//     0 <= A[i] <= 10000
-//     0 <= K <= 10000
+// Constraints:
+//     1 <= nums.length <= 50000
+//     -50000 <= nums[i] <= 50000
 
 
 /**
- * @param {number[]} A
- * @param {number} K
- * @return {number}
+ * @param {number[]} nums
+ * @return {number[]}
  */
-const smallestRangeI = function(A, K) {
-  let p = 0, q = 10000
-  for (let a of A) {
-    p = Math.max(p, a - K)
-    q = Math.min(q, a + K)
+const sortArray = function(nums) {
+  function qsort(lo, hi) {
+    if (lo >= hi) return
+    const k = nums[hi]
+    let i = lo, j = hi
+    while (i < j) {
+      while (i < j && nums[i] <= k) i++
+      nums[j] = nums[i]
+      while (i < j && nums[j] >= k) j--
+      nums[i] = nums[j]
+    }
+    nums[i] = k
+    qsort(lo, i - 1)
+    qsort(i + 1, hi)
   }
-  return Math.max(p - q, 0)
+  qsort(0, nums.length - 1)
+  return nums
 }
 
 ;[
-  [[1], 0], // 0
-  [[0,10], 2], // 6
-  [[1,3,6], 3], // 0
-  [[3,1,6], 3], // 0
-  [[0,100,300,400], 7], //
-].forEach(([A, K]) => {
-  console.log(smallestRangeI(A, K))
+  // [5,2,3,1],
+  // [5,1,1,2,0,0],
+  [-4,0,7,4,9,-5,-1,0,-7,-1],
+].forEach((nums) => {
+  console.log(sortArray(nums))
 })
 
 // Solution:
-// 找出 a - K 中的最大值 p，和 a + K 中的最小值 q ，取 max(p - q, 0)
-
-// 更好的方法
-// 找到 A 中的最大值mx和最小值mn，取 max(mx - mn - 2 * K, 0)
+// 快排
 
 // Submission Result: Accepted
