@@ -1,56 +1,96 @@
-// 704. Binary Search
-// Easy   51%
+// 705. Design HashSet
+// Easy   59%
 
 
-// Given a sorted (in ascending order) integer array nums of n elements and a
-// target value, write a function to search target in nums. If target exists,
-// then return its index, otherwise return -1.
-// Example 1:
-// Input: nums = [-1,0,3,5,9,12], target = 9
-// Output: 4
-// Explanation: 9 exists in nums and its index is 4
-// Example 2:
-// Input: nums = [-1,0,3,5,9,12], target = 2
-// Output: -1
-// Explanation: 2 does not exist in nums so return -1
-
+// Design a HashSet without using any built-in hash table libraries.
+// To be specific, your design should include these functions:
+//     add(value): Insert a value into the HashSet.
+//     contains(value) : Return whether the value exists in the HashSet or not.
+//     remove(value): Remove a value in the HashSet. If the value does not exist
+// in the HashSet, do nothing.
+// Example:
+// MyHashSet hashSet = new MyHashSet();
+// hashSet.add(1);
+// hashSet.add(2);
+// hashSet.contains(1);    // returns true
+// hashSet.contains(3);    // returns false (not found)
+// hashSet.add(2);
+// hashSet.contains(2);    // returns true
+// hashSet.remove(2);
+// hashSet.contains(2);    // returns false (already removed)
 // Note:
-//     You may assume that all elements in nums are unique.
-//     n will be in the range [1, 10000].
-//     The value of each element in nums will be in the range [-9999, 9999].
+//     All values will be in the range of [0, 1000000].
+//     The number of operations will be in the range of [1, 10000].
+//     Please do not use the built-in HashSet library.
 
 
 /**
- * @param {number[]} nums
- * @param {number} target
- * @return {number}
+ * Initialize your data structure here.
  */
-const search = function(nums, target) {
-  let left = 0, right = nums.length - 1
-  while (left <= right) {
-    const mid = (left + right) >>> 1
-    if (nums[mid] > target) right = mid - 1
-    else if (nums[mid] < target) left = mid + 1
-    else return mid
-  }
-  return -1
-}
+const MyHashSet = function() {
+  this.set = []
+};
+
+/**
+ * @param {number} key
+ * @return {void}
+ */
+MyHashSet.prototype.add = function(key) {
+  this.set[key] = true
+};
+
+/**
+ * @param {number} key
+ * @return {void}
+ */
+MyHashSet.prototype.remove = function(key) {
+  this.set[key] = false
+};
+
+/**
+ * Returns true if this set contains the specified element
+ * @param {number} key
+ * @return {boolean}
+ */
+MyHashSet.prototype.contains = function(key) {
+  return !!this.set[key]
+};
+
+/**
+ * Your MyHashSet object will be instantiated and called as such:
+ * var obj = new MyHashSet()
+ * obj.add(key)
+ * obj.remove(key)
+ * var param_3 = obj.contains(key)
+ */
 
 ;[
-  [[-1,0,3,5,9,12], 9], // 4
-  [[-1,0,3,5,9,12], 2], // -1
-  [[1,2,3,4,5,6,7], 1], // 0
-  [[1,2,3,4,5,6,7], 7], // 6
-  [[1,2,3,4,5,6,7,8], 7], // 6
-].forEach(([nums, target]) => {
-  console.log(search(nums, target))
+  [
+    ['MyHashSet','add','add','contains','contains','add','contains','remove','contains'],
+    [[],[1],[2],[1],[3],[2],[2],[2],[2]],
+  ],
+].forEach(([commands, data]) => {
+  let myHashSet = null
+  for (let i = 0; i < commands.length; i++) {
+    switch(commands[i]) {
+      case 'MyHashSet':
+        myHashSet = new MyHashSet()
+        break
+      case 'add':
+        myHashSet.add(data[i][0])
+        break
+      case 'contains':
+        console.log(myHashSet.contains(data[i][0]))
+        break
+      case 'remove':
+        myHashSet.remove(data[i][0])
+        break
+    }
+  }
 })
 
 // Solution:
-// 设置要遍历的数组的左右边界，left / right
-// 每次比较中位数 nums[(left+right)/2] 与 target的大小
-// 1. 大于，说明数也许在左半边，设置右边界为 mid - 1
-// 2. 小于，说明数也许在右半边，设置左边界为 mid + 1
-
+// 只能用数组来实现了
+// 其实JS数组也是一种特殊的hash
 
 // Submission Result: Accepted
