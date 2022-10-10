@@ -1,79 +1,70 @@
-// 1030. Matrix Cells in Distance Order
-// Easy   64%
+// 1033. Moving Stones Until Consecutive
+// Easy   39%
 
-// We are given a matrix with R rows and C columns has cells with integer
-// coordinates (r, c), where 0 <= r < R and 0 <= c < C.
-// Additionally, we are given a cell in that matrix with coordinates (r0, c0).
-// Return the coordinates of all cells in the matrix, sorted by their distance
-// from (r0, c0) from smallest distance to largest distance.  Here, the distance
-// between two cells (r1, c1) and (r2, c2) is the Manhattan distance, |r1 - r2| +
-// |c1 - c2|.  (You may return the answer in any order that satisfies this
-// condition.)
+
+// Three stones are on a number line at positions a, b, and c.
+// Each turn, you pick up a stone at an endpoint (ie., either the lowest or
+// highest position stone), and move it to an unoccupied position between those
+// endpoints.  Formally, let's say the stones are currently at positions x, y, z
+// with x < y < z.  You pick up the stone at either position x or position z, and
+// move that stone to an integer position k, with x < k < z and k != y.
+// The game ends when you cannot make any more moves, ie. the stones are in
+// consecutive positions.
+// When the game ends, what is the minimum and maximum number of moves that you
+// could have made?  Return the answer as an length 2 array: answer =
+// [minimum_moves, maximum_moves]
 
 // Example 1:
-// Input: R = 1, C = 2, r0 = 0, c0 = 0
-// Output: [[0,0],[0,1]]
-// Explanation: The distances from (r0, c0) to other cells are: [0,1]
+// Input: a = 1, b = 2, c = 5
+// Output: [1,2]
+// Explanation: Move the stone from 5 to 3, or move the stone from 5 to 4 to 3.
 // Example 2:
-// Input: R = 2, C = 2, r0 = 0, c0 = 1
-// Output: [[0,1],[0,0],[1,1],[1,0]]
-// Explanation: The distances from (r0, c0) to other cells are: [0,1,1,2]
-// The answer [[0,1],[1,1],[0,0],[1,0]] would also be accepted as correct.
+// Input: a = 4, b = 3, c = 2
+// Output: [0,0]
+// Explanation: We cannot make any moves.
 // Example 3:
-// Input: R = 2, C = 3, r0 = 1, c0 = 2
-// Output: [[1,2],[0,2],[1,1],[0,1],[1,0],[0,0]]
-// Explanation: The distances from (r0, c0) to other cells are: [0,1,1,2,2,3]
-// There are other answers that would also be accepted as correct, such as
-// [[1,2],[1,1],[0,2],[1,0],[0,1],[0,0]].
+// Input: a = 3, b = 5, c = 1
+// Output: [1,2]
+// Explanation: Move the stone from 1 to 4; or move the stone from 1 to 2 to 4.
 
 // Note:
-//     1 <= R <= 100
-//     1 <= C <= 100
-//     0 <= r0 < R
-//     0 <= c0 < C
+//     1 <= a <= 100
+//     1 <= b <= 100
+//     1 <= c <= 100
+//     a != b, b != c, c != a
+
+
+
 
 /**
- * @param {number} R
- * @param {number} C
- * @param {number} r0
- * @param {number} c0
- * @return {number[][]}
+ * @param {number} a
+ * @param {number} b
+ * @param {number} c
+ * @return {number[]}
  */
-const allCellsDistOrder = function(R, C, r0, c0) {
-  const visited = Array(R)
-  for (let i = 0; i < R; i++) visited[i] = Array(C).fill(false)
-
-  const result = []
-
-  const queue = [[r0, c0]]
-  while (queue.length > 0) {
-    const cell = queue.shift()
-    const r = cell[0], c = cell[1]
-
-    if (r < 0 || r >= R || c < 0 || c >= C) continue
-    if (visited[r][c]) continue
-
-    result.push([r, c])
-    visited[r][c] = true
-
-    queue.push([r, c - 1])
-    queue.push([r, c + 1])
-    queue.push([r - 1, c])
-    queue.push([r + 1, c])
-  }
-  return result
+const numMovesStones = function(a, b, c) {
+  [a, b, c] = [a, b, c].sort((a, b) => a - b)
+  let min = 2, p = b - a, q = c - b
+  if (p === 1 && q === 1) min = 0
+  else if (p === 1 || q === 1 || p === 2 || q === 2) min = 1
+  return [min, c - a - 2]
 }
 
 ;[
-  [1, 2, 0, 0],
-  [2, 2, 0, 1],
-  [2, 3, 1, 2],
-].forEach(([R, C, r0, c0]) => {
-  console.log(allCellsDistOrder(R, C, r0, c0))
+  [1, 2, 5],  // [1,2]
+  [4, 3, 2],  // [0,0]
+  [3, 5, 1],  // [1,2]
+  [5, 1, 10], // [2,7]
+].forEach(([a, b, c]) => {
+  console.log(numMovesStones(a, b, c))
 })
 
 // Solution:
-// 1. 按照曼哈顿距离使用内部排序即可
-// 2. BFS 遍历，使用标记矩阵和先进先出队列来完成广度遍历来完成
+// 假设 a < b < c
+// 最大移动值为 c - a - 2
+// 最小移动值为
+// 1) b - a = 1 && c - b = 1, 0
+// 2) b - a = 1 || c - b = 1 || b - a = 2 || c - b = 2, 1
+// 3) 2
 
 // Submission Result: Accepted
