@@ -1,52 +1,73 @@
-// 274. H-Index
-// Medium   33%
+// 278. First Bad Version
+// Easy   25%
 
-// Given an array of citations (each citation is a non-negative integer) of a
-// researcher, write a function to compute the researcher's h-index.
 
-// According to the definition of h-index on Wikipedia: "A scientist has index h
-// if h of his/her N papers have at least h citations each, and the other N − h
-// papers have no more than h citations each."
+// You are a product manager and currently leading a team to develop a new
+// product. Unfortunately, the latest version of your product fails the quality
+// check. Since each version is developed based on the previous version, all the
+// versions after a bad version are also bad.
 
-// For example, given citations = [3, 0, 6, 1, 5], which means the researcher has
-// 5 papers in total and each of them had received 3, 0, 6, 1, 5 citations
-// respectively. Since the researcher has 3 papers with at least 3 citations each
-// and the remaining two with no more than 3 citations each, his h-index is 3.
+// Suppose you have n versions [1, 2, ..., n] and you want to find out the first
+// bad one, which causes all the following ones to be bad.
 
-// Note: If there are several possible values for h, the maximum one is taken as
-// the h-index.
+// You are given an API bool isBadVersion(version) which will return whether
+// version is bad. Implement a function to find the first bad version. You should
+// minimize the number of calls to the API.
 
 // Credits:Special thanks to @jianchao.li.fighter for adding this problem and
 // creating all test cases.
 
 
 /**
- * @param {number[]} citations
- * @return {number}
+ * Definition for isBadVersion()
+ *
+ * @param {integer} version number
+ * @return {boolean} whether the version is bad
  */
-const hIndex = function(citations) {
-  const n = citations.length
-  citations.sort((a, b) => b - a)
-  let h = 0
-  while (h < n && h < citations[h]) h++
-  return h
+
+const setIsBadVersion = function(n) {
+  return function (version) {
+    return version < n ? false : true
+  }
+}
+
+/**
+ * @param {function} isBadVersion()
+ * @return {function}
+ */
+const solution = function(isBadVersion) {
+  /**
+ @param {integer} n Total versions
+ @return {integer} The first bad version
+   */
+  return function(n) {
+    let good = 1
+    while (good <= n) {
+      const mid = (good + n) >>> 1
+      if (isBadVersion(mid)) {
+        if (!isBadVersion(mid - 1)) return mid
+        n = mid - 1
+      } else {
+        good = mid + 1
+      }
+    }
+    return 0
+  }
 }
 
 ;[
-  [3, 0, 6, 1, 5],              // 3
-  [3, 0, 6, 1, 5, 3],           // 3
-  [7, 3, 0, 8, 5, 1, 6],        // 4
-  [12, 15, 29, 83, 18, 53],     // 6
-].forEach(citations => {
-  console.log(hIndex(citations))
+  [6, 5],                       // 5
+  [6, 3],                       // 3
+  [12, 12],                     // 12
+  [12, 1],                      // 1
+  [2126753390, 1702766719],     // 1702766719
+].forEach(args => {
+  console.log(solution(setIsBadVersion(args[1]))(args[0]))
 })
 
-// h-index的定义为：数组中有h个数的值大于或等于h，而n-h个数的值小于或等于h。
-// 存在多个h,取最大的那一个。
-
 // Solution:
-// 将数组按降序排序，按其该降序遍历每个数字。
-// 数字的下标负责计数，即h。
-// 若其值大于其下标，即大于h。
+// 二分查找法。
+// 除二取整 可以使用 >>>1 逻辑右移运算，
+// 因为数可能大于 2^32 所以不能使用 >> 算术右移。
 
 // Submission Result: Accepted
