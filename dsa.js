@@ -1,93 +1,55 @@
-// 547. Friend Circles
-// Medium   49%
+// 551. Student Attendance Record I
+// Easy   44%
 
-//  There are N students in a class. Some of them are friends, while some are
-//  not. Their friendship is transitive in nature. For example, if A is a direct
-//  friend of B, and B is a direct friend of C, then A is an indirect friend of
-//  C. And we defined a friend circle is a group of students who are direct or
-//  indirect friends.
+// You are given a string representing an attendance record for a student. The
+// record only contains the following three characters:
 
-// Given a N*N matrix M representing the friend relationship between students in
-// the class. If M[i][j] = 1, then the ith and jth students are direct friends
-// with each other, otherwise not. And you have to output the total number of
-// friend circles among all the students.
+// 'A' : Absent.
+// 'L' : Late.
+//  'P' : Present.
+
+// A student could be rewarded if his attendance record doesn't contain more than
+// one 'A' (absent) or more than two continuous 'L' (late).
+
+// You need to return whether the student could be rewarded according to his
+// attendance record.
 
 // Example 1:
 
-// Input:
-// [[1,1,0],
-//  [1,1,0],
-//  [0,0,1]]
-// Output: 2
-// Explanation:The 0th and 1st students are direct friends, so they are in a
-// friend circle. The 2nd student himself is in a friend circle. So return 2.
+// Input: "PPALLP"
+// Output: True
 
 // Example 2:
 
-// Input:
-// [[1,1,0],
-//  [1,1,1],
-//  [0,1,1]]
-// Output: 1
-// Explanation:The 0th and 1st students are direct friends, the 1st and 2nd
-// students are direct friends, so the 0th and 2nd students are indirect
-// friends. All of them are in the same friend circle, so return 1.
-
-// Note:
-// 1. N is in range [1,200].
-// 2. M[i][i] = 1 for all students.
-// 3. f M[i][j] = 1, then M[j][i] = 1.
+// Input: "PPALLL"
+// Output: False
 
 
 /**
- * @param {number[][]} M
- * @return {number}
+ * @param {string} s
+ * @return {boolean}
  */
-
-const findCircleNum = function(M) {
-  const n = M.length, used = Array(n)
-  function dfs(i) {
-    if (used[i]) return
-    used[i] = true
-    for (let j = 0; j < n; j++) {
-      if (M[i][j]) dfs(j)
-    }
+const checkRecord = function(s) {
+  const n = s.length
+  let absent = 0, late = 0
+  for (let i = 0; i < n; i++){
+    if (s[i] === 'A') absent++
+    late = s[i] === 'L' ? late + 1 : 0
+    if (absent > 1 || late > 2) return false
   }
-
-  let result = 0
-  for (let i = 0; i < n; i++) {
-    if (!used[i]) {
-      result++
-      dfs(i)
-    }
-  }
-  return result
+  return true
 }
 
 ;[
-  [
-    [1,1,0],
-    [1,1,0],
-    [0,0,1]
-  ],
-  [
-    [1,1,0],
-    [1,1,1],
-    [0,1,1]
-  ],
-  [
-    [1,0,0,1],
-    [0,1,1,0],
-    [0,1,1,1],
-    [1,0,1,1]
-  ],
-].forEach(M => {
-  console.log(findCircleNum(M))
+  'PPALLP',                     // true
+  'PPALLL',                     // false
+  'LALL',                       // true
+].forEach(s => {
+  console.log(checkRecord(s))
 })
 
 // Solution:
-// 使用 DFS 。
-// 对于没有被使用过的数，使用 DFS 。
-// 每完成一次 DFS 都算是形成一个朋友圈。
+// 用一个变量记录缺席的次数
+// 用一个变量记录连续迟到的次数
 
 // Submission Result: Accepted
