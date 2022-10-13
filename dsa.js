@@ -1,44 +1,30 @@
 /**
+ * @see inline comments
+ *
  * @param {number} n
- * @return {number[][]}
+ * @param {number} k
+ * @return {string}
  */
-var generateMatrix = function(n) {
-    var rowStart = 0;
-    var rowEnd = n - 1;
-    var colStart = 0;
-    var colEnd = n - 1;
-    var matrix = [];
-    for (var j = 0; j < n; j++) matrix.push([]);
-
-    var i = 1;
-    while (i <= n * n) {
-        for (var j = colStart; j <= colEnd; j++) {
-            matrix[rowStart][j] = i++;
-        }
-        rowStart++;
-
-        for (var j = rowStart; j <= rowEnd; j++) {
-            matrix[j][colEnd] = i++;
-        }
-        colEnd--;
-
-
-        if (rowStart <= rowEnd) {
-            for (var j = colEnd; j >= colStart; j--) {
-                matrix[rowEnd][j] = i++;
-            }
-            rowEnd--;
-        }
-
-        if (colStart <= colEnd) {
-            for (var j = rowEnd; j >= rowStart; j--) {
-                matrix[j][colStart] = i++;
-            }
-            colStart++;
-        }
+var getPermutation = function(n, k) {
+    var nums = [];
+    for (var i = 0; i < n; i ++) {
+        nums.push(i + 1);
+    }
+    k--;
+    var mod = 1;
+    for (i = 1; i < n; i++) {
+        mod *= i;
+    }
+    var result = '';
+    for (i = 0; i < n; i++) {
+        // find the index of current number's first digit
+        var index = Math.floor(k / mod);
+        k = k % mod;
+        result += nums[index];
+        // remove this used number from nums.
+        nums.splice(index, 1);
+        mod = Math.floor(mod / (n - i - 1));
     }
 
-    return matrix;
+    return result;
 };
-
-// a better solution?
