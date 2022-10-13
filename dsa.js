@@ -1,52 +1,39 @@
-// 347. Top K Frequent Elements
-// Medium   48%
+// 349. Intersection of Two Arrays
+// Easy   47%
 
-// Given a non-empty array of integers, return the k most frequent elements.
 
-// For example,
-// Given [1,1,1,2,2,3] and k = 2, return [1,2].
+// Given two arrays, write a function to compute their intersection.
+
+// Example:
+// Given nums1 = [1, 2, 2, 1], nums2 = [2, 2], return [2].
 
 // Note:
-//  - You may assume k is always valid, 1 ≤ k ≤ number of unique elements.
-//  - Your algorithm's time complexity must be better than O(n log n), where n
-//    is the array's size.
+
+// Each element in the result must be unique.
+// The result can be in any order.
 
 
 /**
- * @param {number[]} nums
- * @param {number} k
+ * @param {number[]} nums1
+ * @param {number[]} nums2
  * @return {number[]}
  */
-const topKFrequent = function(nums, k) {
-  const hash = {}
-  for (let num of nums) hash[num] = (hash[num] || 0) + 1
-
-  const bucket = Array(nums.length + 1)
-  for (let num in hash) {
-    const frequency = hash[num]
-    if (bucket[frequency] == null) bucket[frequency] = []
-    bucket[frequency].push(parseInt(num))
-  }
-
-
-
-  const result = []
-  for (let i = bucket.length - 1; i >= 0 && result.length < k; i--) {
-    if (bucket[i]) result.push(...bucket[i])
-  }
-
+const intersection = function(nums1, nums2) {
+  const result = [], hash1 = {}, hash2 = {}
+  for (let n of nums1) hash1[n] = true
+  for (let n of nums2) hash2[n] = true
+  for (let key in hash1) if (hash2[key]) result.push(parseInt(key))
   return result
 }
 
 ;[
-  [[1,1,1,2,2,3], 2],           // [1,2]
-].forEach(([nums, k]) => {
-  console.log(topKFrequent(nums, k))
+  [[1,2,2,1],[2,2]],            // [2]
+].forEach(args => {
+  console.log(intersection(...args))
 })
 
 // Solution:
-// 使用哈希表来保存数字出现的次数。
-// 使用桶数组按出现次数来排序数组。
-// 最后从桶数组的末尾开始取k个数。
+// 两个哈希记录在两个数组中出现的数。
+// 选择两个哈希中同时存在的。
 
 // Submission Result: Accepted
