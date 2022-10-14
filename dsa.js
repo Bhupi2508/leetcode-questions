@@ -1,53 +1,65 @@
-// 59. Spiral Matrix II
-// Medium   40%
+// 60. Permutation Sequence
+// Medium   28%
 
-// Given an integer n, generate a square matrix filled with elements from 1 to
-// n2 in spiral order.
+// The set [1,2,3,…,n] contains a total of n! unique permutations.
 
-// For example,
-// Given n = 3,
-// You should return the following matrix:
+// By listing and labeling all of the permutations in order,
+// We get the following sequence (ie, for n = 3):
 
-// [
-//   [ 1, 2, 3 ],
-//   [ 8, 9, 4 ],
-//   [ 7, 6, 5 ]
-// ]
+// "123"
+// "132"
+// "213"
+// "231"
+// "312"
+// "321"
+
+// Given n and k, return the kth permutation sequence.
+
+// Note: Given n will be between 1 and 9 inclusive.
 
 /**
  * @param {number} n
- * @return {number[][]}
+ * @param {number} k
+ * @return {string}
  */
-const generateMatrix = function(n) {
-  if (n <= 0) return []
-
-  const m = Array(n)
-  for (let i = 0; i < n; i++) m[i] = Array(n)
-
-  let a = 0, b = n - 1, c = 0, d = n -1, i = 1
-  while (i <= n * n) {
-    for (let j = a; j <= b; j++) m[c][j] = i++
-    c++
-    for (let j = c; j <= d; j++) m[j][b] = i++
-    b--
-    for (let j = b; j >= a; j--) m[d][j] = i++
-    d--
-    for (let j = d; j >= c; j--) m[j][a] = i++
-    a++
+const getPermutation = function(n, k) {
+  const cands = Array(n)
+  let factorial = 1
+  for (let i = 0; i < n; i++) {
+    cands[i] = i + 1
+    factorial *= i + 1
   }
 
-  return m
+  let res = ''
+  for (let i = n; i > 0; i--) {
+    factorial /= i
+    const index = Math.trunc((k - 1) / factorial)
+    res += cands.splice(index, 1)[0]
+    k -= factorial * index
+  }
+  return res
 }
 
 ;[
-  2,
-  3,
-].forEach(n => {
-  console.log(generateMatrix(n))
+  [3, 4],
+].forEach(([n, k]) => {
+  console.log(getPermutation(n, k))
 })
 
 // Solution:
-// 先构造一个n*n的矩阵
-// 从外层顺时针不断向内层填数，一行行或一列列地填。
+// 从第一个字符开始向后一个个生成。
+// 先构造一个可变数组，从1到n。使用过的数字，可从数组中删除。
+// 每次都只需要使用数组中的数和不断更新的k进行生成字符。
+
+// 给定n和k，
+// 先计算 n! 表示 n 个数生成的所有字符串。
+// (n - 1)! 表示 所有生成的按顺序的字符串的第一个字符相同的数量。
+// 如 n = 3 时，
+// '1'、'2'、'3' 为第一个字符的数量都为 2 = (n - 1)!
+
+// 确定第一个字符后，从数组中删去该数字，并更新k，
+// k需要减去第一个数所在的开始的位置。
+
+// 之后只需要不断重复，因为每次k和n都会更新，像是只需要生成第一个数一样。
 
 // Submission Result: Accepted
