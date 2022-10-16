@@ -1,52 +1,61 @@
-// 643. Maximum Average Subarray I
-// Easy   37%
+// 645. Set Mismatch
+// Easy 40% locked:false
 
 
-// Given an array consisting of n integers, find the contiguous subarray of given
-// length k that has the maximum average value. And you need to output the
-// maximum average value.
+// The set S originally contains numbers from 1 to n. But unfortunately, due to
+// the data error, one of the numbers in the set got duplicated to another number
+// in the set, which results in repetition of one number and loss of another
+// number.
+
+// Given an array nums representing the data status of this set after the error.
+// Your task is to firstly find the number occurs twice and then find the number
+// that is missing. Return them in the form of an array.
 
 // Example 1:
 
-// Input: [1,12,-5,-6,50,3], k = 4
-// Output: 12.75
-// Explanation: Maximum average is (12-5-6+50)/4 = 51/4 = 12.75
+// Input: nums = [1,2,2,4]
+// Output: [2,3]
 
 // Note:
 
-// 1 <= k <= n <= 30,000.
-// Elements of the given array will be in the range [-10,000, 10,000].
+// The given array size will in the range [2, 10000].
+// The given array's numbers won't have any order.
 
 
 /**
  * @param {number[]} nums
- * @param {number} k
- * @return {number}
+ * @return {number[]}
  */
-const findMaxAverage = function(nums, k) {
-  let result = -Infinity
-  for (let i = 0, sum = 0, n = nums.length; i < n; i++) {
-    sum += i < k ? nums[i] : nums[i] - nums[i - k]
-    if (i >= k - 1) result = Math.max(result, sum)
+const findErrorNums = function(nums) {
+  const length = nums.length
+  for (let i = 0; i < length;) {
+    const num = nums[i], swap = nums[num - 1]
+    if (num !== i + 1 && num !== swap) {
+      [nums[num - 1], nums[i]] = [num, swap]
+    } else {
+      i++
+    }
   }
-  return result / k
+
+  let i = 0
+  while (i < length && nums[i] === ++i);
+  return [nums[i - 1], i]
 }
 
 ;[
-  [[1,12,-5,-6,50,3], 4],            // 12.75
-  [[1,2], 1],                        // 2
-  [[-1], 1],                         // -1
-].forEach((args) => {
-  console.log(findMaxAverage(...args))
+  [1,2,2,4],                    // [2,3]
+  [6,4,2,3,1,5,8,8],            // [8,7]
+  [6,4,2,3,1,5,8,8,7],          // [8,9]
+  [1,1],                        // [1,2]
+  [2,2],                        // [2,1]
+].forEach(nums => {
+  console.log(findErrorNums(nums))
 })
 
 // Solution:
-// 想象拥有一个长度为 k 的队列，随着队列不断沿着数组向前，新的元素不断进入队列的
-// 头部，而队列尾部的元素不断退出。队列满了之后，前进一位，与记录中的队列总和比
-// 较，更新记录。
-// 记录过程只记录总和，没必要算平均数，总和越大平均越大（k 确定）。
-
-// 编程经验：每次使用 Math.max(.min) 时，都应该注意两个参数的初始值。
-
+// 先为元素找位置。
+// 在交换元素上要保证，交换的元素不同，不然会进入死循环。
+// 最后缺少的元素的位置上会出现重复的那个元素。
+// 再遍历一遍就可以找出来了。
 
 // Submission Result: Accepted
