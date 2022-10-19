@@ -1,47 +1,65 @@
-// 3. Longest Substring Without Repeating Characters
-// Medium  24%
+// 4. Median of Two Sorted Arrays
+// Hard 22%
 
-// Given a string, find the length of the longest substring without repeating
-// characters.
+// There are two sorted arrays nums1 and nums2 of size m and n respectively.
 
-// Examples:
+// Find the median of the two sorted arrays. The overall run time complexity
+// should be O(log (m+n)).
 
-// Given "abcabcbb", the answer is "abc", which the length is 3.
+// Example 1:
 
-// Given "bbbbb", the answer is "b", with the length of 1.
+// nums1 = [1, 3]
+// nums2 = [2]
 
-// Given "pwwkew", the answer is "wke", with the length of 3. Note that the
-// answer must be a substring, "pwke" is a subsequence and not a substring.
+// The median is 2.0
 
-// Given "dvdf", the answer is "vdf", which the length is 3.
+// Example 2:
+
+// nums1 = [1, 2]
+// nums2 = [3, 4]
+
+// The median is (2 + 3)/2 = 2.5
 
 /**
- * @param {string} s
+ * @param {number[]} nums1
+ * @param {number[]} nums2
  * @return {number}
  */
-const lengthOfLongestSubstring = function(s) {
-  const n = s.length, hash = {}
-  let result = 0
-  for (let i = 0, j = 0; i < n; i++) {
-    if (hash[s[i]]) j = Math.max(hash[s[i]], j)
-    result = Math.max(result, i - j + 1)
-    hash[s[i]] = i + 1
+const findMedianSortedArrays = function(nums1, nums2) {
+  let m = nums1.length, n = nums2.length
+  if (m > n) [nums1, nums2, m, n] = [nums2, nums1, n, m]
+
+  const half_len = (m + n + 1) >> 1
+  let imin = 0, imax = m
+  while (imin <= imax) {
+    const i = (imin + imax) >> 1, j = half_len - i
+
+    if (i < m && nums2[j - 1] > nums1[i]) imin = i + 1
+    else if (i > 0 && nums1[i - 1] > nums2[j]) imax = i - 1
+    else {
+      let max_of_left
+      if (i === 0) max_of_left = nums2[j - 1]
+      else if (j === 0) max_of_left = nums1[i - 1]
+      else max_of_left = Math.max(nums1[i - 1], nums2[j - 1])
+
+      if ((m + n) % 2) return max_of_left
+
+      let min_of_right
+      if (i === m) min_of_right = nums2[j]
+      else if (j === n) min_of_right = nums1[i]
+      else min_of_right = Math.min(nums1[i], nums2[j])
+
+      return (max_of_left + min_of_right) / 2
+    }
   }
-  return result
 }
 
 ;[
-  'abcabcbb',                   // 3
-  'bbbbb',                      // 1
-  'pwwkew',                     // 3
-  'c',                          // 1
-  'dvdf',                       // 3
-].forEach(s => {
-  console.log(lengthOfLongestSubstring(s))
+  [[1, 2], [3]],                // 2
+  [[1, 2], [3, 4]],             // 2.5
+].forEach(args => {
+  console.log(findMedianSortedArrays(...args))
 })
 
-// Solution:
-// 用哈希保存出现过的字符，且记录字符的位置+1 。
-// 每次遇到哈希中出现过的字符，就计算当前字符到位置 - 哈希中该字符的值。
 
 // Submission Result: Accepted
