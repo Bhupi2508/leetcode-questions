@@ -1,75 +1,90 @@
-// 680. Valid Palindrome II
-// Easy 31% locked:false
+// 682. Baseball Game
+// Easy 58% locked:false
 
 
-// Given a non-empty string s, you may delete at most one character. Judge
-// whether you can make it a palindrome.
+// You're now a baseball game point recorder.
+
+// Given a list of strings, each string can be one of the 4 following types:
+
+// 1. Integer (one round's score): Directly represents the number of points you
+//    get in this round.
+// 2. "+" (one round's score): Represents that the points you get in this round
+//    are the sum of the last two valid round's points.
+// 3. "D" (one round's score): Represents that the points you get in this round
+//    are the doubled data of the last valid round's points.
+// 4. "C" (an operation, which isn't a round's score): Represents the last valid
+//    round's points you get were invalid and should be removed.
+
+// Each round's operation is permanent and could have an impact on the round
+// before and the round after.
+
+// You need to return the sum of the points you could get in all the rounds.
 
 // Example 1:
 
-// Input: "aba"
-// Output: True
+// Input: ["5","2","C","D","+"]
+// Output: 30
+// Explanation:
+// - Round 1: You could get 5 points. The sum is: 5.
+// - Round 2: You could get 2 points. The sum is: 7.
+// - Operation 1: The round 2's data was invalid. The sum is: 5.
+// - Round 3: You could get 10 points (the round 2's data has been removed). The
+//   sum is: 15.
+// - Round 4: You could get 5 + 10 = 15 points. The sum is: 30.
 
 // Example 2:
 
-// Input: "abca"
-// Output: True
-// Explanation: You could delete the character 'c'.
+// Input: ["5","-2","4","C","D","9","+","+"]
+// Output: 27
+// Explanation:
+// - Round 1: You could get 5 points. The sum is: 5.
+// - Round 2: You could get -2 points. The sum is: 3.
+// - Round 3: You could get 4 points. The sum is: 7.
+// - Operation 1: The round 3's data is invalid. The sum is: 3.
+// - Round 4: You could get -4 points (the round 3's data has been removed). The
+//   sum is: -1.
+// - Round 5: You could get 9 points. The sum is: 8.
+// - Round 6: You could get -4 + 9 = 5 points. The sum is 13.
+// - Round 7: You could get 9 + 5 = 14 points. The sum is 27.
 
 // Note:
-
-// The string will only contain lowercase characters a-z.
-// The maximum length of the string is 50000.
+// The size of the input list will be between 1 and 1000.
+// Every integer represented in the list will be between -30000 and 30000.
 
 
 /**
- * @param {string} s
- * @return {boolean}
+ * @param {string[]} ops
+ * @return {number}
  */
-const validPalindrome = function(s) {
-  function match(i, j) {
-    while (i < j && s[i] === s[j]) { i++; j-- }
-    return [i, j]
+const calPoints = function(ops) {
+  const round = ops.length
+  let len = -1
+  for (let i = 0; i < round; i++) {
+    const num = parseInt(ops[i])
+    if (num === num) ops[++len] = num
+    if (ops[i] === '+') ops[++len] = (ops[len - 1] || 0) + (ops[len - 2] || 0)
+    if (ops[i] === 'D') ops[++len] = (ops[len - 1] || 0) * 2
+    if (ops[i] === 'C') len--
   }
 
-  let [i, j] = match(0, s.length - 1)
-  if (i >= j) return true
+  let result = 0
+  for (let i = 0; i <= len; i++) {
+    result += ops[i]
+  }
 
-  let [a, b] = match(i + 1, j)
-  if (a >= b) return true
-
-  ;[a, b] = match(i, j - 1)
-  if (a >= b) return true
-
-  return false
+  return result
 }
 
-console.log(validPalindrome('abababa'))
-console.log(validPalindrome('abac'))
-console.log(validPalindrome('ababacba'))
-console.log(validPalindrome('abacbacba'))
+console.log(calPoints(['5','2','C','D','+']))
+console.log(calPoints(['5','-2','4','C','D','9','+','+']))
+console.log(calPoints(['1','D','D','D']))
 
 // Solution:
-// 因为最多只能删除一个字符，所以字符串基本上是对称的。
-// 因此，比较首尾对应字符，分别用 low 和 high 表示要比较的字符的下标。
+// 关键在于读懂问题
 
-// 第一次遇到不同时，有下面4种情况：
-// 1. s[low+1] === s[high]，s[low] === s[high-1]，
-//    先 low+=1，继续匹配，不行再回溯，将 high-=1。
-// 2. s[low+1] === s[high]，s[low] !== s[high-1]，
-//    将 low+=1，继续判断，直到遇见第二个不同返回 false，否则返回 true。
-// 3. s[low+1] !== s[high]，s[low] === s[high-1]，
-//    将 high-=1，继续判断，直到遇见第二个不同返回 false，否则返回 true。
-// 4. s[low+1] !== s[high]，s[low] !== s[high-1]，
-//    则返回 false， 因为则起码要删去2个字符
-// 其中要为 情况1 添加额外变量，记录回溯信息。
-
-// 改进，更加直接，直观。
-// 同样首尾匹配，用函数来完成，从外到里匹配。
-// 如果字符串本来就是回文，则返回 true。
-// 若第一次遇到不同，记录 i 和 j，随后有 3 种情况：
-// 1. s[i] 多余，左边从 i+1 开始，若再有不匹配，看下一种情况，否则返回 true。
-// 2. s[j] 多余，右边从 j-1 开始，若再有不匹配，看下一种情况，否则返回 true。
-// 3. s[i] 和 s[j] 都多余，直接返回 false
+// 迭代的时候，记录最后一个有效的轮次的得分，因为迭代过程会执行删去无效轮次的操作（"C")。
+// 将数字字符转换成数字。
+// "D" 和 "+" 也转换为有效得分，并插在最后一个有效得分的后面。
+// 最后将每轮有效得分相加
 
 // Submission Result: Accepted
