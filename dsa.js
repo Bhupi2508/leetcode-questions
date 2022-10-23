@@ -1,70 +1,115 @@
-// 836. Rectangle Overlap
-// Easy   49%
+// 840. Magic Squares In Grid
+// Easy   37%
 
 
-// A rectangle is represented as a list [x1, y1, x2, y2], where (x1, y1) are the
-// coordinates of its bottom-left corner, and (x2, y2) are the coordinates of its
-// top-right corner.
-// Two rectangles overlap if the area of their intersection is positive.  To be
-// clear, two rectangles that only touch at the corner or edges do not overlap.
-// Given two (axis-aligned) rectangles, return whether they overlap.
+// A 3 x 3 magic square is a 3 x 3 grid filled with distinct numbers from 1 to 9
+// such that each row, column, and both diagonals all have the same sum.
+// Given an grid of integers, how many 3 x 3 "magic square" subgrids are there?
+// (Each subgrid is contiguous).
+
 // Example 1:
-// Input: rec1 = [0,0,2,2], rec2 = [1,1,3,3]
-// Output: true
-// Example 2:
-// Input: rec1 = [0,0,1,1], rec2 = [1,0,2,1]
-// Output: false
-// Notes:
-//     Both rectangles rec1 and rec2 are lists of 4 integers.
-//     All coordinates in rectangles will be between -10^9 and 10^9.
+// Input: [[4,3,8,4],
+//         [9,5,1,9],
+//         [2,7,6,2]]
+// Output: 1
+// Explanation:
+// The following subgrid is a 3 x 3 magic square:
+// 438
+// 951
+// 276
+// while this one is not:
+// 384
+// 519
+// 762
+// In total, there is only one magic square inside the given grid.
+// Note:
+//     1 <= grid.length <= 10
+//     1 <= grid[0].length <= 10
+//     0 <= grid[i][j] <= 15
 
 
 /**
- * @param {number[]} rec1
- * @param {number[]} rec2
- * @return {boolean}
+ * @param {number[][]} grid
+ * @return {number}
  */
-const isRectangleOverlap = function(rec1, rec2) {
-  return rec1[0] < rec2[2] && rec2[0] < rec1[2] && rec1[1] < rec2[3] && rec2[1] < rec1[3]
+const numMagicSquaresInside = function(grid) {
+  const circle = '29438167'
+  const pos = [[-1,-1],[-1,0],[-1,1],[0,1],[1,1],[1,0],[1,-1],[0,-1]]
+  function isMagicSquares(i, j) {
+    if (grid[i][j] !== 5) return false
+    let a = b = circle.indexOf(grid[i - 1][j - 1])
+    if (a % 2 === 1) return false
+    let passA = true, passB = true
+    for (let p of pos) {
+      const n = grid[i + p[0]][j + p[1]]
+      if (n != circle[a]) passA = false
+      if (n != circle[b]) passB = false
+      a = (a + 1) % 8
+      b = (b + 7) % 8
+    }
+    return passA || passB
+  }
+  const n = grid.length, m = grid[0].length
+  let res = 0
+  for (let i = 1; i < n - 1; i++) {
+    for (let j = 1; j < m - 1; j++) {
+      if (isMagicSquares(i, j)) res++
+    }
+  }
+  return res
 }
 
 ;[
-  [[0,0,2,2], [1,1,3,3]], // true
-  [[0,0,1,1], [1,0,2,1]], // false
-  [[7,8,13,15], [10,8,12,20]], // true
-  [[1,1,3,2], [2,0,4,3]], // true
-].forEach(([rec1, rec2]) => {
-  console.log(isRectangleOverlap(rec1, rec2))
+  [[4,3,8,4],[9,5,1,9],[2,7,6,2]],
+].forEach((grid) => {
+  console.log(numMagicSquaresInside(grid))
 })
 
 // Solution:
+// 1 + 2 + ... + 9 = 45
+// 45 / 3 = 15
+// 行、列、对角线的和都为 15
+// 3 个数的和为 15 的组合的规律
 
-// 1. 判断是否存在一个矩形的四个点中的一个在另一个矩阵内
-// 【错误】不一定有点在另一个矩阵内才重合，例如一个矩阵的一条边横穿另一个矩阵
-const faild = function(rec1, rec2) {
-  function isInner(i, j) {
-    return rec1[0] < i && i < rec1[2] && rec1[1] < j && j < rec1[3]
+const set = new Set()
+for (let i = 1; i <= 9; i++) {
+  for (let j = 1; j <= 9; j++) {
+    if (i === j) continue
+    const k = 15 - i - j
+    if (i === k || j === k || k <= 0 || k > 9) continue
+    const a = [i, j, k]
+    a.sort((a, b) => a - b)
+    set.add(a.join(' '))
   }
-  return isInner(rec2[0], rec2[1]) ||
-    isInner(rec2[0], rec2[3]) ||
-    isInner(rec2[2], rec2[3]) ||
-    isInner(rec2[2], rec2[1])
 }
 
-// 2. 大神的思路(真的神！)
-// 先考虑 1D 情况
-// 若两条线 (a1,b1) (a2,b2) 重叠
-// a1------b1     | a1----b1          |           a1-----b1 |     a1------b1
-//     a2------b2 |         a2-----b2 | a2-----b2           | a2-------------b2
-// 则 a1 < b2 && a2 < b1
+// 组合有
+// Set {
+//   '1 5 9',
+//   '1 6 8',
+//   '2 4 9',
+//   '2 5 8',
+//   '2 6 7',
+//   '3 4 8',
+//   '3 5 7',
+//   '4 5 6'
+// }
 
-// 再回到 2D 的情况
-// 若两个矩阵在 x 轴和 y 轴上都重叠，则它们在平面上重叠
+// 在四个边的数只需要出现在 2 个组合内，所以有 1，3，7，9
+// 在四个角的数需要在 3 个组合内，所以只能是 2，4，6，8 (所有偶数)
+// 中间的数必须出现在 4 个组合内，只能是 5
 
-// x 轴上的点为 （rec1[0],rec1[2]) (rec2[0],rec2[2])
-// 即需 rec1[0] < rec2[2] && rec2[0] < rec1[2]
+// 159，258，357，456
 
-// y 轴上的点为  (rec1[1],rec1[3]) (rec2[1],rec2[3])
-// 即需 rec1[1] < rec2[3] && rec2[1] < rec1[3]
+// 能组成的矩阵有
+// 2 9 4
+// 7 5 3
+// 6 1 8
+// 及其旋转和镜像等
+// 共 8 个
+
+// 因此
+// 1，判断中间是否为 5
+// 2，判断周围的环是否与环 2-9-4-3-8-1-6-7(或逆环) 相同
 
 // Submission Result: Accepted
