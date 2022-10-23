@@ -1,39 +1,62 @@
-// 326. Power of Three
-// Easy   40%
+// 338. Counting Bits
+// Medium   61%
 
+// Given a non negative integer number num. For every numbers i in the range 0 ≤
+// i ≤ num calculate the number of 1's in their binary representation and return
+// them as an array.
 
-// Given an integer, write a function to determine if it is a power of three.
+// Example:
+// For num = 5 you should return [0,1,1,2,1,2].
 
 // Follow up:
-// Could you do it without using any loop / recursion?
 
-// Credits:Special thanks to @dietpepsi for adding this problem and creating all
+// It is very easy to come up with a solution with run time O(n*sizeof(integer)).
+// But can you do it in linear time O(n) /possibly in a single pass?
+// Space complexity should be O(n).
+// Can you do it like a boss? Do it without using any builtin function like
+// __builtin_popcount  in c++ or in any other language.
+
+// Credits:Special thanks to @ syedee  for adding this problem and creating all
 // test cases.
 
 
 /**
- * @param {number} n
- * @return {boolean}
+ * @param {number} num
+ * @return {number[]}
  */
-const isPowerOfThree = function(n) {
-  return n > 0 && Math.pow(3, Math.trunc(Math.log(n) / Math.log(3))) === n
+const countBits = function(num) {
+  if (num === 0) return [0]
+  const result = [0], power = Math.floor(Math.log2(num)) + 1
+  for (let i = 0; i < power; i++) {
+    result.push(...result.map(v => v + 1))
+  }
+  return result.slice(0, num + 1)
 }
 
 ;[
-  0,                            // false
-  3,                            // true
-  81,                           // true
-].forEach(n => {
-  console.log(isPowerOfThree(n))
+  5,                            // [0,1,1,2,1,2]
+].forEach(num => {
+  console.log(countBits(num))
 })
 
-
 // Solution:
-// 假设 3^m = n_um，当 m 为整数时，n_um 为 以4为底数的幂
-// 两边取以3为底的对数 log_3(3 ^ m) = log_3(n)
-// m = log_3(n)
-// m = log_e(n) / log_e(3)，因为没有合适的取对数函数，只能换用 e 为底的
-// 但是这样得到的 n，和正确的结果有极小的误差。
-// 因此需要对 m 取整再比较 3^m 是否等于 n
+// 按二进制位数来给每个数字分组，如下（0为0位数）
+// 0       0
+// ---------
+// 1       1
+// ---------
+// 2      10
+// 3      11
+// ---------
+// 4     100
+// 5     101
+// 6     110
+// 7     111
+
+// 从中可看出，每个组中的数都是其前面全部组的连接后的数加上一个1形成的
+// 如 6=110 对应 2=10， 5=101 对应 1=01
+
+// 因此每个数 i 的二进制中一的个数都可通过数 (i - （2^log(i) + 1)) 中一的个数再加上 1
+// 获得。
 
 // Submission Result: Accepted
