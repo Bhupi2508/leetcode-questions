@@ -1,115 +1,79 @@
-// 479. Largest Palindrome Product
-// Easy   23%
+// 481. Magical String
+// Medium   46%
 
 
-// Find the largest palindrome made from the product of two n-digit numbers.
+// A magical string S consists of only '1' and '2' and obeys the following rules:
 
-//  Since the result could be very large, you should return the largest
-// palindrome mod 1337.
+// The string S is magical because concatenating the number of contiguous
+// occurrences of characters '1' and '2' generates the string S itself.
 
-// Example:
-// Input: 2
-// Output: 987
-// Explanation: 99 x 91 = 9009, 9009 % 1337 = 987
+// The first few elements of string S is the following:
+// S = "1221121221221121122……"
+// If we group the consecutive '1's and '2's in S, it will be:
+// 1   22  11  2  1  22  1  22  11  2  11  22 ......
+// and the occurrences of '1's or '2's in each group are:
+// 1   2   2   1  1  2   1  2   2   1  2   2  ......
+
+// You can see that the occurrence sequence above is the S itself.
+// Given an integer N as input, return the number of '1's in the first N number
+// in the magical string S.
 
 // Note:
-// The range of n is [1,8].
+// N will not exceed 100,000.
+
+// Example 1:
+// Input: 6
+// Output: 3
+// Explanation: The first 6 elements of magical string S is "12211" and it
+// contains three 1's, so return 3.
 
 
 /**
  * @param {number} n
  * @return {number}
  */
-const largestPalindrome = function(n) {
-  return [0,9,987,123,597,677,1218,877,475][n]
+const magicalString = function(n) {
+  if (n <= 0) return 0
+  const s = [1]
+  for (let i = 0; s.length < n; i++) {
+    if (s[i] === 2) {
+      s.push(s[s.length - 1])
+    }
+    if (s.length < n) {
+      s.push(i % 2 ? 1 : 2)
+    }
+  }
+  return s.filter(v => v < 2).length
 }
 
 ;[
-  2,                            // 987
-  5,                            // 677
-  6,                            // 1218
-  7,                            // 877
-  8,                            // 475
-].forEach(n => {
-  console.log(largestPalindrome(n))
+  1,  // 1
+  2,  // 1
+  3,  // 1
+  4,  // 2
+  5,  // 3
+  6,  // 3
+  19, // 9
+].forEach((n) => {
+  console.log(magicalString(n))
 })
 
 // Solution:
-// 必须判断数字是否回文，因此使用了判断函数 [[./9-palindrome-number.js][isPalindrome]]
+// 文字图解释（其中两个 s 为同一个序列）：
+// s = 1   2 2  1 1  2  1  2 2  1  2 2  1 1  2  1 1  2 2 ......
+//     |   |/   |/   |  |  |/   |  |/   |/   |  |/   |/
+// s = 1   2    2    1  1  2    1  2    2    1  2    2   ......
 
-// 尝试1：
-// 从回文数开始入手。
-// 先找到位数合适且时回文数的数字，再判断时候可以*因数分解*成两个合适位数的数字。
-// 当位数为 6 的时候就已经要花很多很多时间了。
+// 从中可以看出，连续相同的数字成为一组：
+//  - 每组的数字是 1 和 2 交替出现的，即奇数组为 2 的组合，偶数组为 1 的组合，
+//  - 每组的数字出现的次数，是非分组序列的同下标（组数与数组下标相同）的数，
+//    即 s[i] = 1 时，添加一个数，s[i] = 2 时，添加两个数。
 
-// 尝试2：
-// 从两个乘数开始入手。
-// 从两个乘数的乘积最大的数开始遍历，看是否为回文数。
 
-// 顺序依次为
-// n * n
-// n * (n - 1)
-// (n - 1) * (n - 1)
-// n * (n - 2)
-// (n - 1) * (n - 2)
-// ...
-
-// 用对（i, j) 表示 (n - i) * (n - j) 的话会清晰一点。
-// ---0---
-// (0, 0)
-// ---1---
-// (0, 1)
-// ---2---
-// (1, 1)
-// (0, 2)
-// ---3---
-// (1, 2)
-// (0, 3)
-// ---4---
-// (2, 2)
-// (1, 3)
-// (0, 4)
-// ---5---
-// (2, 3)
-// (1, 4)
-// (0, 5)
-// ---6---
-// (3, 3)
-// (2, 4)
-// ...
-
-// 从中可看出每个(i, j)对中，每个层次的 i + j 都相同，且从0开始依次递增，
-// 而每个层中，i 从 (i + j) / 2 开始递减。
-
-// 由此顺序找出两数乘积最大的回文数。
-
-// const digit = Math.pow(10, n) - 1
-// for (let i = 0, end = (digit - Math.pow(10, n - 1)) * 2; i < end; i++) {
-//   for (let j = i >> 1; j >= 0; j--) {
-//     const product = (digit - j) * (digit + j - i)
-//     if (isPalindrome(product)) return product % 1337
-//   }
-// }
-
-// 到 8 位数的时候，就要花好多好多时间了。
-
-// 因为两数的乘积是否为回文数，这个是比较随机的，因此不知道如何计算其时间复杂度。
-
-// 尝试3：
-// 构造回文数，再尝试因式分解。
-// if (n === 1) return 9
-// const max= Math.pow(10, n) - 1
-// for (let i = max - 1; i > max / 10; i--) {
-//   console.log(i + '', (i + '').split('').reverse().join(''));
-//   const u = parseFloat(i + (i + '').split('').reverse().join(''))
-//   console.log(u);
-//   for (let x = max; x * x >= u; x--) {
-//     if (u % x === 0) return u % 1337
-//   }
-// }
-// return 0
-
-// 速度很快，但是到了8的时候，因为JS存储数值类型的精度问题，构造出来的数会有偏差，从而无法得到正确答案。
+// 实现中，使用了一些小技巧：超前添加。即使用 s[i] 来完成 s[i + 1] 对应的组数的
+// 第一个数。具体为：
+//  - s[i] = 2时，添加一个与末尾相同的数，然后再添加一个交替数
+//  - s[i] = 1时，添加一个交替数。
 
 
 // Submission Result: Accepted
