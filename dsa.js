@@ -1,63 +1,102 @@
-// 7. Reverse Integer
-// Easy  24%
+// 8. String to Integer (atoi)
+// Medium  13%
 
-// Reverse digits of an integer.
+// Implement atoi to convert a string to an integer.
 
-// Example1: x = 123, return 321
-// Example2: x = -123, return -321
+// Hint: Carefully consider all possible input cases. If you want a challenge,
+// please do not see below and ask yourself what are the possible input cases.
 
-// click to show spoilers.
-//   Have you thought about this?
+// Notes: It is intended for this problem to be specified vaguely (ie, no given
+// input specs). You are responsible to gather all the input requirements up
+// front.
 
-// Here are some good questions to ask before coding. Bonus points for you if
-// you have already thought through this!
+// Update (2015-02-10): The signature of the C++ function had been updated. If
+// you still see your function signature accepts a const char * argument, please
+// click the reload button to reset your code definition.
 
-// If the integer's last digit is 0, what should the output be? ie, cases such
-// as 10, 100.
+// spoilers alert... click to show requirements for atoi. Requirements for atoi:
 
-// Did you notice that the reversed integer might overflow? Assume the input is
-// a 32-bit integer, then the reverse of 1000000003 overflows. How should you
-// handle such cases?
+// The function first discards as many whitespace characters as necessary until
+// the first non-whitespace character is found. Then, starting from this
+// character, takes an optional initial plus or minus sign followed by as many
+// numerical digits as possible, and interprets them as a numerical value.
 
-// For the purpose of this problem, assume that your function returns 0 when the
-// reversed integer overflows.
+// The string can contain additional characters after those that form the
+// integral number, which are ignored and have no effect on the behavior of this
+// function.
 
-// Note: The input is assumed to be a 32-bit signed integer. Your function
-// should return 0 when the reversed integer overflows.
+// If the first sequence of non-whitespace characters in str is not a valid
+// integral number, or if no such sequence exists because either str is empty or
+// it contains only whitespace characters, no conversion is performed.
+
+// If no valid conversion could be performed, a zero value is returned. If the
+// correct value is out of the range of representable values, INT_MAX
+// (2147483647) or INT_MIN (-2147483648) is returned.
 
 /**
- * @param {number} x
+ * @param {string} str
  * @return {number}
  */
+const myAtoi = function(str) {
+  const n = str.length
 
-const reverse = function(x) {
-  const isOverflow = x => x > 0x7fffffff || -x > 0x7fffffff
-  if (isOverflow(x)) return 0
+  let i = 0, result = 0
+  while (str[i] === ' ') i++
 
-  let y = Math.abs(x), result = 0
-  while (y !== 0) {
-    result = result * 10 + y % 10
-    y = Math.floor(y / 10)
+  let sign = str[i] === '-' ? -1 : 1
+  if (str[i] === '-' || str[i] === '+') i++
+
+  while (i < n) {
+    const m = str[i] - 0
+    if (Number.isNaN(m) || str[i] === ' ') break
+    result = result * 10 + m
+    i++
   }
 
-  result *= x < 0 ? -1 : 1
-  return isOverflow(result) ? 0 : result
+  result *= sign
+
+  if (result >= 2147483647) return 2147483647
+  if (result <= -2147483648) return -2147483648
+  return result
 }
 
 ;[
-  123,                          // 321
-  -123,                         // -321
-  -2147483648,                  // 0
-  1534236469,                   // 0
-].forEach(x => {
-  console.log(reverse(x))
+  '',                           // 0
+  '       ',                    // 0
+  '-',                          // 0
+  '+',                          // 0
+
+  '123',                        // 123
+  '-123',                       // -123
+  '+123',                       // 123
+  '-0001230',                   // -1230
+
+  '11.2',                       // 11
+  '-123.234',                   // -123
+
+  '  -123',                     // -123
+  '  -12 3',                    // -12
+
+  '-12a42',                     //-12
+].forEach(str => {
+  console.log(myAtoi(str))
 })
 
-
 // Solution:
-// 因为假设数字是 32 位有符号整数，而答案可能会超出该范围，所以输入和输出都要检
-// 查一遍是否溢出。
-// 构造导致数，每次取得原数的最后一位作为新数的最后一位就好了。
-// 像两个栈传递元素一样，只是用的是取模运算和乘除法运算来避免额外空间。
+// 根据提示，首先需要考虑所有可能的输入情况。
+// - 空字符串，'+'和'-'，空格
+// - 前导空格
+// - 前导0
+// - 正负整数字符串
+// - 正负浮点数字符串
+// - 非数字字符串
+// - 中间非数字字符
+
+// 步骤
+// 1. 处理前导空格，如果有的话
+// 2. 处理符号，如果有符号的话
+// 3. 处理有效数字字符，直到遇到非数字字符
+// 4. 添加符号，并判断是否溢出
+// 5. 返回数字
 
 // Submission Result: Accepted
