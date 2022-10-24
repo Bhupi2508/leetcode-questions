@@ -1,86 +1,79 @@
-// 155. Min Stack
-// Easy   29%
+// 160. Intersection of Two Linked Lists
+// Easy   30%
 
 
-// Design a stack that supports push, pop, top, and retrieving the minimum
-// element in constant time.
+// Write a program to find the node at which the intersection of two singly
+// linked lists begins.
 
-// push(x) -- Push element x onto stack.
+// For example, the following two linked lists:
 
-// pop() -- Removes the element on top of the stack.
+// A:          a1 → a2
+//                    ↘
+//                      c1 → c2 → c3
+//                    ↗
+// B:     b1 → b2 → b3
 
-// top() -- Get the top element.
+// begin to intersect at node c1.
 
-// getMin() -- Retrieve the minimum element in the stack.
+// Notes:
 
-// Example:
+// If the two linked lists have no intersection at all, return null.
+// The linked lists must retain their original structure after the function
+// returns.
+// You may assume there are no cycles anywhere in the entire linked structure.
+// Your code should preferably run in O(n) time and use only O(1) memory.
 
-// MinStack minStack = new MinStack();
-// minStack.push(-2);
-// minStack.push(0);
-// minStack.push(-3);
-// minStack.getMin();   --> Returns -3.
-// minStack.pop();
-// minStack.top();      --> Returns 0.
-// minStack.getMin();   --> Returns -2.
+// Credits:Special thanks to @stellari for adding this problem and creating all
+// test cases.
 
 
 /**
- * initialize your data structure here.
+ * Definition for singly-linked list.
+ * function ListNode(val) {
+ *     this.val = val;
+ *     this.next = null;
+ * }
  */
-const MinStack = function() {
-  this.stack = []
-  this.min = []
+
+/**
+ * @param {ListNode} headA
+ * @param {ListNode} headB
+ * @return {ListNode}
+ */
+const getIntersectionNode = function(headA, headB) {
+  const hash = {}
+  while (headA) {
+    hash[headA.val] = 1
+    headA = headA.next
+  }
+  while (headB) {
+    if (hash[headB.val]) hash[headB.val] = 2
+    headB = headB.next
+  }
+
+  const head = new ListNode()
+  let node = head
+  for (let key in hash) {
+    if (hash[key] === 2) {
+      node.next = new ListNode(key)
+      node = node.next
+    }
+  }
+
+  return head.next
 }
 
-/**
- * @param {number} x
- * @return {void}
- */
-MinStack.prototype.push = function(x) {
-  if (this.min.length === 0 ||  x <= this.min[this.min.length - 1]) this.min.push(x)
-  this.stack.push(x)
-}
+const ListNode = require('../structs/ListNode')
+;[
+  [[3,4,1,2,5], [2,4,3]],       // [2,4,3]
+].forEach(([A, B]) => {
+  const headA = ListNode.from(A),
+        headB = ListNode.from(B)
+  console.log((getIntersectionNode(headA, headB) || '').toString())
+})
 
-/**
- * @return {void}
- */
-MinStack.prototype.pop = function() {
-  const result = this.stack.pop()
-  if (this.min[this.min.length - 1] === result) this.min.pop()
-  return result
-}
-
-/**
- * @return {number}
- */
-MinStack.prototype.top = function() {
-  return this.stack[this.stack.length - 1]
-}
-
-/**
- * @return {number}
- */
-MinStack.prototype.getMin = function() {
-  return this.min[this.min.length - 1]
-}
-
-/**
- * Your MinStack object will be instantiated and called as such:
- * var obj = Object.create(MinStack).createNew()
- * obj.push(x)
- * obj.pop()
- * var param_3 = obj.top()
- * var param_4 = obj.getMin()
- */
-
-const minStack = new MinStack()
-minStack.push(-2)
-minStack.push(0)
-minStack.push(-3)
-console.log(minStack.getMin())
-console.log(minStack.pop())
-console.log(minStack.top())
-console.log(minStack.getMin())
+// Solution:
+// 用哈希来算交集。
+// TODO: #160 重做，题目理解错了
 
 // Submission Result: Accepted
