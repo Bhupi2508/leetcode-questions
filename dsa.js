@@ -1,26 +1,25 @@
-// 101. Symmetric Tree
-// Easy   39%
+// 102. Binary Tree Level Order Traversal
+// Medium 40% locked:false
 
-// Given a binary tree, check whether it is a mirror of itself (ie, symmetric
-// around its center).
+// Given a binary tree, return the level order traversal of its nodes' values.
+// (ie, from left to right, level by level).
 
-// For example, this binary tree [1,2,2,3,4,4,3] is symmetric:
+// For example:
+// Given binary tree [3,9,20,null,null,15,7],
 
-//     1
+//     3
 //    / \
-//   2   2
-//  / \ / \
-// 3  4 4  3
+//   9  20
+//     /  \
+//    15   7
 
-// But the following [1,2,2,null,3,null,3] is not:
+// return its level order traversal as:
 
-//    1
-//   / \
-//  2   2
-//   \   \
-//   3    3
-
-// Note: Bonus points if you could solve it both recursively and iteratively.
+// [
+//   [3],
+//   [9,20],
+//   [15,7]
+// ]
 
 /**
  * Definition for a binary tree node.
@@ -32,33 +31,31 @@
 
 /**
  * @param {TreeNode} root
- * @return {boolean}
+ * @return {number[][]}
  */
-const isSymmetric = function(root) {
-  if (root == null) return true
-  function iter(left, right) {
-    if (left === right) return true
-    if (left && right && left.val === right.val) {
-      return iter(left.left, right.right) && iter(left.right, right.left)
+const levelOrder = function(root) {
+  const res = []
+  function iter(root, level) {
+    if (root) {
+      if (!res[level]) res[level] = []
+      res[level].push(root.val)
+      iter(root.left, level + 1)
+      iter(root.right, level + 1)
     }
-    return false
   }
-  return iter(root.left, root.right)
+
+  iter(root, 0)
+  return res
 }
 
 const TreeNode = require('../structs/TreeNode')
 ;[
-  [1, 2, 2, 3, 4, 4, 3],        // true
-  [1,2,2,null,3,null,3],        // false
+  [3,9,20,null,null,15,7], // [ [ 3 ], [ 9, 20 ], [ 15, 7 ] ]
 ].forEach(array => {
-  console.log(isSymmetric(TreeNode.from(array)))
+  console.log(levelOrder(TreeNode.from(array)))
 })
 
 // Solution:
-// 比较左右子节点对象是否相同，相同（同为 null）则返回 true
-// 比较左右子节点的值是否相同，相同则递归返回（&&运算）
-//  1. 左节点的左子树和右节点的右子树是否相同
-//  2. 左节点的右子树和右节点的左子树是否相同
-// 否则返回 false
+// 递归遍历，遍历过程中，带上层级参数 level ，根据 level 来插入对应数组。
 
 // Submission Result: Accepted
