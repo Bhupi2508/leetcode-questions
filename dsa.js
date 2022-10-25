@@ -1,30 +1,18 @@
 /**
- * Definition for a binary tree node.
- * function TreeNode(val) {
- *     this.val = val;
- *     this.left = this.right = null;
- * }
+ * @param {number[]} nums
+ * @return {number[]}
  */
-/**
- * @param {TreeNode} root
- * @param {TreeNode} p
- * @param {TreeNode} q
- * @return {TreeNode}
- */
-var lowestCommonAncestor = function(root, p, q) {
-    if (!root || root === p || root === q) {
-        return root;
+var productExceptSelf = function(nums) {
+    var productsOnRight = [];
+    productsOnRight[nums.length - 1] = 1;
+    for (var i = nums.length - 2; i >= 0; i--) {
+        productsOnRight[i] = nums[i + 1] * productsOnRight[i + 1];
     }
-
-    var left = lowestCommonAncestor(root.left, p, q);
-    var right = lowestCommonAncestor(root.right, p, q);
-
-    if (!left) {
-        return right;
+    var productsOnLeft = 1;
+    var results = [];
+    for (var i = 0; i < nums.length; i++) {
+        results[i] = productsOnLeft * productsOnRight[i];
+        productsOnLeft *= nums[i];
     }
-    if (!right) {
-        return left;
-    }
-    
-    return root;
+    return results;
 };
