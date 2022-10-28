@@ -1,31 +1,16 @@
 /**
- * Key: Bit manipulation. 26 letters, from bit 0 to 25, each bit represent a letter,
- * so each word can be represented by an 'or |' operation of all bits. The two words
- * share no common letter only if the represented bits of the two words do not share
- * a common bit. (use & to solve this problem).
+ * Key, focus on the bulb, the ith bulb's stutus will not be changed after ith round
+ * e.g. 2nd bulb's status only can be changed twice, 1*2, and 2*1, that is, 2's factors
+ * If the number of factors of i is even, it will be no effect to the bulb, the bulb stays
+ * off. (e.g. 6 has 1, 2, 3, 6, only (1,6) (2,3) (3,2) (6,1) can change the status,
+ * but 4 times has no effect to the status). However, if the number of factors is odd, the
+ * bulb status will be changed. (e.g. 4 has 1, 2, 4, (1,4), (2,2), (4,1)), so we can see only
+ * the number of total 'on' bulb is the number of sqaure root of n.
  *
- * @param {string[]} words
+ * if the number of factors is odd, the
+ * @param {number} n
  * @return {number}
  */
-var maxProduct = function(words) {
-    var bytes = [];
-    var maxLength = 0;
-    for (var i = 0; i < words.length; i++) {
-        var bit = 0;
-        for (var j = 0; j < words[i].length; j++) {
-            bit |= 1 << (words[i].charCodeAt(j) - 'a'.charCodeAt(0));
-        }
-        bytes[i] = bit;
-    }
-
-    for (var i = 0; i < words.length; i++) {
-        for (var j = i + 1; j < words.length; j++) {
-            // the operator priority '===' > '&', so we need () for the & operator
-            if ((bytes[j] & bytes[i]) === 0) {
-                maxLength = Math.max(maxLength, words[i].length * words[j].length);
-            }
-        }
-    }
-
-    return maxLength;
+var bulbSwitch = function(n) {
+    return Math.floor(Math.sqrt(n));
 };
