@@ -1,12 +1,12 @@
-// 82. Remove Duplicates from Sorted List II
-// Medium 29% locked:false
+// 83. Remove Duplicates from Sorted List
+// Easy   39%
 
-// Given a sorted linked list, delete all nodes that have duplicate numbers,
-// leaving only distinct numbers from the original list.
+// Given a sorted linked list, delete all duplicates such that each element
+// appear only once.
 
 // For example,
-// Given 1->2->3->3->4->4->5, return 1->2->5.
-// Given 1->1->1->2->3, return 2->3.
+// Given 1->1->2, return 1->2.
+// Given 1->1->2->3->3, return 1->2->3.
 
 /**
  * Definition for singly-linked list.
@@ -21,36 +21,28 @@
  * @return {ListNode}
  */
 const deleteDuplicates = function(head) {
-  if (head === null) return head
-
-  const start = new ListNode()
-  start.next = head
-
-  let p = start, q = p.next
-  while (q !== null && q.next !== null) {
-    if (p.next.val !== q.next.val) {
-      p = p.next
-      q = q.next
-    } else {
-      while (q.next !== null && p.next.val === q.next.val) q = q.next
-      q = q.next
-      p.next = q
-    }
+  let p = head
+  while (p && p.next) {
+    if (p.val === p.next.val) p.next = p.next.next
+    else p = p.next
   }
 
-  return start.next
+  return head
 }
 
 const ListNode = require('../structs/ListNode')
 ;[
-  [3,3,4,4],       // []
-  [1,2,3,3,4,4,5], // [1,2,5]
-  [1,1,1,2,3],     // [2,3]
+  [1, 1, 2],
+  [1, 1, 2, 3, 3],
+  [],
+  [3, 3, 4, 4],
 ].forEach((array) => {
   console.log((deleteDuplicates(ListNode.from(array)) || '').toString())
 })
 
+
 // Solution:
-// TODO: #82 solution
+// 若下一个指针的值与当前指针的值相同，则将下一个指针删除。
+// 否则，移动指针。
 
 // Submission Result: Accepted
