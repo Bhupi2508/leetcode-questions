@@ -1,70 +1,71 @@
-// 492. Construct the Rectangle
-// Easy   48%
+// 495. Teemo Attacking
+// Medium   51%
 
 
-// For a web developer, it is very important to know how to design a web page's
-// size. So, given a specific rectangular web page’s area, your job by now is to
-// design a rectangular web page, whose length L and width W satisfy the
-// following requirements:
-// 1. The area of the rectangular web page you designed must equal to the given
-// target area.
-// 2. The width W should not be larger than the length L, which means L >= W.
-// 3. The difference between length L and width W should be as small as possible.
+// In LOL world, there is a hero called Teemo and his attacking can make his
+// enemy Ashe be in poisoned condition. Now, given the Teemo's attacking
+// ascending time series towards Ashe and the poisoning time duration per Teemo's
+// attacking, you need to output the total time that Ashe is in poisoned
+// condition.
 
-// You need to output the length L and the width W of the web page you designed
-// in sequence.
+// You may assume that Teemo attacks at the very beginning of a specific time
+// point, and makes Ashe be in poisoned condition immediately.
 
-// Example:
+// Example 1:
 
-// Input: 4
-// Output: [2, 2]
-// Explanation: The target area is 4, and all the possible ways to construct it
-// are [1,4], [2,2], [4,1].
-// But according to requirement 2, [1,4] is illegal; according to requirement 3, 
-// [4,1] is not optimal compared to [2,2]. So the length L is 2, and the width W
-// is 2.
+// Input: [1,4], 2
+// Output: 4
+// Explanation: At time point 1, Teemo starts attacking Ashe and makes Ashe be
+// poisoned immediately. This poisoned status will last 2 seconds until the end
+// of time point 2. And at time point 4, Teemo attacks Ashe again, and causes
+// Ashe to be in poisoned status for another 2 seconds. So you finally need to
+// output 4.
+
+// Example 2:
+
+// Input: [1,2], 2
+// Output: 3
+// Explanation: At time point 1, Teemo starts attacking Ashe and makes Ashe be
+// poisoned. This poisoned status will last 2 seconds until the end of time point
+// 2. However, at the beginning of time point 2, Teemo attacks Ashe again who is
+// already in poisoned status. Since the poisoned status won't add up together,
+// though the second poisoning attack will still work at time point 2, it will
+// stop at the end of time point 3. So you finally need to output 3.
 
 // Note:
 
-// The given area won't exceed 10,000,000 and is a positive integer
-// The web page's width and length you designed must be positive integers.
+// You may assume the length of given time series array won't exceed 10000.
+// You may assume the numbers in the Teemo's attacking time series and his
+// poisoning time duration per attacking are non-negative integers, which won't
+// exceed 10,000,000.
 
 
 /**
- * @param {number} area
- * @return {number[]}
+ * @param {number[]} timeSeries
+ * @param {number} duration
+ * @return {number}
  */
-const constructRectangle = function(area) {
-  let i = Math.trunc(Math.sqrt(area))
-  while (i > 1 && area % i !== 0) i--
-  return [area / i, i]
+const findPoisonedDuration = function(timeSeries, duration) {
+  let result = 0
+  for (let i = 0; i < timeSeries.length; i++) {
+    const d = timeSeries[i] - (timeSeries[i - 1] || -Infinity)
+    result += d > duration ? duration : d
+  }
+  return result
 }
 
 ;[
-  4,                            // [2,2]
-  1,                            // [1,1]
-].forEach(area => {
-  console.log(constructRectangle(area))
+  [[1,4], 2],                   // 4
+  [[1,2], 2],                   // 3
+  [[1,3], 2],                   // 4
+  [[1,2,3,4,5], 5],             // 9
+  [[1,6,11,12,30], 5],          // 21
+].forEach(args => {
+  console.log(findPoisonedDuration(...args))
 })
 
 // Solution:
-// 求数组 [a, b]，满足 a * b = area，且在所有满足的a，b中，|a - b|最小
-
-// 首先满足的a，b，即是 area 的因子对。
-// 找出 area 的因子对，假设 a <= b，那么 a 可以从 1 到 sqrt(area)
-// 因为 a <= b；   a * a <= a * b = area；  a <= sqrt(area)
-
-// 再找 |a - b| 最小。
-// 假设有两对满足的因子对分别为[a_1, b_1]，[a_2, b_2]，
-// 且 a_i <= b_i，a_1 < a_2
-// 因为假设了 a_i <= b_i，所以 |a - b| 实际为 b - a
-// 比较 (b_1 - a_1) 和 （b_2 - a_2)
-// (b_1 - a_1) - (b_2 - a_2) = (b_1 - b_2) + (a_2 - a_1)
-// 因为 a_2 > a_1，所以 c / a_1 > c / a_2，即 b_1 - b_2 > 0
-// 又因为 a_2 - a_1 > 0
-// 所以 (b_1 - a_1) - (b_2 - a_2) > 0
-// 因此可以确定，a 越大，|a - b| 越小
-
-// 因此只需找 a 最大时的因子对，就行了。
+// 如果两个数间的间隔大于持续时间，则算持续时间，
+// 若小于，则算两数间隔时间。
 
 // Submission Result: Accepted
