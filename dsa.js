@@ -1,26 +1,21 @@
-// 103. Binary Tree Zigzag Level Order Traversal
-// Medium 35% locked:false
+// 104. Maximum Depth of Binary Tree
+// Easy   53%
 
-// Given a binary tree, return the zigzag level order traversal of its nodes'
-// values. (ie, from left to right, then right to left for the next level and
-// alternate between).
+// Given a binary tree, find its maximum depth.
+
+// The maximum depth is the number of nodes along the longest path from the root
+// node down to the farthest leaf node.
 
 // For example:
 // Given binary tree [3,9,20,null,null,15,7],
 
-//     3
-//    / \
-//   9  20
-//     /  \
-//    15   7
+//    3
+//   / \
+//  9  20
+//    /  \
+//   15   7
 
-// return its zigzag level order traversal as:
-
-// [
-//   [3],
-//   [20,9],
-//   [15,7]
-// ]
+// return its depth = 3.
 
 
 /**
@@ -31,38 +26,24 @@
  * }
  */
 
-
 /**
  * @param {TreeNode} root
- * @return {number[][]}
+ * @return {number}
  */
-const zigzagLevelOrder = function(root) {
-  const res = []
-  function iter(root, level) {
-    if (root) {
-      if (!res[level]) res[level] = []
-
-      if (level % 2) res[level].unshift(root.val)
-      else res[level].push(root.val)
-
-      iter(root.left, level + 1)
-      iter(root.right, level + 1)
-    }
-  }
-
-  iter(root, 0)
-  return res
+const maxDepth = function(root) {
+  return root == null ? 0 : 1 + Math.max(maxDepth(root.left), maxDepth(root.right))
 }
 
 const TreeNode = require('../structs/TreeNode')
 ;[
-  [3,9,20,null,null,15,7], // [ [ 3 ], [ 20, 9 ], [ 15, 7 ] ]
+  [3,9,20,null,null,15,7], // 3
 ].forEach(array => {
-  console.log(zigzagLevelOrder(TreeNode.from(array)))
+  console.log(maxDepth(TreeNode.from(array)))
 })
 
+
 // Solution:
-// 递归遍历，遍历过程中，带上层级参数 level ，根据 level 来插入对应数组。
-// 插入的时候，根据 level 的奇偶性来判断插入头或尾。
+// 递归返回左子树和右子树中最大深度，加上该节点（即1）。
+// 若节点为null，则返回 0。
 
 // Submission Result: Accepted
