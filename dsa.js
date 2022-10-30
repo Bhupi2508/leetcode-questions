@@ -1,48 +1,44 @@
 /**
-* question: http://www.programcreek.com/2014/07/leetcode-shortest-word-distance-ii-java/
+* question: http://www.programcreek.com/2014/08/leetcode-shortest-word-distance-iii/
 *
 */
 
-function ShortestWordDist(words) {
-  this.hashMap = {};
-
-  var map = this.hashMap;
+function shortestWordDist(words, word1, word2) {
+  var index1 = -1;
+  var index2 = -1;
+  var dist = Number.MAX_VALUE; // for some reason in JavaScript, manually set max.
 
   words.forEach(function(word, index) {
-    if (word in map) {
-      map[word].push(index);
+    if (word1 === word2) {
+      if (word1 === word) {
+        if (index1 > index2) {
+          index2 = index;
+        } else {
+          index1 = index;
+        }
+      }
     } else {
-      map[word] = [index];
+      if (word === word1) {
+        index1 = index;
+      }
+
+      if (word === word2) {
+        index2 = index;
+      }
     }
-  });
-}
 
-ShortestWordDist.prototype.shortest = function(word1, word2) {
-  var list1 = this.hashMap[word1];
-  var list2 = this.hashMap[word2];
-  var dist = Number.MAX_VALUE;
-
-  for (var i = 0, j = 0; i < list1.length && j < list2.length;) {
-    var index1 = list1[i];
-    var index2 = list2[j];
-
-    dist = Math.min(Math.abs(index1 - index2), dist);
-    if (index1 < index2) {
-      i++;
-    } else {
-      j++;
+    if (index1 >= 0 && index2 >= 0) {
+      dist = Math.min(Math.abs(index1 - index2), dist);
     }
-  }
+  })
 
   return dist;
-};
+}
 
 // test cases
-var ws = ["practice", "makes", "perfect", "coding", "makes", "google", "coding", "apple", "alpha"];
-var words = new ShortestWordDist(ws);
-
+var words = ["practice", "makes", "perfect", "coding", "makes"];
 var word1 = 'practice';
 var word2 = 'coding';
-var word3 = 'apple';
-console.log(words.shortest(word1, word2));
-console.log(words.shortest(word2, word3));
+var word3 = 'makes';
+// console.log(shortestWordDist(words, word1, word2));
+console.log(shortestWordDist(words, word3, word3));
