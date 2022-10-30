@@ -1,41 +1,58 @@
-// 11. Container With Most Water
-// Medium   36%
+// 12. Integer to Roman
+// Medium   45%
 
-// Given n non-negative integers a1, a2, ..., an, where each represents a point
-// at coordinate (i, ai). n vertical lines are drawn such that the two endpoints
-// of line i is at (i, ai) and (i, 0). Find two lines, which together with
-// x-axis forms a container, such that the container contains the most water.
+// Given an integer, convert it to a roman numeral.
 
-// Note: You may not slant the container and n is at least 2.
+// Input is guaranteed to be within the range from 1 to 3999.
 
 /**
- * @param {number[]} height
- * @return {number}
+ * @param {number} num
+ * @return {string}
  */
-const maxArea = function(height) {
-  let result = 0, i = 0, j = height.length - 1
-  while (i < j) {
-    const min = Math.min(height[i] , height[j])
-    result = Math.max(result, min * (j - i))
-    if (min === height[j]) j--
-    else i++
-  }
-  return result
+const intToRoman = function(num) {
+  const M = ['', 'M', 'MM', 'MMM'],
+        C = ['', 'C', 'CC', 'CCC', 'CD', 'D', 'DC', 'DCC', 'DCCC', 'CM'],
+        X = ['', 'X', 'XX', 'XXX', 'XL', 'L', 'LX', 'LXX', 'LXXX', 'XC'],
+        I = ['', 'I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX']
+  return M[Math.trunc(num / 1000)] +
+    C[Math.trunc((num % 1000) / 100)] +
+    X[Math.trunc((num % 100) / 10)] +
+    I[num % 10]
 }
 
 ;[
-  [1, 2, 1, 3, 4, 2, 1],        // 8
-].forEach(height => {
-  console.log(maxArea(height))
+  1,
+  3,
+  4,
+  5,
+  6,
+  9,
+  10,
+  14,
+  15,
+  19,
+  78,
+  99,
+  532,
+  1239,
+  3999,
+].forEach(num => {
+  console.log(num, intToRoman(num))
 })
 
 // Solution:
-// 从两侧开始向中间遍历，
-// 两侧中小的哪一个向中间前进（相等的话可随意一边）。
-// 在遍历过程中每次计算一次构成的容器的容量，保存最大的作为答案。
+// 符号意义：
+// I 1
+// V 5
+// X 10
+// L 50
+// C 100
+// D 500
+// M 1000
 
-// 为什么小的一侧前进？这会不会错过最大的容器呢？
-// 有待严谨的分析 ;p
-// TODO: #11 solution
+// 一个符号最多连续重复3遍，即表示1~3倍，四倍需要用两个符号（即该符号和下一个符
+// 号），如 4 = IV, 9 = IX 等。
+
+// 因为表示的数有限，且每个10进制位的符号固定，因此直接枚举出来。
 
 // Submission Result: Accepted
