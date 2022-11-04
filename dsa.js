@@ -1,31 +1,19 @@
 /**
- * @param {character[][]} board
- * @param {string} word
- * @return {boolean}
+ * Key: Use two pointers. First pointer is for the a newly(modified) generated array
+ * as long as it doesn't have more than two more Duplicates, the original point
+ * keeps moving...
+ *
+ * @param {number[]} nums
+ * @return {number}
  */
-var exist = function(board, word) {
-    for (var i = 0; i < board.length; i++) {
-        for (var j = 0; j < board[0].length; j++) {
-            if (existHelper(board, word, i, j, 0)) return true;
+var removeDuplicates = function(nums) {
+    var newStart = 0;
+    for (var i = 0; i < nums.length; i++) {
+        if (newStart < 2 || nums[i] > nums[newStart - 2]) {
+            nums[newStart] = nums[i];
+            newStart++;
         }
     }
 
-    return false;
-};
-
-// if the word[k] existing in board, keep searching up, down, left, right 
-var existHelper = function(board, word, i, j, k) {
-    if (k === word.length) return true;
-    if (i < 0 || j < 0 || i > board.length - 1 || j > board[0].length - 1) return false;
-    if (board[i][j] === word[k]) {
-        var tmp = board[i][j];
-        board[i][j] = '#';
-        if (existHelper(board, word, i + 1, j, k + 1) ||
-            existHelper(board, word, i - 1, j, k + 1) ||
-            existHelper(board, word, i, j + 1, k + 1) ||
-            existHelper(board, word, i, j - 1, k + 1)) {
-              return true;
-        }
-        board[i][j] = tmp;
-    }
+    return newStart;
 };
