@@ -1,68 +1,64 @@
-// 690. Employee Importance
-// Easy   56%
+// 693. Binary Number with Alternating Bits
+// Easy 53% locked:false
 
+// Given a positive integer, check whether it has alternating bits: namely, if
+// two adjacent bits will always have different values.
 
-// You are given a data structure of employee information, which includes the
-// employee's unique id, his importance value and his direct subordinates' id.
-// For example, employee 1 is the leader of employee 2, and employee 2 is the
-// leader of employee 3. They have importance value 15, 10 and 5, respectively.
-// Then employee 1 has a data structure like [1, 15, [2]], and employee 2 has [2,
-// 10, [3]], and employee 3 has [3, 5, []]. Note that although employee 3 is also
-// a subordinate of employee 1, the relationship is not direct.
-// Now given the employee information of a company, and an employee id, you need
-// to return the total importance value of this employee and all his
-// subordinates.
 // Example 1:
-// Input: [[1, 5, [2, 3]], [2, 3, []], [3, 3, []]], 1
-// Output: 11
+
+// Input: 5
+// Output: True
 // Explanation:
-// Employee 1 has importance value 5, and he has two direct subordinates:
-// employee 2 and employee 3. They both have importance value 3. So the total
-// importance value of employee 1 is 5 + 3 + 3 = 11.
+// The binary representation of 5 is: 101
 
-// Note:
-//     One employee has at most one direct leader and may have several
-// subordinates.
-//     The maximum number of employees won't exceed 2000.
+// Example 2:
 
+// Input: 7
+// Output: False
+// Explanation:
+// The binary representation of 7 is: 111.
+
+// Example 3:
+
+// Input: 11
+// Output: False
+// Explanation:
+// The binary representation of 11 is: 1011.
+
+// Example 4:
+
+// Input: 10
+// Output: True
+// Explanation:
+// The binary representation of 10 is: 1010.
 
 
 /**
- * Definition for Employee.
- * function Employee(id, importance, subordinates) {
- *     this.id = id;
- *     this.importance = importance;
- *     this.subordinates = subordinates;
- * }
+ * @param {number} n
+ * @return {boolean}
  */
-function Employee(id, importance, subordinates) {
-  this.id = id;
-  this.importance = importance;
-  this.subordinates = subordinates;
-}
-
-/**
- * @param {Employee[]} employees
- * @param {number} id
- * @return {number}
- */
-const GetImportance = function(employees, id) {
-  const leader = employees.find((e => e.id === id))
-  let res = leader.importance
-  for (let subId of leader.subordinates) {
-    res += GetImportance(employees, subId)
+const hasAlternatingBits = function(n) {
+  while (n) {
+    const prev = n & 1
+    n = n >> 1
+    if ((n & 1) === prev) return false
   }
-  return res
+
+  return true
 }
 
-;[
-  [[[1,2,[2]], [2,3,[]]], 2],
-].forEach(([array, id]) => {
-  const employees = array.map(item => new Employee(item[0], item[1], item[2]))
-  console.log(GetImportance(employees, id))
-})
+console.log(hasAlternatingBits(4))
+console.log(hasAlternatingBits(5))
+console.log(hasAlternatingBits(7))
+console.log(hasAlternatingBits(11))
+console.log(hasAlternatingBits(10))
 
 // Solution:
-// 找到节点后，递归深度遍历即可。
+// 关键在于获得每一位上的比特，并与前或者后的比特比较
+// & 1 运算可以获得末位的比特值。
+// >> 算术右移（也可以是 >>> 逻辑右移，输入为正数），右移后，比较末位时候与之前的相同
+// 题目，思路，代码都很简单。
+// 时间复杂度 O(log(n))
+// 空间复杂度 O(1)
 
 // Submission Result: Accepted
