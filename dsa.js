@@ -1,129 +1,85 @@
-// 732. My Calendar III
-// Hard   52%
+// 733. Flood Fill
+// Easy   49%
 
+// An image is represented by a 2-D array of integers, each integer representing
+// the pixel value of the image (from 0 to 65535).
 
-// Implement a MyCalendarThree class to store your events. A new event can always
-// be added.
+// Given a coordinate (sr, sc) representing the starting pixel (row and column)
+// of the flood fill, and a pixel value newColor, "flood fill" the image.
 
-// Your class will have one method, book(int start, int end).  Formally, this
-// represents a booking on the half open interval [start, end), the range of real
-// numbers x such that start <= x < end.
+// To perform a "flood fill", consider the starting pixel, plus any pixels
+// connected 4-directionally to the starting pixel of the same color as the
+// starting pixel, plus any pixels connected 4-directionally to those pixels
+// (also with the same color as the starting pixel), and so on. Replace the
+// color of all of the aforementioned pixels with the newColor.
 
-// A K-booking happens when K events have some non-empty intersection (ie., there
-// is some time that is common to all K events.)
-
-// For each call to the method MyCalendar.book, return an integer K representing
-// the largest integer such that there exists a K-booking in the calendar.
-
-// Your class will be called like this:
-// MyCalendarThree cal = new MyCalendarThree();
-// MyCalendarThree.book(start, end)
+// At the end, return the modified image.
 
 // Example 1:
 
-// MyCalendarThree();
-// MyCalendarThree.book(10, 20); // returns 1
-// MyCalendarThree.book(50, 60); // returns 1
-// MyCalendarThree.book(10, 40); // returns 2
-// MyCalendarThree.book(5, 15); // returns 3
-// MyCalendarThree.book(5, 10); // returns 3
-// MyCalendarThree.book(25, 55); // returns 3
+// Input:
+// image = [[1,1,1],[1,1,0],[1,0,1]]
+// sr = 1, sc = 1, newColor = 2
+// Output: [[2,2,2],[2,2,0],[2,0,1]]
 // Explanation:
-// The first two events can be booked and are disjoint, so the maximum K-booking
-// is a 1-booking.
-// The third event [10, 40) intersects the first event, and the maximum K-booking
-// is a 2-booking.
-// The remaining events cause the maximum K-booking to be only a 3-booking.
-// Note that the last event locally causes a 2-booking, but the answer is still 3
-// because
-// eg. [10, 20), [10, 40), and [5, 15) are still triple booked.
+// From the center of the image (with position (sr, sc) = (1, 1)), all pixels
+// connected by a path of the same color as the starting pixel are colored with
+// the new color.
+// Note the bottom corner is not colored 2, because it is not 4-directionally
+// connected to the starting pixel.
 
 // Note:
-
-// The number of calls to MyCalendarThree.book per test case will be at most 400.
-// In calls to MyCalendarThree.book(start, end), start and end are integers in
-// the range [0, 10^9].
-
-
-const MyCalendarThree = function() {
-  this.times = {}
-}
+// - The length of image and image[0] will be in the range [1, 50].
+// - The given starting pixel will satisfy 0 <= sr < image.length and 0 <= sc <
+//   image[0].length.
+// - The value of each color in image[i][j] and newColor will be an integer in
+//   [0, 65535].
 
 /**
- * @param {number} start
- * @param {number} end
- * @return {number}
+ * @param {number[][]} image
+ * @param {number} sr
+ * @param {number} sc
+ * @param {number} newColor
+ * @return {number[][]}
  */
-MyCalendarThree.prototype.book = function(start, end) {
-  if (this.times[start] == null) this.times[start] = 0
-  if (this.times[end] == null) this.times[end] = 0
-  this.times[start]++
-  this.times[end]--
+const floodFill = function(image, sr, sc, newColor) {
+  const old = image[sr][sc]
+  if (old === newColor) return image
 
-  let active = 0, result = 0
-  for (let time in this.times) {
-    active += this.times[time]
-    if (active > result) result = active
+  function iter(i, j) {
+    if (image[i] && image[i][j] === old) {
+      image[i][j] = newColor
+      iter(i - 1, j)
+      iter(i + 1, j)
+      iter(i, j - 1)
+      iter(i, j + 1)
+    }
   }
-  return result
+  iter(sr, sc)
+  return image
 }
 
-/**
- * Your MyCalendarThree object will be instantiated and called as such:
- * var obj = Object.create(MyCalendarThree).createNew()
- * var param_1 = obj.book(start,end)
- */
-
-const myCalendarThree = new MyCalendarThree()
 ;[
-  [24,40],                      // 1
-  [43,50],                      // 1
-  [27,43],                      // 2
-  [5,21],                       // 2
-  [30,40],                      // 3
-  [14,29],                      // 3
-  [3,19],                       // 3
-  [3,14],                       // 3
-  [25,39],                      // 4
-  [6,19],                       // 4
-].forEach(args => {
-  console.log(myCalendarThree.book(...args))
+  [
+    [[1,1,1],
+     [1,1,0],
+     [1,0,1]],                  // image
+    1,                          // sr
+    1,                          // sc
+    2                           // newColor
+  ],
+  [
+    [[0,0,0],
+     [0,1,1]],
+    1,
+    1,
+    1
+  ],
+].forEach(([image, sr, sc, newColor]) => {
+  console.log(floodFill(image, sr, sc, newColor))
 })
 
 // Solution:
-// y ^
-// 6 |              [-----------------)
-// 5 |  [--)
-// 4 |  [-----)
-// 3 |     [-----------------)
-// 2 |                             [-----)
-// 1 |     [-----)
-//   --------------------------------------->
-//   0  5 10 15 20 25 30 35 40 45 50 55 60  x
-
-
-// y ^       3
-// 6 |       |      [-----------------)
-// 5 |  [--) |
-// 4 |  [----|)
-// 3 |     [-|---------------)
-// 2 |       |                     [-----)
-// 1 |     [-|---)
-//   --------|------------------------------>
-//   0  5 10 15 20 25 30 35 40 45 50 55 60  x
-
-
-// 将时间排在一个如同上同的坐标中。
-// 用一条平行于y轴的直线，从0相交开始向x轴正方向前进（如同时间流逝）。
-// 在某个时间点可能会与某些时间相交，相交的点数即是该时刻发生的事件的数量。
-// 找出整个过程中相交点数最大的数。
-
-// 将时间存放在一个哈希表中，
-// 开始时间用正数表示，每一个开始时间都在其哈希中加一。
-// 结束时间用负数表示，每一个结束时间都在其哈希中减一。
-
-// 按从小到大的顺序，遍历哈希中的时间。
-// 将哈希值依次累加（该操作为：每遇到一个开始时间就加一，遇到一个结束时间就减一）
-// 保存过程中的最大值，作为返回值。
+// DFS 找到所有与旧的目标数相同的上下左右数，递归进行。
 
 // Submission Result: Accepted
