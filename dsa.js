@@ -1,78 +1,90 @@
-// 437. Path Sum III
-// Easy   39%
+// 438. Find All Anagrams in a String
+// Easy   33%
 
 
-// You are given a binary tree in which each node contains an integer value.
+// Given a string s and a non-empty string p, find all the start indices of p's
+// anagrams in s.
 
-// Find the number of paths that sum to a given value.
+// Strings consists of lowercase English letters only and the length of both
+// strings s and p will not be larger than 20,100.
 
-// The path does not need to start or end at the root or a leaf, but it must go
-// downwards
-// (traveling only from parent nodes to child nodes).
+// The order of output does not matter.
 
-// The tree has no more than 1,000 nodes and the values are in the range
-// -1,000,000 to 1,000,000.
+// Example 1:
 
-// Example:
+// Input:
+// s: "cbaebabacd" p: "abc"
 
-// root = [10,5,-3,3,2,null,11,3,-2,null,1], sum = 8
+// Output:
+// [0, 6]
 
-//       10
-//      /  \
-//     5   -3
-//    / \    \
-//   3   2   11
-//  / \   \
-// 3  -2   1
+// Explanation:
+// The substring with start index = 0 is "cba", which is an anagram of "abc".
+// The substring with start index = 6 is "bac", which is an anagram of "abc".
 
-// Return 3. The paths that sum to 8 are:
+// Example 2:
 
-// 1.  5 -> 3
-// 2.  5 -> 2 -> 1
-// 3. -3 -> 11
+// Input:
+// s: "abab" p: "ab"
+
+// Output:
+// [0, 1, 2]
+
+// Explanation:
+// The substring with start index = 0 is "ab", which is an anagram of "ab".
+// The substring with start index = 1 is "ba", which is an anagram of "ab".
+// The substring with start index = 2 is "ab", which is an anagram of "ab".
 
 
 /**
- * Definition for a binary tree node.
- * function TreeNode(val) {
- *   this.val = val;
- *   this.left = this.right = null;
- * }
+ * @param {string} s
+ * @param {string} p
+ * @return {number[]}
  */
-
-/**
- * @param {TreeNode} root
- * @param {number} sum
- * @return {number}
- */
-const pathSum = function(root, sum) {
-  function iter(root, rests) {
-    if (root == null) return 0
-
-    const nRests = [sum]
-    let count = 0
-    for (let rest of rests) {
-      if (rest - root.val === 0) count++
-      nRests.push(rest - root.val)
+const findAnagrams = function(s, p) {
+  const m = s.length, n = p.length, hash = {}
+  let count = 0
+  for (let i = 0; i < n; i++) {
+    if (!hash[p[i]]) {
+      hash[p[i]] = 0
+      count++
     }
-
-    return iter(root.left, nRests) + iter(root.right, nRests) + count
+    hash[p[i]]++
   }
-  return iter(root, [sum])
+
+  const result = []
+  for (let i = 0; i < m; i++) {
+    if (hash[s[i - n]] === 0) count++
+    if (hash[s[i - n]] !== void 0) hash[s[i - n]]++
+    if (hash[s[i - n]] === 0) count--
+
+    if (hash[s[i]] === 0) count++
+    if (hash[s[i]] !== void 0) hash[s[i]]--
+    if (hash[s[i]] === 0) count--
+
+    if (count === 0) result.push(i - n + 1)
+  }
+  return result
 }
 
-const TreeNode = require('../structs/TreeNode')
 ;[
-  [[10,5,-3,3,2,null,11,3,-2,null,1], 8], // 3
-  [[1,-2,-3,1,3,-2,null,-1], -1],         // 4
-].forEach(([array, sum]) => {
-  const root = TreeNode.from(array)
-  console.log(pathSum(root, sum))
+  ['cbaebabacd', 'abc'],        // [0, 6]
+  ['abab', 'ab'],               // [0, 1, 2]
+  ['ababababab', 'abab'],       // [0, 1, 2, 3, 4, 5, 6]
+  ['asdfabababab', 'abab'],     // [4, 5, 6, 7, 8]
+].forEach(args => {
+  console.log(findAnagrams(...args))
 })
 
 // Solution:
+// 先用哈希表保存 p 中出现的字符和字符重复的次数，用变量保存字符的不同种类。
 
-// 每遍历一个节点，构造一个新的数组，数组的元素是当前节点到上层节点的和再与所要
-// 的总和的差。如果差为0，则表明有一条路径。
+// 先想象我们拥有一个长度为 n(即p的长度) 的队列，队列从头穿过 s 字符串，像火车在
+// 轨道上一样。
+// 火车不断前行，被覆盖的字符串不断改变。先推出一个字符，在进入一个字符。
+// 如果推出的字符在哈希中出现，则改变哈希表中该字符的值（加一）
+// 如果进入的字符在哈希中出现，也改变哈希表中该字符的值（减一）
+
+// 每次前进检查一遍哈希中的值，如果全为0，说明火车覆盖的字符串就是 p 的乱序。
 
 // Submission Result: Accepted
