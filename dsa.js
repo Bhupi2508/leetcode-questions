@@ -1,85 +1,47 @@
-// 733. Flood Fill
-// Easy   49%
+// 739. Daily Temperatures
+// Medium   52%
 
-// An image is represented by a 2-D array of integers, each integer representing
-// the pixel value of the image (from 0 to 65535).
 
-// Given a coordinate (sr, sc) representing the starting pixel (row and column)
-// of the flood fill, and a pixel value newColor, "flood fill" the image.
+// Given a list of daily temperatures, produce a list that, for each day in the
+// input, tells you how many days you would have to wait until a warmer
+// temperature.  If there is no future day for which this is possible, put 0
+// instead.
 
-// To perform a "flood fill", consider the starting pixel, plus any pixels
-// connected 4-directionally to the starting pixel of the same color as the
-// starting pixel, plus any pixels connected 4-directionally to those pixels
-// (also with the same color as the starting pixel), and so on. Replace the
-// color of all of the aforementioned pixels with the newColor.
-
-// At the end, return the modified image.
-
-// Example 1:
-
-// Input:
-// image = [[1,1,1],[1,1,0],[1,0,1]]
-// sr = 1, sc = 1, newColor = 2
-// Output: [[2,2,2],[2,2,0],[2,0,1]]
-// Explanation:
-// From the center of the image (with position (sr, sc) = (1, 1)), all pixels
-// connected by a path of the same color as the starting pixel are colored with
-// the new color.
-// Note the bottom corner is not colored 2, because it is not 4-directionally
-// connected to the starting pixel.
+// For example, given the list temperatures = [73, 74, 75, 71, 69, 72, 76, 73],
+// your output should be [1, 1, 4, 2, 1, 1, 0, 0].
 
 // Note:
-// - The length of image and image[0] will be in the range [1, 50].
-// - The given starting pixel will satisfy 0 <= sr < image.length and 0 <= sc <
-//   image[0].length.
-// - The value of each color in image[i][j] and newColor will be an integer in
-//   [0, 65535].
+// The length of temperatures will be in the range [1, 30000].
+// Each temperature will be an integer in the range [30, 100].
+
 
 /**
- * @param {number[][]} image
- * @param {number} sr
- * @param {number} sc
- * @param {number} newColor
- * @return {number[][]}
+ * @param {number[]} temperatures
+ * @return {number[]}
  */
-const floodFill = function(image, sr, sc, newColor) {
-  const old = image[sr][sc]
-  if (old === newColor) return image
-
-  function iter(i, j) {
-    if (image[i] && image[i][j] === old) {
-      image[i][j] = newColor
-      iter(i - 1, j)
-      iter(i + 1, j)
-      iter(i, j - 1)
-      iter(i, j + 1)
+const dailyTemperatures = function(temperatures) {
+  const result = [0], stack = [0]
+  for (let i = 1, n = temperatures.length; i < n; i++) {
+    while (temperatures[i] > temperatures[stack[stack.length - 1]]) {
+      const j = stack.pop()
+      result[j] = i - j
     }
+    result[i] = 0
+    stack.push(i)
   }
-  iter(sr, sc)
-  return image
+  return result
 }
 
 ;[
-  [
-    [[1,1,1],
-     [1,1,0],
-     [1,0,1]],                  // image
-    1,                          // sr
-    1,                          // sc
-    2                           // newColor
-  ],
-  [
-    [[0,0,0],
-     [0,1,1]],
-    1,
-    1,
-    1
-  ],
-].forEach(([image, sr, sc, newColor]) => {
-  console.log(floodFill(image, sr, sc, newColor))
+  [73,74,75,71,69,72,76,73],    // [1,1,4,2,1,1,0,0]
+].forEach(temperatures => {
+  console.log(dailyTemperatures(temperatures))
 })
 
 // Solution:
-// DFS 找到所有与旧的目标数相同的上下左右数，递归进行。
+// 使用栈来保存数的位置。
+// 栈里自底向上依次保存递减的温度，
+// 每天都从顶部开始检查栈里哪天温度比今天低，取出并计算那天到今天的天数，
+// 保存在那天的槽里，直到遇到一个比今天温度高的。最后将这天推入栈顶。
 
 // Submission Result: Accepted
