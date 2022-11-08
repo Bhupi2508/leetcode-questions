@@ -1,86 +1,54 @@
-// 475. Heaters
-// Easy   29%
+// 476. Number Complement
+// Easy   60%
 
 
-// Winter is coming! Your first job during the contest is to design a standard
-// heater with fixed warm radius to warm all the houses.
-
-// Now, you are given positions of houses and heaters on a horizontal line, find
-// out minimum radius of heaters so that all houses could be covered by those
-// heaters.
-
-// So, your input will be the positions of houses and heaters seperately, and
-// your expected output will be the minimum radius standard of heaters.
+// Given a positive integer, output its complement number. The complement
+// strategy is to flip the bits of its binary representation.
 
 // Note:
 
-// Numbers of houses and heaters you are given are non-negative and will not
-// exceed 25000.
-// Positions of houses and heaters you are given are non-negative and will not
-// exceed 10^9.
-// As long as a house is in the heaters' warm radius range, it can be warmed.
-// All the heaters follow your radius standard and the warm radius will the same.
+// The given integer is guaranteed to fit within the range of a 32-bit signed
+// integer.
+// You could assume no leading zero bit in the integer’s binary representation.
 
 // Example 1:
 
-// Input: [1,2,3],[2]
-// Output: 1
-// Explanation: The only heater was placed in the position 2, and if we use the
-// radius 1 standard, then all the houses can be warmed.
+// Input: 5
+// Output: 2
+// Explanation: The binary representation of 5 is 101 (no leading zero bits), and
+// its complement is 010. So you need to output 2.
 
 // Example 2:
 
-// Input: [1,2,3,4],[1,4]
-// Output: 1
-// Explanation: The two heater was placed in the position 1 and 4. We need to use
-// radius 1 standard, then all the houses can be warmed.
+// Input: 1
+// Output: 0
+// Explanation: The binary representation of 1 is 1 (no leading zero bits), and
+// its complement is 0. So you need to output 0.
 
 
 /**
- * @param {number[]} houses
- * @param {number[]} heaters
+ * @param {number} num
  * @return {number}
  */
-const findRadius = function(houses, heaters) {
-  houses.sort((a, b) => a - b)
-  heaters.sort((a, b) => a - b)
-  const n = houses.length
-  let i = 0, j = 0, result = 0
-  while (i < n) {
-    const next = heaters[j + 1] || Infinity
-    if (houses[i] < next) {
-      result = Math.max(result, Math.min(
-        Math.abs(next - houses[i]),
-        Math.abs(heaters[j] - houses[i])
-      ))
-      i++
-    } else {
-      j++
-    }
+const findComplement = function(num) {
+  let result = num ? 0 : 1, i = 0
+  while (num > 0) {
+    result += (num % 2 ^ 1) << (i++)
+    num = num >> 1
   }
   return result
 }
 
 ;[
-  [[1,2,3], [2]],               // 1
-  [[1,2,3,4], [1,4]],           // 1
-  [[1,2,3,4], [5]],             // 4
-  [[1,2,3,5,15], [2,30]],       // 13
-  [[1,2,3,5,15], [3,12]],       // 3
-].forEach(args => {
-  console.log(findRadius(...args))
+  5,                            // 2
+  1,                            // 0
+  2,                            // 1
+].forEach(num => {
+  console.log(findComplement(num))
 })
 
 // Solution:
-
-// 排序两个数组，这样它们就像是在一条线上了。
-
-// 首先考虑房子全部在加热器内部，即左右两边都有加热器。
-// 这种情况下每个房子计算其到左右两边的加热器的距离，
-// 选择连接最近的那个加热器。
-// 最后计算加热器需要的最短半径。
-
-// 如果房子只有左边或右边有，那就没的选了，只能选有的那边。
-
+// num % 2 ^ 1 ：取得num的二进制的最后一位的bit的取反。
+// 用 i 记录是在第几位，用 << 左移运算来将其移到合适的位置，并加到原来的数上。
 
 // Submission Result: Accepted
