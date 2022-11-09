@@ -1,87 +1,59 @@
-// 783. Minimum Distance Between BST Nodes
-// Easy   52%
+// 784. Letter Case Permutation
+// Easy   62%
 
 
-// Given a Binary Search Tree (BST) with the root node root, return the minimum
-// difference between the values of any two different nodes in the tree.
-// Example :
-// Input: root = [4,2,6,1,3,null,null]
-// Output: 1
-// Explanation:
-// Note that root is a TreeNode object, not an array.
-// The given tree [4,2,6,1,3,null,null] is represented by the following diagram:
-//           4
-//         /   \
-//       2      6
-//      / \
-//     1   3
-// while the minimum difference in this tree is 1, it occurs between node 1 and
-// node 2, also between node 3 and node 2.
+// Given a string S, we can transform every letter individually to be lowercase
+// or uppercase to create another string.  Return a list of all possible strings
+// we could create.
+// Examples:
+// Input: S = "a1b2"
+// Output: ["a1b2", "a1B2", "A1b2", "A1B2"]
+// Input: S = "3z4"
+// Output: ["3z4", "3Z4"]
+// Input: S = "12345"
+// Output: ["12345"]
 // Note:
-//     The size of the BST will be between 2 and 100.
-//     The BST is always valid, each node's value is an integer, and each node's
-// value is different.
-//     This question is the same as 530:
-// https://leetcode.com/problems/minimum-absolute-difference-in-bst/
+//     S will be a string with length between 1 and 12.
+//     S will consist only of letters or digits.
 
 
 /**
- * Definition for a binary tree node.
- * function TreeNode(val, left, right) {
- * this.val = (val===undefined ? 0 : val)
- *     this.left = (left===undefined ? null : left)
- *     this.right = (right===undefined ? null : right)
- * }
+ * @param {string} S
+ * @return {string[]}
  */
-/**
- * @param {TreeNode} root
- * @return {number}
- */
-const minDiffInBST = function(root) {
-  function midTraverse(r, array) {
-    if (r) {
-      midTraverse(r.left, array)
-      array.push(r.val)
-      midTraverse(r.right, array)
+const letterCasePermutation = function(S) {
+  const res = [], n = S.length
+  S = S.split('')
+  function rec(i) {
+    while ('0' <= S[i] && S[i] <= '9') i++
+    if (i >= n) {
+      res.push(S.join(''))
+      return
     }
+    S[i] = S[i].toLowerCase()
+    rec(i + 1)
+    S[i] = S[i].toUpperCase()
+    rec(i + 1)
   }
-  const array = []
-  midTraverse(root, array)
-  let res = Infinity
-  for (let i = array.length - 1; i > 0; i--)
-    res = Math.min(res, array[i] - array[i - 1])
+  rec(0)
   return res
 }
 
-const inorderTraversal = function(root) {
-  let res = Number.MAX_VALUE, pre = null
-  function trave(root) {
-    if (root.left !== null) trave(root.left)
-    if (pre != null) res = Math.min(res, root.val - pre)
-    pre = root.val
-    if (root.right !== null) trave(root.right)
-  }
-  trave(root)
-  return res
-}
-
-const TreeNode = require('../structs/TreeNode')
 ;[
-  [4,2,6,1,3,null,null],  // 1
-  [40,20,60,10,31,null,null], // 9
-].forEach((array) => {
-  console.log(minDiffInBST(TreeNode.from(array)))
-  console.log(inorderTraversal(TreeNode.from(array)))
+  'a1b2',
+  '3z4',
+  '12345',
+  'abc',
+].forEach((S) => {
+  console.log(letterCasePermutation(S))
 })
 
 // Solution:
-// 1. 思路：递归每个一个节点，计算并返回其左右子树返回的值与当前值与其左右子节点的值的差的最小值。
-// 【错误】因为很深的节点可能和根节点间存在最小值。
+// 使用递归的方法（DFS)
+// 遇到一个字符，就先将其转换成小写/大写，然后遍历下一个字符
 
-// 2. 使用中序遍历得到递增数组
-// 遍历递增数组的到最小间距。
-
-// 3. 无需数组的解法
-// 中序遍历时，除了记录结果外，还要记录前一个遍历到的节点的值，用于计算与当前值的差。
+// 循环的方法
+// 遇到一个字符，将 res 中的每个字符串分为两个，两个字符串只是当前字符不同。
+// JS 中改变字符串中的某个字符不是很方便，作罢。
 
 // Submission Result: Accepted
