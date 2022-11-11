@@ -1,60 +1,90 @@
-// 1232. Check If It Is a Straight Line
-// Easy   47%
+// 1237. Find Positive Integer Solution for a Given Equation
+// Easy   69%
 
+// Given a function  f(x, y) and a value z, return all positive integer pairs x
+// and y where f(x,y) == z.
+// The function is constantly increasing, i.e.:
+//     f(x, y) < f(x + 1, y)
+//     f(x, y) < f(x, y + 1)
+// The function interface is defined like this:
 
-// You are given an array coordinates, coordinates[i] = [x, y], where [x, y]
-// represents the coordinate of a point. Check if these points make a straight
-// line in the XY plane.
+// interface CustomFunction {
+// public:
+//   // Returns positive integer f(x, y) for any given positive integer x and y.
+//   int f(int x, int y);
+// };
 
+// For custom testing purposes you're given an integer function_id and a target z
+// as input, where function_id represent one function from an secret internal
+// list, on the examples you'll know only two functions from the list.
+// You may return the solutions in any order.
 
 // Example 1:
-// Input: coordinates = [[1,2],[2,3],[3,4],[4,5],[5,6],[6,7]]
-// Output: true
+// Input: function_id = 1, z = 5
+// Output: [[1,4],[2,3],[3,2],[4,1]]
+// Explanation: function_id = 1 means that f(x, y) = x + y
 // Example 2:
-// Input: coordinates = [[1,1],[2,2],[3,4],[4,5],[5,6],[7,7]]
-// Output: false
+// Input: function_id = 2, z = 5
+// Output: [[1,5],[5,1]]
+// Explanation: function_id = 2 means that f(x, y) = x * y
 
 // Constraints:
-//     2 <= coordinates.length <= 1000
-//     coordinates[i].length == 2
-//     -10^4 <= coordinates[i][0], coordinates[i][1] <= 10^4
-//     coordinates contains no duplicate point.
-
+//     1 <= function_id <= 9
+//     1 <= z <= 100
+//     It's guaranteed that the solutions of f(x, y) == z will be on the range 1
+// <= x, y <= 1000
+//     It's also guaranteed that f(x, y) will fit in 32 bit signed integer if 1
+// <= x, y <= 1000
 
 /**
- * @param {number[][]} coordinates
- * @return {boolean}
+ * // This is the CustomFunction's API interface.
+ * // You should not implement it, or speculate about its implementation
+ * function CustomFunction() {
+ *     @param {integer, integer} x, y
+ *     @return {integer}
+ *     this.f = function(x, y) {
+ *         ...
+ *     };
+ * };
  */
-const checkStraightLine = function(coordinates) {
-  const [[x0, y0], [x1, y1]] = coordinates
-  const dx = x0 - x1, dy = y0 - y1
-  for (let c of coordinates) {
-    if (dx * (y0 - c[1]) !== dy * (x0 - c[0])) return false
+
+/**
+ * @param {CustomFunction} customfunction
+ * @param {integer} z
+ * @return {integer[][]}
+ */
+const findSolution = function (customfunction, z) {
+  const queue = [[1, 1, true]]
+  const res = []
+  while (queue.length) {
+    const [i, j, isLeft] = queue.shift()
+    const r = customfunction.f(i, j)
+    if (r === z) {
+      res.push([i, j])
+    } else if (r < z) {
+      if (isLeft) queue.push([i, j + 1, true])
+      queue.push([i + 1, j, false])
+    }
   }
-  return true
+  return res
 }
 
 ;[
-  [[1,2],[2,3],[3,4],[4,5],[5,6],[6,7]],
-  [[1,1],[2,2],[3,4],[4,5],[5,6],[7,7]],
-  [[1,1],[2,2],[2,0]], // false
-].forEach((coordinates) => {
-  console.log(checkStraightLine(coordinates))
+  [{ f: (x, y) => x + y }, 5],
+  [{ f: (x, y) => x * y }, 5],
+].forEach(([f, z]) => {
+  console.log(findSolution(f, z))
 })
 
 // Solution:
-//                         x1 - x2     dx
-// 两点连成的直线的斜率为 k = -------- = ------
-//                         y1 - y2     dy
-// 比较第一个点与其余点形成的直线的斜率，若都相同则都在一条直线上，否则不在.
-// 由于 JS 不好记录分数，因此，使用两个变量来记录dx和dy，分别为x轴距离 x1-x2 和 y轴距离
-// y1-y2
-// 在比较两个斜率时，将除法转换成乘法，如
-//  x1 - x2     x1 - xi
-// --------- = --------- --> (x1-x2) * (y1-yi) = (x1-xi) * (y1-y2)
-//  y1 - y2     y1 - yi
-//
-//  --> dx * (y1-yi) = dy * (x1-xi)
-
+//           1,1
+//          /   \
+//       2,1    1,2
+//       /   \     \
+//    3,1    2,2   1,3
+//    /  \     \     \
+// 4,1   3,2    2,3   1,4
+// 递归广度遍历BFS，其中右子节点只遍历右子树
+// 使用 queue 队列和循环遍历实现递归
 
 // Submission Result: Accepted
