@@ -1,43 +1,84 @@
-// 17. Letter Combinations of a Phone Number
-// Medium   35%
+// 18. 4Sum
+// Medium   27%
 
-// Given a digit string, return all possible letter combinations that the number
-// could represent.
+// Given an array S of n integers, are there elements a, b, c, and d in S such
+// that a + b + c + d = target? Find all unique quadruplets in the array which
+// gives the sum of target.
 
-// A mapping of digit to letters (just like on the telephone buttons) is given
-// below.
+// Note: The solution set must not contain duplicate quadruplets.
 
-// Input:Digit string "23"
-// Output: ["ad", "ae", "af", "bd", "be", "bf", "cd", "ce", "cf"].
+// For example, given array S = [1, 0, -1, 0, -2, 2], and target = 0.
 
-// Note: Although the above answer is in lexicographical order, your answer
-// could be in any order you want.
+// A solution set is:
+// [
+//   [-1,  0, 0, 1],
+//   [-2, -1, 1, 2],
+//   [-2,  0, 0, 2]
+// ]
 
 /**
- * @param {string} digits
- * @return {string[]}
+ * @param {number[]} nums
+ * @param {number} target
+ * @return {number[][]}
  */
-const letterCombinations = function(digits) {
-  if (digits.length === 0) return []
+const fourSum = function(nums, target) {
+  const result = []
+  nums.sort((a, b) => a - b)
+  const iter = (i, j, next) => {
+    if (i + 3 > j) return
 
-  const LETTERS = [
-    ' ',                        // 0
-    '',                         // 1
-    'abc',                      // 2
-    'def',                      // 3
-    'ghi',                      // 4
-    'jkl',                      // 5
-    'mno',                      // 6
-    'pqrs',                     // 7
-    'tuv',                      // 8
-    'wxyz'                      // 9
-  ]
-  const result = ['']
-  for (let digit of digits) {
-    for (let i = 0, m = result.length; i < m; i++) {
-      const prev = result.shift()
-      for (let letter of LETTERS[digit]) {
-        result.push(prev + letter)
+    let lo = i + 1, hi = j - 1, s = nums[i] + nums[j]
+    const t = s + nums[lo] + nums[hi]
+    while(lo < hi) {
+      const sum = s + nums[lo] + nums[hi]
+      if (sum > target) hi--
+      else if (sum < target) lo++
+      else {
+        result.push([nums[i], nums[lo], nums[hi], nums[j]])
+        while (++lo < hi && nums[lo] === nums[lo - 1]);
+        while (lo < --hi && nums[hi] === nums[hi + 1]);
+      }
+    }
+
+    if (next) {
+      if (t > target) iter(i, j - 1, true)
+      if (t < target) iter(i + 1, j, true)
+      if (t === target) {
+        iter(i, j - 1, false)
+        iter(i + 1, j, true)
+      }
+    }
+  }
+
+  iter(0, nums.length - 1, true)
+  return result
+}
+
+const On3 = function(nums, target) {
+  const result = [], n = nums.length
+  if (n < 4) return result
+
+  nums.sort((a, b) => a - b)
+  const sum4 = (a, b, c, d) => nums[a] + nums[b] + nums[c] + nums[d]
+  for (let i = 0; i < n - 3; i++) {
+    if (sum4(i, i + 1, i + 2, i + 3) > target) break
+    if (sum4(i, n - 1, n - 2, n - 3) < target) continue
+    if (nums[i] === nums[i - 1]) continue
+
+    for(let j = i + 1; j < n - 2; j++) {
+      if(sum4(i, j, j + 1, j + 2) > target) break
+      if(sum4(i, j, n - 1, n - 2) < target) continue
+      if(j > i + 1 && nums[j] === nums[j - 1]) continue
+      let lo = j + 1, hi = n - 1
+      while (lo < hi) {
+        const sum = sum4(i, j, lo, hi)
+        if (sum < target) lo++
+        else if (sum > target) hi--
+        else {
+          result.push([nums[i], nums[j], nums[lo], nums[hi]])
+          while (++lo < hi && nums[lo] === nums[lo - 1]);
+          while (lo < --hi && nums[hi] === nums[hi + 1]);
+        }
       }
     }
   }
@@ -45,19 +86,11 @@ const letterCombinations = function(digits) {
 }
 
 ;[
-  '',                           // []
-  '23',
-].forEach(digits => {
-  console.log(letterCombinations(digits))
+  [[1, 0, -1, 0, -2, 2], 0],
+  [[-3,-1,0,2,4,5], 0],
+  [[-3,-2,-1,0,0,1,2,3], 0],
+  [[-5,-4,-3,-2,-1,0,0,1,2,3,4,5], 0],
+].forEach(args => {
+  console.log(fourSum(...args))
+  console.log(On3(...args))
 })
-
-// Solution:
-// 像是一棵树一样在增长。
-// 每输入一个数，树就的每个分子都增长一层。
-// 利用先进先出队列模拟树的层级生长。
-// 每个输入的数字代表一层。
-// 每进入一层，都记录当前分支的长度，即当前队列的长度。
-// 对该层的每个元素从头弹出队列，并与该层的数字代表的所有字母组合，
-// 然后添加到队尾。
-
-// Submission Result: Accepted
