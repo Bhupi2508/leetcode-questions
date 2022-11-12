@@ -1,63 +1,105 @@
-// 1002. Find Common Characters
-// Easy   66%
+// 1005. Maximize Sum Of Array After K Negations
+// Easy   51%
 
 
-// Given an array A of strings made only from lowercase letters, return a list of
-// all characters that show up in all strings within the list (including
-// duplicates).  For example, if a character occurs 3 times in all strings but
-// not 4 times, you need to include that character three times in the final
-// answer.
-// You may return the answer in any order.
+// Given an array A of integers, we must modify the array in the following way:
+// we choose an i and replace A[i] with -A[i], and we repeat this process K times
+// in total.  (We may choose the same index i multiple times.)
+// Return the largest possible sum of the array after modifying it in this way.
 
 // Example 1:
-// Input: ["bella","label","roller"]
-// Output: ["e","l","l"]
+// Input: A = [4,2,3], K = 1
+// Output: 5
+// Explanation: Choose indices (1,) and A becomes [4,-2,3].
 // Example 2:
-// Input: ["cool","lock","cook"]
-// Output: ["c","o"]
+// Input: A = [3,-1,0,2], K = 3
+// Output: 6
+// Explanation: Choose indices (1, 2, 2) and A becomes [3,1,0,2].
+// Example 3:
+// Input: A = [2,-3,-1,5,-4], K = 2
+// Output: 13
+// Explanation: Choose indices (1, 4) and A becomes [2,3,-1,5,4].
 
 // Note:
-//     1 <= A.length <= 100
-//     1 <= A[i].length <= 100
-//     A[i][j] is a lowercase letter
+//     1 <= A.length <= 10000
+//     1 <= K <= 10000
+//     -100 <= A[i] <= 100
 
 
 /**
- * @param {string[]} A
- * @return {string[]}
+ * @param {number[]} A
+ * @param {number} K
+ * @return {number}
  */
-const commonChars = function(A) {
-  let arr = Array(26).fill(101)
-  for (let S of A) {
-    let temp = Array(26).fill(0)
-    for (let c of S) temp[c.charCodeAt(0) - 97]++
-    for (let i = 0; i < 26; i++) arr[i] = Math.min(arr[i], temp[i])
+const largestSumAfterKNegations = function(A, K) {
+  A.sort((a, b) => a - b)
+  for (let i = 0; i < A.length && A[i] < 0 && K > 0; i++, K--) {
+    A[i] = -A[i]
   }
-  let res = []
-  for (let i = 0; i < 26; i++) {
-    for (let j = 0; j < arr[i]; j++) res.push(String.fromCharCode(i + 97))
+  let result = 0, min = 100
+  for (let a of A) {
+    result += a
+    min = Math.min(min, a)
   }
-  return res
+  return result - (K % 2) * min * 2
+}
+
+const first = function(A, K) {
+  const hash = {}
+  for (let a of A) hash[a] = (hash[a] || 0) + 1
+  
+  let result = 0
+  let i = -100
+  for (; i < 0; i++) {
+    for (let j = 0; j < hash[i]; j++) {
+      result += i * (K-- > 0 ? -1 : 1)
+    }
+  }
+  i = 0
+  if (!hash[i] && K > 0 && K % 2) {
+    for (; i <= 100; i++) {
+      if (hash[i]) {
+        result -= i
+        hash[i]--
+        break
+      } else if (hash[-i]) {
+        result -= i * 2
+        break
+      }
+    }
+  }
+  for (; i <= 100; i++) {
+    for (let j = 0; j < hash[i]; j++) result += i
+  }
+  return result
 }
 
 ;[
-  ['bella','label','roller'], // ["e", "l", "l"]
-  ["cool","lock","cook"],     // ["c","o"]
-  ["bbcd","accd","abdd","aabc"], // []
-  ["daaccccd","adacbdda","abddbaba","bacbcbcb","bdaaaddc"] // ['a']
-].forEach((A) => {
-  console.log(commonChars(A))
+  [[4,2,3], 1],         // 5
+  [[3,-1,0,2], 3],      // 6
+  [[2,-3,-1,5,-4], 2],  // 13
+  [[-1], 2],            // -1
+].forEach(([A, K]) => {
+  console.log(largestSumAfterKNegations(A, K))
 })
 
 // Solution:
-// 1. 前两个比较合并
-// 每次选出两个字符串的共同字符，选出后合并成新字符串，并和下一个字符串对比，直至最后一个字符串
-// 选出两个字符串的方法是使用 hash 记录第一个字符串的字符数
-// 若第二个字符串也有，则选出来
+// 方法1
+// 使用桶排序
+// 1. 从小到大遍历所有负数
+//    若 K > 0，则将 -a 添加到 result 中
+//    若 K = 0，则将  a 添加到 result 中
+// 2. 遍历完负数后，若 K > 0 && K % 2 == 0 && 数组中没有 0，则需要有一个绝对值最小数，
+//    要变为其负数，添加到 result 中
+// 3. 将剩余的数添加到 result 中
 
-// 2. 使用桶数组代替字符串
-// 用长度为26的数组，来记录字符的个数
-// 后一个字符串的数组和前一个比较，取其小者，替换前一个
-// 最后得到的桶数组则为字符的个数
+// 方法2
+// 原生排序
+// 1. 从小到大遍历所有负数
+//    若 K > 0，则 A[i] = -A[i]
+// 2. 计算数组中所有数的和 res
+// 3. 找出数组中最小的数
+// 4. 若 K % 2 == 1, 则 res 需要减去最小数的两倍
+// TO(nlogn)-SO(1)
 
 // Submission Result: Accepted
