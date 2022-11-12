@@ -1,70 +1,108 @@
-// 606. Construct String from Binary Tree
-// Easy   49%
+// 609. Find Duplicate File in System
+// Medium   52%
 
 
-// You need to construct a string consists of parenthesis and integers from a
-// binary tree with the preorder traversing way.
+// Given a list of directory info including directory path, and all the hash
+// with contents in this directory, you need to find out all the groups of
+// duplicate hash in the file system in terms of their paths.
 
-// The null node needs to be represented by empty parenthesis pair "()". And you
-// need to omit all the empty parenthesis pairs that don't affect the one-to-one
-// mapping relationship between the string and the original binary tree.
+// A group of duplicate hash consists of at least two hash that have exactly
+// the same content.
+
+// A single directory info string in the input list has the following format:
+
+// "root/d1/d2/.../dm f1.txt(f1_content) f2.txt(f2_content) ...
+// fn.txt(fn_content)"
+
+// It means there are n hash (f1.txt, f2.txt ... fn.txt with content f1_content,
+// f2_content ... fn_content, respectively) in directory root/d1/d2/.../dm. Note
+// that n >= 1 and m >= 0. If m = 0, it means the directory is just the root
+// directory.
+
+// The output is a list of group of duplicate file paths. For each group, it
+// contains all the file paths of the hash that have the same content. A file
+// path is a string that has the following format:
+
+// "directory_path/file_name.txt"
 
 // Example 1:
 
-// Input: Binary tree: [1,2,3,4]
-//        1
-//      /   \
-//     2     3
-//    /
-//   4
+// Input:
+// ["root/a 1.txt(abcd) 2.txt(efgh)", "root/c 3.txt(abcd)", "root/c/d
+// 4.txt(efgh)", "root 4.txt(efgh)"]
+// Output:
+// [["root/a/2.txt","root/c/d/4.txt","root/4.txt"],["root/a/1.txt","root/c/3.txt"]]
 
-// Output: "1(2(4))(3)"
-// Explanation: Originallay it needs to be "1(2(4)())(3()())", but you need to
-// omit all the unnecessary empty parenthesis pairs. And it will be "1(2(4))(3)".
+// Note:
 
-// Example 2:
+// No order is required for the final output.
+// You may assume the directory name, file name and file content only has letters
+// and digits, and the length of file content is in the range of [1,50].
+// The number of hash given is in the range of [1,20000].
+// You may assume no hash or directories share the same name in the same
+// directory.
+// You may assume each given directory info represents a unique directory.
+// Directory path and file info are separated by a single blank space.
 
-// Input: Binary tree: [1,2,3,null,4]
-//        1
-//      /   \
-//     2     3
-//      \
-//       4
+// Follow-up beyond contest:
 
-// Output: "1(2()(4))(3)"
-// Explanation: Almost the same as the first example, except we can't omit the
-// first parenthesis pair to break the one-to-one mapping relationship between
-// the input and the output.
+//  Imagine you are given a real file system, how will you search hash? DFS or
+// BFS?
+//  If the file content is very large (GB level), how will you modify your
+// solution?
+//  If you can only read the file by 1kb each time, how will you modify your
+// solution?
+//  What is the time complexity of your modified solution? What is the most
+// time-consuming part and memory consuming part of it? How to optimize?
+//  How to make sure the duplicated hash you find are not false positive?
 
-
-/**
- * Definition for a binary tree node.
- * function TreeNode(val) {
- *   this.val = val;
- *   this.left = this.right = null;
- * }
- */
 
 /**
- * @param {TreeNode} t
- * @return {string}
+ * @param {string[]} paths
+ * @return {string[][]}
  */
-const tree2str = function(t) {
-  if (t == void 0) return ''
-  return '' + t.val +
-    (t.left ? '(' + tree2str(t.left) + ')' : (t.right ? '()' : '')) +
-    (t.right ? '(' + tree2str(t.right) + ')' : '')
+const findDuplicate = function(paths) {
+  const hash = {}
+  for (let path of paths) {
+    const strings = path.split(' ')
+    const dir = strings[0]
+    for (let i = 1; i < strings.length; i++) {
+      const [filename, content] = strings[i].split('(')
+      if (!hash[content]) hash[content] = []
+      hash[content].push(dir + '/' + filename)
+    }
+  }
+  const result = []
+  for (let content in hash) {
+    if (hash[content].length > 1) {
+      result.push(hash[content])
+    }
+  }
+  return result
 }
 
-const TreeNode = require('../structs/TreeNode')
 ;[
-  [1,2,3,4],           // '1(2(4))(3)'
-  [1,2,3,null,4],      // '1(2()(4))(3)'
-].forEach((array) => {
-  console.log(tree2str(TreeNode.from(array)))
+  [
+    'root/a 1.txt(abcd) 2.txt(efgh)',
+    'root/c 3.txt(abcd)',
+    'root/c/d 4.txt(efgh)',
+    'root 4.txt(efgh)',
+  ],
+].forEach(paths => {
+  console.log(findDuplicate(paths))
 })
 
 // Solution:
-// 关键在于只有右节点，没有左节点时，做节点要用 ‘()’ 代替。
+
+// 先解析目录，
+// 再解析文件名
+// 最后解析内容
+
+// 使用一个哈希表，对内容进行哈希并将其保存为键名，
+// 对于内容相同的文件，都保存在同一个哈希项的值（是一个数组）里。
+
+// 遍历哈希表，找出长度大于1的数组，添加到答案中。
+
+// 目前还没有考虑到 Follow-up 中的内容;p
 
 // Submission Result: Accepted
