@@ -1,73 +1,45 @@
-// 278. First Bad Version
-// Easy   25%
+// 283. Move Zeroes
+// Easy   50%
 
 
-// You are a product manager and currently leading a team to develop a new
-// product. Unfortunately, the latest version of your product fails the quality
-// check. Since each version is developed based on the previous version, all the
-// versions after a bad version are also bad.
+// Given an array nums, write a function to move all 0's to the end of it while
+// maintaining the relative order of the non-zero elements.
 
-// Suppose you have n versions [1, 2, ..., n] and you want to find out the first
-// bad one, which causes all the following ones to be bad.
+// For example, given nums  = [0, 1, 0, 3, 12], after calling your function, nums
+// should be [1, 3, 12, 0, 0].
 
-// You are given an API bool isBadVersion(version) which will return whether
-// version is bad. Implement a function to find the first bad version. You should
-// minimize the number of calls to the API.
+// Note:
+
+// You must do this in-place without making a copy of the array.
+// Minimize the total number of operations.
 
 // Credits:Special thanks to @jianchao.li.fighter for adding this problem and
 // creating all test cases.
 
 
 /**
- * Definition for isBadVersion()
- *
- * @param {integer} version number
- * @return {boolean} whether the version is bad
+ * @param {number[]} nums
+ * @return {void} Do not return anything, modify nums in-place instead.
  */
-
-const setIsBadVersion = function(n) {
-  return function (version) {
-    return version < n ? false : true
-  }
-}
-
-/**
- * @param {function} isBadVersion()
- * @return {function}
- */
-const solution = function(isBadVersion) {
-  /**
- @param {integer} n Total versions
- @return {integer} The first bad version
-   */
-  return function(n) {
-    let good = 1
-    while (good <= n) {
-      const mid = (good + n) >>> 1
-      if (isBadVersion(mid)) {
-        if (!isBadVersion(mid - 1)) return mid
-        n = mid - 1
-      } else {
-        good = mid + 1
-      }
+const moveZeroes = function(nums) {
+  for (let i = 1, n = nums.length; i < n; i++) {
+    let j = i
+    while (j > 0 && nums[j] && !nums[j - 1]) {
+      [nums[j], nums[j - 1]] = [nums[j - 1], nums[j]]
+      j--
     }
-    return 0
   }
+  console.log(nums)
 }
 
 ;[
-  [6, 5],                       // 5
-  [6, 3],                       // 3
-  [12, 12],                     // 12
-  [12, 1],                      // 1
-  [2126753390, 1702766719],     // 1702766719
-].forEach(args => {
-  console.log(solution(setIsBadVersion(args[1]))(args[0]))
+  [0, 1, 0, 3, 12],             // [1, 3, 12, 0, 0]
+].forEach(nums => {
+  moveZeroes(nums)
 })
 
 // Solution:
-// 二分查找法。
-// 除二取整 可以使用 >>>1 逻辑右移运算，
-// 因为数可能大于 2^32 所以不能使用 >> 算术右移。
+// 在遍历数组的过程中，遇到不为 0 的数时，检查其前一个数是否为 0，
+// 如果是，则不断交换，直到其前一个数不为 0
 
 // Submission Result: Accepted
