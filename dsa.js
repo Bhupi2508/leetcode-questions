@@ -1,71 +1,75 @@
-// 495. Teemo Attacking
-// Medium   51%
+// 496. Next Greater Element I
+// Easy   56%
 
 
-// In LOL world, there is a hero called Teemo and his attacking can make his
-// enemy Ashe be in poisoned condition. Now, given the Teemo's attacking
-// ascending time series towards Ashe and the poisoning time duration per Teemo's
-// attacking, you need to output the total time that Ashe is in poisoned
-// condition.
+// You are given two arrays (without duplicates) nums1 and nums2 where nums1’s
+// elements are subset of nums2. Find all the next greater numbers for nums1's
+// elements in the corresponding places of nums2.
 
-// You may assume that Teemo attacks at the very beginning of a specific time
-// point, and makes Ashe be in poisoned condition immediately.
+// The Next Greater Number of a number x in nums1 is the first greater number to
+// its right in nums2. If it does not exist, output -1 for this number.
 
 // Example 1:
 
-// Input: [1,4], 2
-// Output: 4
-// Explanation: At time point 1, Teemo starts attacking Ashe and makes Ashe be
-// poisoned immediately. This poisoned status will last 2 seconds until the end
-// of time point 2. And at time point 4, Teemo attacks Ashe again, and causes
-// Ashe to be in poisoned status for another 2 seconds. So you finally need to
-// output 4.
+// Input: nums1 = [4,1,2], nums2 = [1,3,4,2].
+// Output: [-1,3,-1]
+// Explanation:
+//     For number 4 in the first array, you cannot find the next greater number
+// for it in the second array, so output -1.
+//     For number 1 in the first array, the next greater number for it in the
+// second array is 3.
+//     For number 2 in the first array, there is no next greater number for it in
+// the second array, so output -1.
 
 // Example 2:
 
-// Input: [1,2], 2
-// Output: 3
-// Explanation: At time point 1, Teemo starts attacking Ashe and makes Ashe be
-// poisoned. This poisoned status will last 2 seconds until the end of time point
-// 2. However, at the beginning of time point 2, Teemo attacks Ashe again who is
-// already in poisoned status. Since the poisoned status won't add up together,
-// though the second poisoning attack will still work at time point 2, it will
-// stop at the end of time point 3. So you finally need to output 3.
+// Input: nums1 = [2,4], nums2 = [1,2,3,4].
+// Output: [3,-1]
+// Explanation:
+//     For number 2 in the first array, the next greater number for it in the
+// second array is 3.
+//     For number 4 in the first array, there is no next greater number for it in
+// the second array, so output -1.
 
 // Note:
 
-// You may assume the length of given time series array won't exceed 10000.
-// You may assume the numbers in the Teemo's attacking time series and his
-// poisoning time duration per attacking are non-negative integers, which won't
-// exceed 10,000,000.
+// All elements in nums1 and nums2 are unique.
+// The length of both nums1 and nums2 would not exceed 1000.
 
 
 /**
- * @param {number[]} timeSeries
- * @param {number} duration
- * @return {number}
+ * @param {number[]} findNums
+ * @param {number[]} nums
+ * @return {number[]}
  */
-const findPoisonedDuration = function(timeSeries, duration) {
-  let result = 0
-  for (let i = 0; i < timeSeries.length; i++) {
-    const d = timeSeries[i] - (timeSeries[i - 1] || -Infinity)
-    result += d > duration ? duration : d
+const nextGreaterElement = function(findNums, nums) {
+  const n = findNums.length,
+        result = Array(n).fill(-1)
+  for (let i = 0; i < n; i++) {
+    let find = false
+    for (let num of nums) {
+      if (find && findNums[i] < num) {
+        result[i] = num
+        break
+      }
+      if (findNums[i] === num) find = true
+    }
   }
   return result
 }
 
 ;[
-  [[1,4], 2],                   // 4
-  [[1,2], 2],                   // 3
-  [[1,3], 2],                   // 4
-  [[1,2,3,4,5], 5],             // 9
-  [[1,6,11,12,30], 5],          // 21
+  [[4,1,2], [1,3,4,2]],         // [-1,3,-1]
+  [[2,4], [1,2,3,4]],           // [3,-1]
 ].forEach(args => {
-  console.log(findPoisonedDuration(...args))
+  console.log(nextGreaterElement(...args))
 })
 
+
 // Solution:
-// 如果两个数间的间隔大于持续时间，则算持续时间，
-// 若小于，则算两数间隔时间。
+// O(n * m)
+// 为每个在 findNums 的元素，遍历一遍 nums 数组，
+// 记录一个是否已经找到该元素的变量，只有当找到，才能找比其大的数
+
 
 // Submission Result: Accepted
