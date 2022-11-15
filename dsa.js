@@ -1,62 +1,68 @@
-// 1470. Shuffle the Array
-// Easy   90%
+// 1475. Final Prices With a Special Discount in a Shop
+// Easy   78%
+
+const { pid } = require("process");
 
 
-// Given the array nums consisting of 2n elements in the form
-// [x1,x2,...,xn,y1,y2,...,yn].
-// Return the array in the form [x1,y1,x2,y2,...,xn,yn].
+// Given the array prices where prices[i] is the price of the ith item in a shop.
+// There is a special discount for items in the shop, if you buy the ith item,
+// then you will receive a discount equivalent to prices[j] where j is the
+// minimum index such that j > i and prices[j] <= prices[i], otherwise, you will
+// not receive any discount at all.
+// Return an array where the ith element is the final price you will pay for the
+// ith item of the shop considering the special discount.
 
 // Example 1:
-// Input: nums = [2,5,1,3,4,7], n = 3
-// Output: [2,3,5,4,1,7]
-// Explanation: Since x1=2, x2=5, x3=1, y1=3, y2=4, y3=7 then the answer is
-// [2,3,5,4,1,7].
+// Input: prices = [8,4,6,2,3]
+// Output: [4,2,4,2,3]
+// Explanation:
+// For item 0 with price[0]=8 you will receive a discount equivalent to
+// prices[1]=4, therefore, the final price you will pay is 8 - 4 = 4.
+// For item 1 with price[1]=4 you will receive a discount equivalent to
+// prices[3]=2, therefore, the final price you will pay is 4 - 2 = 2.
+// For item 2 with price[2]=6 you will receive a discount equivalent to
+// prices[3]=2, therefore, the final price you will pay is 6 - 2 = 4.
+// For items 3 and 4 you will not receive any discount at all.
 // Example 2:
-// Input: nums = [1,2,3,4,4,3,2,1], n = 4
-// Output: [1,4,2,3,3,2,4,1]
+// Input: prices = [1,2,3,4,5]
+// Output: [1,2,3,4,5]
+// Explanation: In this case, for all items, you will not receive any discount at
+// all.
 // Example 3:
-// Input: nums = [1,1,2,2], n = 2
-// Output: [1,2,1,2]
+// Input: prices = [10,1,1,6]
+// Output: [9,0,1,6]
 
 // Constraints:
-//     1 <= n <= 500
-//     nums.length == 2n
-//     1 <= nums[i] <= 10^3
+//     1 <= prices.length <= 500
+//     1 <= prices[i] <= 10^3
 
 
 /**
- * @param {number[]} nums
- * @param {number} n
+ * @param {number[]} prices
  * @return {number[]}
  */
-const shuffle = function(nums, n) {
-  let q = []
+const finalPrices = function(prices) {
+  const n = prices.length
   for (let i = 0; i < n; i++) {
-    if (i * 2 < n) q.push(nums[i * 2], nums[i * 2 + 1])
-    nums[i * 2] = q.shift()
-    nums[i * 2 + 1] = nums[n + i]
+    let j = i + 1
+    while (j < n && prices[j] > prices[i]) j++
+    if (j < n) prices[i] -= prices[j]
   }
-  return nums
+  return prices
 }
 
 ;[
-  [[2,5,1,3,4,7], 3],
-  [[1,2,3,4,4,3,2,1], 4],
-  [[1,1,2,2], 2],
-].forEach(([nums, n]) => {
-  console.log(shuffle(nums, n))
+  [8,4,6,2,3],
+  [1,2,3,4,5],
+  [10,1,1,6],
+  [8,8,6,7],
+].forEach((prices) => {
+  console.log(finalPrices(prices))
 })
 
 // Solution:
-// 1. 构造一个新数组，在每个位置上放对应的数即可。
-// 需要重新分配一个数组长度的内存
-
-// 2. 在原数组上完成
-// 这就需要考虑设置新的值后，原来的值会丢失的问题。
-
-// 使用一个 queue 优先队列来记录被覆盖的数。
-// 使用了 O(n/2) 的内存
-
-// LEARN #1470 讨论中有真正的 O(1) 内存的方法，去学习一下吧
+// 按照题意
+// 遍历数组，对于每个数，找到其后第一个小于或等于其值的数，
+// 若找到了，该数减去那个数。未找到则跳过。
 
 // Submission Result: Accepted
