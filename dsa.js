@@ -1,47 +1,52 @@
-// 345. Reverse Vowels of a String
-// Easy   38%
+// 347. Top K Frequent Elements
+// Medium   48%
 
+// Given a non-empty array of integers, return the k most frequent elements.
 
-// Write a function that takes a string as input and reverse only the vowels of a
-// string.
-
-// Example 1:
-// Given s = "hello", return "holle".
-
-// Example 2:
-// Given s = "leetcode", return "leotcede".
+// For example,
+// Given [1,1,1,2,2,3] and k = 2, return [1,2].
 
 // Note:
-// The vowels does not include the letter "y".
+//  - You may assume k is always valid, 1 ≤ k ≤ number of unique elements.
+//  - Your algorithm's time complexity must be better than O(n log n), where n
+//    is the array's size.
 
 
 /**
- * @param {string} s
- * @return {string}
+ * @param {number[]} nums
+ * @param {number} k
+ * @return {number[]}
  */
-const reverseVowels = function(s) {
-  const VOWELS = { a: true, e: true, i: true, o: true, u: true ,
-                   A: true, E: true, I: true, O: true, U: true }
-  const stack = []
-  for (let c of s) if (VOWELS[c]) stack.push(c)
+const topKFrequent = function(nums, k) {
+  const hash = {}
+  for (let num of nums) hash[num] = (hash[num] || 0) + 1
 
-  let result = ''
-  for (let c of s) result += VOWELS[c] ? stack.pop() : c
+  const bucket = Array(nums.length + 1)
+  for (let num in hash) {
+    const frequency = hash[num]
+    if (bucket[frequency] == null) bucket[frequency] = []
+    bucket[frequency].push(parseInt(num))
+  }
+
+
+
+  const result = []
+  for (let i = bucket.length - 1; i >= 0 && result.length < k; i--) {
+    if (bucket[i]) result.push(...bucket[i])
+  }
+
   return result
 }
 
 ;[
-  'hello',                      // 'holle'
-  'leetcode',                   // 'leotcede'
-  'Aa',                         // 'aA'
-].forEach(s => {
-  console.log(reverseVowels(s))
+  [[1,1,1,2,2,3], 2],           // [1,2]
+].forEach(([nums, k]) => {
+  console.log(topKFrequent(nums, k))
 })
 
 // Solution:
-// 用一个哈希表保存元音字母，方便判断某字母是否为元音
-// 用一个栈来保存字符串中出现的元音字母
-// 最后构造新字符时，若不是元音则直接用原来的字符，
-// 否则，用从栈顶弹出的字符。
+// 使用哈希表来保存数字出现的次数。
+// 使用桶数组按出现次数来排序数组。
+// 最后从桶数组的末尾开始取k个数。
 
 // Submission Result: Accepted
