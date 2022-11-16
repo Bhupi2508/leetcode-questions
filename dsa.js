@@ -1,89 +1,100 @@
-// 859. Buddy Strings
-// Easy   28%
+// 860. Lemonade Change
+// Easy   51%
 
 
-// Given two strings A and B of lowercase letters, return true if and only if we
-// can swap two letters in A so that the result equals B.
+// At a lemonade stand, each lemonade costs $5.
+// Customers are standing in a queue to buy from you, and order one at a time (in
+// the order specified by bills).
+// Each customer will only buy one lemonade and pay with either a $5, $10, or $20
+// bill.  You must provide the correct change to each customer, so that the net
+// transaction is that the customer pays $5.
+// Note that you don't have any change in hand at first.
+// Return true if and only if you can provide every customer with correct change.
 
 // Example 1:
-// Input: A = "ab", B = "ba"
+// Input: [5,5,5,10,20]
 // Output: true
+// Explanation:
+// From the first 3 customers, we collect three $5 bills in order.
+// From the fourth customer, we collect a $10 bill and give back a $5.
+// From the fifth customer, we give a $10 bill and a $5 bill.
+// Since all customers got correct change, we output true.
 // Example 2:
-// Input: A = "ab", B = "ab"
-// Output: false
+// Input: [5,5,10]
+// Output: true
 // Example 3:
-// Input: A = "aa", B = "aa"
-// Output: true
-// Example 4:
-// Input: A = "aaaaaaabc", B = "aaaaaaacb"
-// Output: true
-// Example 5:
-// Input: A = "", B = "aa"
+// Input: [10,10]
 // Output: false
+// Example 4:
+// Input: [5,5,10,10,20]
+// Output: false
+// Explanation:
+// From the first two customers in order, we collect two $5 bills.
+// For the next two customers in order, we collect a $10 bill and give back a $5
+// bill.
+// For the last customer, we can't give change of $15 back because we only have
+// two $10 bills.
+// Since not every customer received correct change, the answer is false.
 
 // Note:
-//     0 <= A.length <= 20000
-//     0 <= B.length <= 20000
-//     A and B consist only of lowercase letters.
+//     0 <= bills.length <= 10000
+//     bills[i] will be either 5, 10, or 20.
 
 
 /**
- * @param {string} A
- * @param {string} B
+ * @param {number[]} bills
  * @return {boolean}
  */
-const buddyStrings = function(A, B) {
-  if (A.length !== B.length) return false
-  let a = '', b = '', count = {}, swap = 0
-  for (let i = 0; i < A.length; i++) {
-    count[A[i]] = (count[A[i]] || 0) + 1
-    if (A[i] !== B[i]) {
-      if (swap === 0) {
-        a = A[i]
-        b = B[i]
-        swap++
-      } else if (swap === 1) {
-        if (a !== B[i] || b !== A[i]) return false
-        swap++
-      } else return false
+const lemonadeChange = function(bills) {
+  let B5 = 0, B10 = 0
+  for (let b of bills) {
+    if (b === 5) {
+      B5++
+    } else if (b === 10) {
+      B5--
+      B10++
+      if (B5 < 0) return false
+    } else if (b === 20) {
+      if (B10 > 0) {
+        B10--
+        B5--
+        if (B5 < 0) return false
+      } else {
+        B5 -= 3
+        if (B5 < 0) return false
+      }
     }
   }
-  for (let key in count) if (count[key] > 1) return true
-  return swap === 2
+  return true
 }
 
-const better = function(A, B) {
-  if (A.length !== B.length) return false
-  if (A === B && (new Set(A)).size < A.length) return true
-  const dif = []
-  for (let i = 0; i < A.length; i++) {
-    if (A[i] !== B[i]) dif.push(i)
+const prettier = function(bills) {
+  let five = 0, ten = 0
+  for (let b of bills) {
+    if (b === 5) five++
+    else if (b === 10) five--, ten++
+    else if (ten > 0) ten--, five--
+    else five -= 3
+    if (five < 0) return false
   }
-  return dif.length === 2 && A[dif[0]] === B[dif[1]] && A[dif[1]] === B[dif[0]]
+  return true
 }
 
 ;[
-  ['ab', 'ba'], // true
-  ['ab', 'ab'], // false
-  ['aa', 'aa'], // true
-  ['aaaaaaabc', 'aaaaaaacb'], // true
-  ['', 'aa'], // false
-  ['abab', 'abab'], // true
-  ['acbb', 'abcc'], // false
-].forEach(([A, B]) => {
-  console.log(buddyStrings(A, B))
-  // console.log(better(A, B))
+  // [5,5,5,10,20], // true
+  // [5,5,10],      // true
+  // [10,10],       // false
+  // [5,5,10,10,20],// false
+  [5,5,10,20,5,5,5,5,5,5,5,5,5,10,5,5,20,5,20,5], // true
+].forEach((bills) => {
+  console.log(lemonadeChange(bills))
 })
 
 // Solution:
-// 记录字符 `a` 和 `b`，记录交换的次数 `swap`，并记录每个字符出现的次数。
-// a 和 b 用于记录交换的字符
-// swap 不能大于2，否则返回 false
-// 记录字符次数，是为了在两个字符串相同时，看看有没有可交换的两个相同的字符。
-
-// 更好的方法
-// 当字符串相同时，用 Set 来判断，是否有重复字符
-// 遍历字符串时，使用数组记录要交换的字符的下标
-// 最后判断数组的长度是否等于2，并判断交换后是否相同。
+// 记录收到的 $5 和 $10 的数量
+// 在收到一个 $10 时，需要返回一个 $5
+// 收到一个 $20 时，可以返回 $10 + $5 或 3 * $5，有 $10 时优先返回 $10
+// 每次交易（假设允许 $5 的数量为负）后，判断 $5 的数量是否小于零，是则返回 false
+// 完成所有交易后 返回 true
 
 // Submission Result: Accepted
