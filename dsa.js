@@ -1,26 +1,55 @@
 /**
- * @param {number[]} nums
- * @return {string}
+ * Definition for a binary tree node.
+ * function TreeNode(val) {
+ *     this.val = val;
+ *     this.left = this.right = null;
+ * }
  */
-var largestNumber = function(nums) {
-    nums.sort(function(a, b) {
-        var ab = a + '' + b;
-        var ba = b + '' + a;
-        if (ab < ba) return 1;
-        else if (ab > ba) return -1;
-        return 0;
-    });
-    if (nums[0] === 0) return '0';
-    return nums.join('');
+/**
+ * @param {TreeNode} root
+ * @return {number[]}
+ */
+var rightSideView = function(root) {
+    if (!root) return [];
+    var result = [];
+    var queue = [root];
+
+    while (queue.length > 0) {
+        result.push(queue[queue.length - 1].val);
+        var nextLevel = [];
+        for (var i = 0; i < queue.length; i++) {
+            if (queue[i].left) {
+                nextLevel.push(queue[i].left);
+            }
+            if (queue[i].right) {
+                nextLevel.push(queue[i].right);
+            }
+        }
+        queue = nextLevel;
+    }
+
+    return result;
 };
 
-// this is a wrong solution e.g. [121,12] '12' < '121', then it doesn't work.
-var largestNumber = function(nums) {
-    nums.sort(function(a, b) {
-        if (a.toString() < b.toString()) return 1;
-        else if (a.toString() > b.toString()) return -1;
-        else return 0;
-    });
-    if (nums[0] === 0) return '0';
-    return nums.join('');
+// more concise, no need to track each level.
+var rightSideView = function(root) {
+    if (!root) return [];
+    var result = [];
+    var queue = [root];
+
+    while (queue.length > 0) {
+        result.push(queue[queue.length - 1].val);
+        var queueLength = queue.length;
+        for (var i = 0; i < queueLength; i++) {
+            var node = queue.shift();
+            if (node.left) {
+                queue.push(node.left);
+            }
+            if (node.right) {
+                queue.push(node.right);
+            }
+        }
+    }
+
+    return result;
 };
