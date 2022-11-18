@@ -1,136 +1,58 @@
-// 999. Available Captures for Rook
-// Easy   66%
+// 1000. Minimum Cost to Merge Stones
+// Hard   40%
 
 
-// On an 8 x 8 chessboard, there is one white rook.  There also may be empty
-// squares, white bishops, and black pawns.  These are given as characters 'R',
-// '.', 'B', and 'p' respectively. Uppercase characters represent white pieces,
-// and lowercase characters represent black pieces.
-// The rook moves as in the rules of Chess: it chooses one of four cardinal
-// directions (north, east, west, and south), then moves in that direction until
-// it chooses to stop, reaches the edge of the board, or captures an opposite
-// colored pawn by moving to the same square it occupies.  Also, rooks cannot
-// move into the same square as other friendly bishops.
-// Return the number of pawns the rook can capture in one move.
+// There are N piles of stones arranged in a row.  The i-th pile has stones[i]
+// stones.
+// A move consists of merging exactly K consecutive piles into one pile, and the
+// cost of this move is equal to the total number of stones in these K piles.
+// Find the minimum cost to merge all piles of stones into one pile.  If it is
+// impossible, return -1.
 
 // Example 1:
-// Input:
-// [
-//  [".",".",".",".",".",".",".","."],
-//  [".",".",".","p",".",".",".","."],
-//  [".",".",".","R",".",".",".","p"],
-//  [".",".",".",".",".",".",".","."],
-//  [".",".",".",".",".",".",".","."],
-//  [".",".",".","p",".",".",".","."],
-//  [".",".",".",".",".",".",".","."],
-//  [".",".",".",".",".",".",".","."]
-// ]
-// Output: 3
+// Input: stones = [3,2,4,1], K = 2
+// Output: 20
 // Explanation:
-// In this example the rook is able to capture all the pawns.
+// We start with [3, 2, 4, 1].
+// We merge [3, 2] for a cost of 5, and we are left with [5, 4, 1].
+// We merge [4, 1] for a cost of 5, and we are left with [5, 5].
+// We merge [5, 5] for a cost of 10, and we are left with [10].
+// The total cost was 20, and this is the minimum possible.
 // Example 2:
-// Input:
-// [
-//  [".",".",".",".",".",".",".","."],
-//  [".","p","p","p","p","p",".","."],
-//  [".","p","p","B","p","p",".","."],
-//  [".","p","B","R","B","p",".","."],
-//  [".","p","p","B","p","p",".","."],
-//  [".","p","p","p","p","p",".","."],
-//  [".",".",".",".",".",".",".","."],
-//  [".",".",".",".",".",".",".","."],
-// ]
-// Output: 0
-// Explanation:
-// Bishops are blocking the rook to capture any pawn.
+// Input: stones = [3,2,4,1], K = 3
+// Output: -1
+// Explanation: After any merge operation, there are 2 piles left, and we can't
+// merge anymore.  So the task is impossible.
 // Example 3:
-// Input:
-// [
-//  [".",".",".",".",".",".",".","."],
-//  [".",".",".","p",".",".",".","."],
-//  [".",".",".","p",".",".",".","."],
-//  ["p","p",".","R",".","p","B","."],
-//  [".",".",".",".",".",".",".","."],
-//  [".",".",".","B",".",".",".","."],
-//  [".",".",".","p",".",".",".","."],
-//  [".",".",".",".",".",".",".","."]
-// ]
-// Output: 3
+// Input: stones = [3,5,1,2,6], K = 3
+// Output: 25
 // Explanation:
-// The rook can capture the pawns at positions b5, d6 and f5.
+// We start with [3, 5, 1, 2, 6].
+// We merge [5, 1, 2] for a cost of 8, and we are left with [3, 8, 6].
+// We merge [3, 8, 6] for a cost of 17, and we are left with [17].
+// The total cost was 25, and this is the minimum possible.
 
 // Note:
-//     board.length == board[i].length == 8
-//     board[i][j] is either 'R', '.', 'B', or 'p'
-//     There is exactly one cell with board[i][j] == 'R'
+//     1 <= stones.length <= 30
+//     2 <= K <= 30
+//     1 <= stones[i] <= 100
+
 
 /**
- * @param {character[][]} board
+ * @param {number[]} stones
+ * @param {number} K
  * @return {number}
  */
-const numRookCaptures = function(board) {
-  function cap(x, y, dx, dy) {
-    while (x >= 0 && y >=0 && x < 8 && y < 8 && board[x][y] !== 'B') {
-      if (board[x][y] === 'p') return 1
-      x += dx
-      y += dy
-    }
-    return 0
-  }
-  for (let i = 0; i < 8; i++) {
-    for (let j = 0; j < 8; j++) {
-      if (board[i][j] === 'R') {
-        return (
-          cap(i, j, -1, 0) +
-          cap(i, j, 0, 1) +
-          cap(i, j, 1, 0) +
-          cap(i, j, 0, -1)
-        )
-      }
-    }
-  }
-  return 0
+const mergeStones = function(stones, K) {
+
 }
 
 ;[
-  [
-    ['.', '.', '.', '.', '.', '.', '.', '.'],
-    ['.', '.', '.', 'p', '.', '.', '.', '.'],
-    ['.', '.', '.', 'R', '.', '.', '.', 'p'],
-    ['.', '.', '.', '.', '.', '.', '.', '.'],
-    ['.', '.', '.', '.', '.', '.', '.', '.'],
-    ['.', '.', '.', 'p', '.', '.', '.', '.'],
-    ['.', '.', '.', '.', '.', '.', '.', '.'],
-    ['.', '.', '.', '.', '.', '.', '.', '.'],
-  ], // 3
-  [
-    ['.', '.', '.', '.', '.', '.', '.', '.'],
-    ['.', 'p', 'p', 'p', 'p', 'p', '.', '.'],
-    ['.', 'p', 'p', 'B', 'p', 'p', '.', '.'],
-    ['.', 'p', 'B', 'R', 'B', 'p', '.', '.'],
-    ['.', 'p', 'p', 'B', 'p', 'p', '.', '.'],
-    ['.', 'p', 'p', 'p', 'p', 'p', '.', '.'],
-    ['.', '.', '.', '.', '.', '.', '.', '.'],
-    ['.', '.', '.', '.', '.', '.', '.', '.'],
-  ], // 0
-  [
-    ['.', '.', '.', '.', '.', '.', '.', '.'],
-    ['.', '.', '.', 'p', '.', '.', '.', '.'],
-    ['.', '.', '.', 'p', '.', '.', '.', '.'],
-    ['p', 'p', '.', 'R', '.', 'p', 'B', '.'],
-    ['.', '.', '.', '.', '.', '.', '.', '.'],
-    ['.', '.', '.', 'B', '.', '.', '.', '.'],
-    ['.', '.', '.', 'p', '.', '.', '.', '.'],
-    ['.', '.', '.', '.', '.', '.', '.', '.'],
-  ], // 3
-].forEach((board) => {
-  console.log(numRookCaptures(board))
+  [3,2,4,1], 2,
+].forEach(() => {
+
 })
 
 // Solution:
-// 找到 R 的位置
-// 寻找 R 四周方向的 p
 
-// 利用 dx, dy 偏移量来创建查找函数
-
-// Submission Result: Accepted
+// Submission Result: Accept
