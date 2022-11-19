@@ -1,74 +1,81 @@
-// 563. Binary Tree Tilt
-// Easy   47%
+// 566. Reshape the Matrix
+// Easy   58%
 
 
-// Given a binary tree, return the tilt of the whole tree.
+// In MATLAB, there is a very useful function called 'reshape', which can reshape
+// a matrix into a new one with different size but keep its original data.
 
-// The tilt of a tree node is defined as the absolute difference between the sum
-// of all left subtree node values and the sum of all right subtree node values.
-// Null node has tilt 0.
+// You're given a matrix represented by a two-dimensional array, and two positive
+// integers r and c representing the row number and column number of the wanted
+// reshaped matrix, respectively.
 
-// The tilt of the whole tree is defined as the sum of all nodes' tilt.
+//  The reshaped matrix need to be filled with all the elements of the original
+// matrix in the same row-traversing order as they were.
 
-// Example:
+// If the 'reshape' operation with given parameters is possible and legal, output
+// the new reshaped matrix; Otherwise, output the original matrix.
+
+// Example 1:
 
 // Input:
-//          1
-//        /   \
-//       2     3
-// Output: 1
-// Explanation:
-// Tilt of node 2 : 0
-// Tilt of node 3 : 0
-// Tilt of node 1 : |2-3| = 1
-// Tilt of binary tree : 0 + 0 + 1 = 1
+// nums =
+// [[1,2],
+//  [3,4]]
+// r = 1, c = 4
+// Output:
+// [[1,2,3,4]]
+// Explanation:The row-traversing of nums is [1,2,3,4]. The new reshaped matrix
+// is a 1 * 4 matrix, fill it row by row by using the previous list.
+
+// Example 2:
+
+// Input:
+// nums =
+// [[1,2],
+//  [3,4]]
+// r = 2, c = 4
+// Output:
+// [[1,2],
+//  [3,4]]
+// Explanation:There is no way to reshape a 2 * 2 matrix to a 2 * 4 matrix. So
+// output the original matrix.
 
 // Note:
 
-// The sum of node values in any subtree won't exceed the range of 32-bit
-// integer.
-// All the tilt values won't exceed the range of 32-bit integer.
+// The height and width of the given matrix is in range [1, 100].
+// The given r and c are all positive.
 
 
 /**
- * Definition for a binary tree node.
- * function TreeNode(val) {
- *   this.val = val
- *   this.left = this.right = null
- * }
+ * @param {number[][]} nums
+ * @param {number} r
+ * @param {number} c
+ * @return {number[][]}
  */
-
-/**
- * @param {TreeNode} root
- * @return {number}
- */
-const findTilt = function(root) {
-  function iter(root) {
-    if (root == void 0) return [0, 0]
-    const left = iter(root.left),
-          right = iter(root.right)
-    return [
-      left[0] + right[0] + Math.abs(left[1] - right[1]),
-      left[1] + right[1] + root.val
-    ]
+const matrixReshape = function(nums, r, c) {
+  const n = nums.length, m = nums[0].length
+  if (n * m !== r * c) return nums
+  const result = Array(r)
+  for (let i = 0; i < r; i++) {
+    result[i] = []
+    for (let j = 0; j < c; j++) {
+      const index = i * c + j
+      result[i][j] = nums[Math.trunc(index / m)][index % m]
+    }
   }
-  return iter(root)[0]
+  return result
 }
 
-const TreeNode = require('../structs/TreeNode')
 ;[
-  [1,2,3],             // 1
-  [1,2,3,4,null,5],    // 11
-  [1,2,null,3,4],      // 10
-].forEach((array) => {
-  console.log(findTilt(TreeNode.from(array)))
+  [[[1,2], [3,4]], 1, 4],       // [[1,2,3,4]]
+  [[[1,2], [3,4]], 2, 4],       // [[1,2],[3,4]]
+].forEach(args => {
+  console.log(matrixReshape(...args))
 })
 
 // Solution:
-// 在每个节点中，累积其左右子树的总和的差的绝对值。
-// 这时，不仅要记录数差的绝对值的总和，还要记录子树的所有值的总和。
-// 注意：两个完全不同的总和，必须特别区分。
-// 一个是累积子树所有节点的左右子树的差的绝对值的总和，即答案
-// 另一个是累积子树的所有值的总和。
+// 记录原数组的每个元素的编号为 i * m + j
+// 新数组的每个元素编号为 i * c + j，且取原数组中相同编号的元素
+// i * c + j 位置对应的矩阵号为 (i * c + j) / m, (i * c + j) % m
 
 // Submission Result: Accepted
