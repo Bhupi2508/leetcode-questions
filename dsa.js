@@ -1,59 +1,56 @@
-// 976. Largest Perimeter Triangle
-// Easy   57%
+// 977. Squares of a Sorted Array
+// Easy   72%
 
 
-// Given an array A of positive lengths, return the largest perimeter of a
-// triangle with non-zero area, formed from 3 of these lengths.
-// If it is impossible to form any triangle of non-zero area, return 0.
+// Given an array of integers A sorted in non-decreasing order, return an array
+// of the squares of each number, also in sorted non-decreasing order.
 
 // Example 1:
-// Input: [2,1,2]
-// Output: 5
+// Input: [-4,-1,0,3,10]
+// Output: [0,1,9,16,100]
 // Example 2:
-// Input: [1,2,1]
-// Output: 0
-// Example 3:
-// Input: [3,2,3,4]
-// Output: 10
-// Example 4:
-// Input: [3,6,2,3]
-// Output: 8
+// Input: [-7,-3,2,3,11]
+// Output: [4,9,9,49,121]
 
 // Note:
-//     3 <= A.length <= 10000
-//     1 <= A[i] <= 10^6
+//     1 <= A.length <= 10000
+//     -10000 <= A[i] <= 10000
+//     A is sorted in non-decreasing order.
 
 
 /**
  * @param {number[]} A
- * @return {number}
+ * @return {number[]}
  */
-const largestPerimeter = function(A) {
-  A.sort((a, b) => a - b)
-  for (let i = A.length - 1; i > 1; i--) {
-    if (A[i] < A[i - 1] + A[i - 2]) return A[i] + A[i - 1] + A[i - 2]
+const sortedSquares = function(A) {
+  const result = Array(A.length)
+  let i = 0, j = A.length - 1
+  for (let p = j; p >= 0; p--) {
+    if (Math.abs(A[i]) > Math.abs(A[j])) {
+      result[p] = A[i] * A[i]
+      i++
+    } else {
+      result[p] = A[j] * A[j]
+      j--
+    }
   }
-  return 0
+  return result
 }
 
 ;[
-  [2,1,2], // 5
-  [1,2,1], // 0
-  [3,2,3,4],// 10
-  [3,6,2,3], // 8
+  [-4,-1,0,3,10], // [0,1,9,16,100]
+  [-7,-3,2,3,11], // [4,9,9,49,121]
 ].forEach((A) => {
-  console.log(largestPerimeter(A))
+  console.log(sortedSquares(A))
 })
 
 // Solution:
-// 先排序
-// 每次取最大的相连的三个数，看是否能组成三角形，若能则返回
-// 否则判断下一组最大的相连的
+// 1. 直接算每个数的平方再排序
+//  没有充分利用原数组已排序的条件
 // TO(nlogn)
 
-// 为什么每次只判断最大三个数？
-// 因为要用最大值为最大边，若第二大及第三大加起来都没办法组成三角形，那最大边和其他值更不可能了
-// 所以这个最大值就可以排除在外了
-
+// 2. 充分利用原数组已排序的条件，从数组两边开始，
+// 大的一边先排入结果数组末尾
+// TO(n)
 
 // Submission Result: Accepted
