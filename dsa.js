@@ -1,59 +1,47 @@
-// 40. Combination Sum II
-// Medium   34%
+// 41. First Missing Positive
+// Hard   25%
 
-// Given a collection of candidate numbers (C) and a target number (T), find all
-// unique combinations in C where the candidate numbers sums to T.
+// Given an unsorted integer array, find the first missing positive integer.
 
-// Each number in C may only be used once in the combination.
+// For example,
+// Given [1,2,0] return 3,
+// and [3,4,-1,1] return 2.
 
-// Note:
+// Your algorithm should run in O(n) time and uses constant space.
 
-// All numbers (including target) will be positive integers.
-//   The solution set must not contain duplicate combinations.
-
-// For example, given candidate set [10, 1, 2, 7, 6, 1, 5] and target 8,
-// A solution set is:
-
-// [
-//   [1, 7],
-//   [1, 2, 5],
-//   [2, 6],
-//   [1, 1, 6]
-// ]
 
 /**
- * @param {number[]} candidates
- * @param {number} target
- * @return {number[][]}
+ * @param {number[]} nums
+ * @return {number}
  */
-const combinationSum2 = function(candidates, target) {
-  candidates.sort((a, b) => b - a)
-  const result = []
-  function iter(i, target, array) {
-    for (; i >= 0; i--) {
-      const c = candidates[i]
-      if (c > target) break
-      if (c === target) result.push([...array, c])
-      array.push(c)
-      iter(i - 1, target - c, array)
-      array.pop()
-      while (i >= 0 && c === candidates[i - 1]) i--
+const firstMissingPositive = function(nums) {
+  const n = nums.length
+
+  for (let i = 0; i < n; i++) {
+    while (nums[i] > 0 && nums[i] <= n && nums[nums[i] - 1] !== nums[i]) {
+      const t = nums[i] - 1
+      ;[nums[i], nums[t]] = [nums[t], nums[i]]
     }
   }
 
-  iter(candidates.length - 1, target, [])
-  return result
+  for (let i = 0; i < n; i++) {
+    if (nums[i] !== i + 1) return i + 1
+  }
+
+  return n + 1
 }
 
 ;[
-  [[10, 1, 2, 7, 6, 1, 5], 8],
-].forEach(args => {
-  console.log(combinationSum2(...args))
+  [1,2,0],                      // 3
+  [3,4,-1,1],                   // 2
+  [2, 5, 4, -1, 2, 1, 6, 3],    // 7
+].forEach(nums => {
+  console.log(firstMissingPositive(nums))
 })
 
 // Solution:
-// 有重复数字，但每个出现在数组中的数字只能使用一次。
-// 使用类似深度遍历的方法。
-// 不过每次回溯到原来的地方时，都跳过重复数字（数组已排序）。
+// 不断交换元素的位置。
+// 若某个数应在的位置没有被相同的数先占领，则将该数放置在该在的位置。
+// 否则先跳过该数所在的位置，看下一个位置的数。
 
 // Submission Result: Accepted
