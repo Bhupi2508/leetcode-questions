@@ -1,57 +1,55 @@
-// 628. Maximum Product of Three Numbers
-// Easy   45%
+// 633. Sum of Square Numbers
+// Easy   32%
 
 
-// Given an integer array, find three numbers whose product is maximum and output
-// the maximum product.
+// Given a non-negative integer c, your task is to decide whether there're two
+// integers a and b such that a^2 + b^2 = c.
 
 // Example 1:
 
-// Input: [1,2,3]
-// Output: 6
+// Input: 5
+// Output: True
+// Explanation: 1 * 1 + 2 * 2 = 5
 
 // Example 2:
 
-// Input: [1,2,3,4]
-// Output: 24
-
-// Note:
-
-// The length of the given array will be in range [3,104] and all elements are in
-// the range [-1000, 1000].
-// Multiplication of any three numbers in the input won't exceed the range of
-// 32-bit signed integer.
+// Input: 3
+// Output: False
 
 
 /**
- * @param {number[]} nums
- * @return {number}
+ * @param {number} c
+ * @return {boolean}
  */
-const maximumProduct = function(nums) {
-  const n = nums.length
-  nums.sort((a, b) => a - b)
-  return Math.max(
-    nums[n - 3] * nums[n - 2] * nums[n - 1],
-    nums[0] * nums[1] * nums[n - 1]
-  )
+const judgeSquareSum = function(c) {
+  const s = Math.floor(Math.sqrt(c / 2))
+  for (let i = 0; i <= s; i++) {
+    if (Number.isInteger(Math.sqrt(c - i * i))) return true
+  }
+  return false
 }
 
 ;[
-  [1,2,3],                      // 6
-  [1,2,3,4],                    // 24
-].forEach(nums => {
-  console.log(maximumProduct(nums))
+  5,                            // true
+  3,                            // false
+  2,                            // true
+  32,                           // true
+].forEach(c => {
+  console.log(judgeSquareSum(c))
 })
 
 // Solution:
-// 根据数组中的元素类型，分情况讨论：
-// 1. 全为正数且可以包括0，则选择 3 个最大的数相乘。
-// 2. 全为负数且可以包括0，同样选择 3 个最大的数相乘。
-// 3. 正/负/0都有，选择以下两种情况中较大的一种：
-//    1) 3 个最大的数相乘
-//    2) 一个最大的数，和两个最小的负数相乘
+// 已知：非负整数 c, 满足 a^2 + b^2 = c，
+// 求：整数 a，b 是否存在
 
-// 数组排序。
-// 上面 3 种情况可以合并为一种（即情况3）。
+// 因为 a^2 <= c
+// 所以 0 <= a <= sqrt(c) (b 同理)
+
+// 若假设 a <= b,
+// 则 a^2 <= (c / 2)
+// 则 0 <= a <= sqrt(c / 2)
+
+// 迭代 a 从 0 到 sqrt(c / 2)，计算 b = sqrt(c - a^2)，
+// 如果 b 为整数，则返回 true
 
 // Submission Result: Accepted
