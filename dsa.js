@@ -1,65 +1,58 @@
-// 950. Reveal Cards In Increasing Order
-// Medium   74%
+// 951. Flip Equivalent Binary Trees
+// Medium   66%
 
 
-// In a deck of cards, every card has a unique integer.  You can order the deck
-// in any order you want.
-// Initially, all the cards start face down (unrevealed) in one deck.
-// Now, you do the following steps repeatedly, until all cards are revealed:
-//  1.Take the top card of the deck, reveal it, and take it out of the deck.
-//  2.If there are still cards in the deck, put the next top card of the deck at
-// the bottom of the deck.
-//  3.If there are still unrevealed cards, go back to step 1.  Otherwise, stop.
-// Return an ordering of the deck that would reveal the cards in increasing
-// order.
-// The first entry in the answer is considered to be the top of the deck.
+// For a binary tree T, we can define a flip operation as follows: choose any
+// node, and swap the left and right child subtrees.
+// A binary tree X is flip equivalent to a binary tree Y if and only if we can
+// make X equal to Y after some number of flip operations.
+// Write a function that determines whether two binary trees are flip equivalent.
+//  The trees are given by root nodes root1 and root2.
 
 // Example 1:
-// Input: [17,13,11,2,3,5,7]
-// Output: [2,13,3,11,5,17,7]
-// Explanation:
-// We get the deck in the order [17,13,11,2,3,5,7] (this order doesn't matter),
-// and reorder it.
-// After reordering, the deck starts as [2,13,3,11,5,17,7], where 2 is the top of
-// the deck.
-// We reveal 2, and move 13 to the bottom.  The deck is now [3,11,5,17,7,13].
-// We reveal 3, and move 11 to the bottom.  The deck is now [5,17,7,13,11].
-// We reveal 5, and move 17 to the bottom.  The deck is now [7,13,11,17].
-// We reveal 7, and move 13 to the bottom.  The deck is now [11,17,13].
-// We reveal 11, and move 17 to the bottom.  The deck is now [13,17].
-// We reveal 13, and move 17 to the bottom.  The deck is now [17].
-// We reveal 17.
-// Since all the cards revealed are in increasing order, the answer is correct.
+// Input: root1 = [1,2,3,4,5,6,null,null,null,7,8], root2 =
+// [1,3,2,null,6,4,5,null,null,null,null,8,7]
+// Output: true
+// Explanation: We flipped at nodes with values 1, 3, and 5.
 
 // Note:
-//     1 <= A.length <= 1000
-//     1 <= A[i] <= 10^6
-//     A[i] != A[j] for all i != j
+//     Each tree will have at most 100 nodes.
+//     Each value in each tree will be a unique integer in the range [0, 99].
+
 
 
 /**
- * @param {number[]} deck
- * @return {number[]}
+ * Definition for a binary tree node.
+ * function TreeNode(val, left, right) {
+ * this.val = (val===undefined ? 0 : val)
+ *     this.left = (left===undefined ? null : left)
+ *     this.right = (right===undefined ? null : right)
+ * }
  */
-const deckRevealedIncreasing = function(deck) {
-  deck.sort((a, b) => b - a)
-  const res = [deck[0]]
-  for (let i = 1; i < deck.length; i++) {
-    const t = res.pop()
-    res.unshift(deck[i], t)
-  }
-  return res
+/**
+ * @param {TreeNode} root1
+ * @param {TreeNode} root2
+ * @return {boolean}
+ */
+const flipEquiv = function(root1, root2) {
+  if (root1 === null || root2 === null) return root1 === root2
+  return root1.val === root2.val && (
+    (flipEquiv(root1.left, root2.left) && flipEquiv(root1.right, root2.right)) ||
+    (flipEquiv(root1.left, root2.right) && flipEquiv(root1.right, root2.left))
+  )
 }
 
+const TreeNode = require('../structs/TreeNode')
 ;[
-  [17,13,11,2,3,5,7],
-].forEach((deck) => {
-  console.log(deckRevealedIncreasing(deck))
+  [[1,2,3,4,5,6,null,null,null,7,8], [1,3,2,null,6,4,5,null,null,null,null,8,7]],
+].forEach((arr) => {
+  console.log(flipEquiv(TreeNode.from(arr[0]), TreeNode.from(arr[1])))
 })
 
 // Solution:
-// 先从大到小排序。倒序操作：
-// 1. 先从 res 中取出最后一个值，插入到第一个位置；
-// 2. 取当前 deck 的最大值，插入到第一个位置。
+// 使用递归算法，
+// 1. 比较它们当前节点值是否相等
+// 2. 比较它们的左子树是否相等，右子树是否相等
+// 3. 比较 r1 的左子树与 r2 的右子树是否相等， r1 的右子树与 r2 的左子树是否相等
 
 // Submission Result: Accepted
