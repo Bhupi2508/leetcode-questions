@@ -1,59 +1,44 @@
-// 54. Spiral Matrix
-// Medium   26%
+// 55. Jump Game
+// Medium   29%
 
-// Given a matrix of m x n elements (m rows, n columns), return all elements of
-// the matrix in spiral order.
+// Given an array of non-negative integers, you are initially positioned at the
+// first index of the array.
 
-// For example, Given the following matrix:
+// Each element in the array represents your maximum jump length at that
+// position.
 
-// [ [ 1, 2, 3 ], [ 4, 5, 6 ], [ 7, 8, 9 ] ]
+// Determine if you are able to reach the last index.
 
-// You should return [1,2,3,6,9,8,7,4,5].
+// For example: A = [2,3,1,1,4], return true.
+
+// A = [3,2,1,0,4], return false.
 
 /**
- * @param {number[][]} matrix
- * @return {number[]}
+ * @param {number[]} nums
+ * @return {boolean}
  */
-const spiralOrder = function(matrix) {
-  if (matrix == null || matrix.length === 0) return []
-  const rows = matrix.length, cols = matrix[0].length
-
-  const res = []
-  let a = 0, b = cols - 1, c = 0, d = rows - 1
-  while (a <= b && c <= d) {
-    for (let i = a; i <= b; i++) res.push(matrix[c][i])
-    c++
-    for (let i = c; i <= d; i++) res.push(matrix[i][b])
-    b--
-    for (let i = b; i >= a && c <= d; i--) res.push(matrix[d][i])
-    d--
-    for (let i = d; i >= c && a <= b; i--) res.push(matrix[i][a])
-    a++
+const canJump = function(nums) {
+  let lastPos = nums.length - 1
+  for (let i = lastPos; i >= 0; i--) {
+    if (i + nums[i] >= lastPos) lastPos = i
   }
-  return res
+  return lastPos === 0
 }
 
 ;[
-  [
-    [1, 2, 3, 0],
-    [4, 5, 6, 1],
-    [0, 1, 0, 2],
-    [7, 8, 9, 3]
-  ],
-  [
-    [2,3]
-  ],
-  [
-    [2],
-    [3],
-    [4]
-  ]
-].forEach(matrix => {
-  console.log(spiralOrder(matrix))
+  [2, 3, 1, 1, 4],              // true
+  [3, 2, 1, 0, 4],              // false
+].forEach(nums => {
+  console.log(canJump(nums))
 })
 
 // Solution:
-// 按照题意，从外圈层层向里读。
-// 设置矩阵的四个边界，没读完最外层的行或列，都改变一个边界。
+// 从后面开始向前遍历，
+// 判断当前位置是否能跳到终点，若能则将终点调整为该位置。
+// 否则判断前一个位置。
+
+// 最后，若终点移到了开始位置，则说明从开始位置能跳到终点。
+
+// 逆向思维。
 
 // Submission Result: Accepted
