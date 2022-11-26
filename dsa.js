@@ -1,57 +1,52 @@
-// 1200. Minimum Absolute Difference
-// Easy   67%
+// 1207. Unique Number of Occurrences
+// Easy   71%
 
 
-// Given an array of distinct integers arr, find all pairs of elements with the
-// minimum absolute difference of any two elements.
-// Return a list of pairs in ascending order(with respect to pairs), each pair
-// [a, b] follows
-//     a, b are from arr
-//     a < b
-//     b - a equals to the minimum absolute difference of any two elements in arr
+// Given an array of integers arr, write a function that returns true if and only
+// if the number of occurrences of each value in the array is unique.
 
 // Example 1:
-// Input: arr = [4,2,1,3]
-// Output: [[1,2],[2,3],[3,4]]
-// Explanation: The minimum absolute difference is 1. List all pairs with
-// difference equal to 1 in ascending order.
+// Input: arr = [1,2,2,1,1,3]
+// Output: true
+// Explanation: The value 1 has 3 occurrences, 2 has 2 and 3 has 1. No two values
+// have the same number of occurrences.
 // Example 2:
-// Input: arr = [1,3,6,10,15]
-// Output: [[1,3]]
+// Input: arr = [1,2]
+// Output: false
 // Example 3:
-// Input: arr = [3,8,-10,23,19,-4,-14,27]
-// Output: [[-14,-10],[19,23],[23,27]]
+// Input: arr = [-3,0,1,-3,1,1,1,-3,10,0]
+// Output: true
 
 // Constraints:
-//     2 <= arr.length <= 10^5
-//     -10^6 <= arr[i] <= 10^6
+//     1 <= arr.length <= 1000
+//     -1000 <= arr[i] <= 1000
 
 
 /**
  * @param {number[]} arr
- * @return {number[][]}
+ * @return {boolean}
  */
-const minimumAbsDifference = function(arr) {
-  arr.sort((a, b) => a - b)
-  const res = [], n = arr.length
-  let min = 2000000
-  for (let i = 1; i < n; i++) min = Math.min(min, arr[i] - arr[i - 1])
-  for (let i = 1; i < n; i++)
-    if (arr[i] - arr[i - 1] === min) res.push([arr[i - 1], arr[i]])
-  return res
+const uniqueOccurrences = function(arr) {
+  const hash = {}
+  for (let a of arr) hash[a] = (hash[a] || 0) + 1
+  const set = new Set()
+  for (let k in hash) {
+    if (set.has(hash[k])) return false
+    set.add(hash[k])
+  }
+  return true
 }
 
 ;[
-  [4,2,1,3],
-  [1,3,6,10,15],
-  [3,8,-10,23,19,-4,-14,27],
+  [1,2,2,1,1,3],
+  [1,2],
+  [-3,0,1,-3,1,1,1,-3,10,0],
 ].forEach((arr) => {
-  console.log(minimumAbsDifference(arr))
+  console.log(uniqueOccurrences(arr))
 })
 
 // Solution:
-// 先按从小到大排序数组
-// 遍历一遍数组，计算出每两个相邻数的差中的最小值 min
-// 再遍历一遍数组，取出差等于 min 的所有数对。
+// 使用 hashMap 记录每个数出现的次数
+// 使用 Set 判断是否有重复次数
 
 // Submission Result: Accepted
