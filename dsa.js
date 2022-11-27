@@ -1,33 +1,26 @@
 /**
- * @param {number[]} candidates
- * @param {number} target
- * @return {number[][]}
+ * key: num1[i] * num2[j] will be placed at indices result[i + j, i + j + 1]
+ * 
+ * @param {string} num1
+ * @param {string} num2
+ * @return {string}
  */
-var combinationSum2 = function(candidates, target) {
+var multiply = function(num1, num2) {
+    if (num1 === '0' || num2 === '0') return '0';
     var result = [];
-    var results = [];
+    for (var i = 0; i < num1.length + num2.length; i++) {
+        result.push(0);
+    }
 
-    candidates.sort(function(a, b) {
-        return a - b;
-    });
-    combinationSum2Helper(candidates, result, results, target, 0);
-    return results;
-};
+    for (var i = num1.length - 1; i >= 0 ; i--) {
+        for (var j = num2.length - 1; j >= 0 ; j--) {
+            var digitResult = parseInt(num1[i]) * parseInt(num2[j]);
+            digitResult += result[i+j+1];
+            result[i+j+1] = digitResult % 10;
+            result[i+j] += Math.floor(digitResult / 10);
+        }
+    }
+    if (result[0] === 0) result.shift();
 
-var combinationSum2Helper = function(candidates, result, results, target, start) {
-  if (target === 0) {
-      results.push(result.slice());
-      return;
-  }
-
-  for (var i = start; i < candidates.length; i++) {
-      if (target < 0) break;
-      if (i > start && candidates[i] === candidates[i - 1]) {
-          continue;
-      } else {
-          result.push(candidates[i]);
-          combinationSum2Helper(candidates, result, results, target - candidates[i], i + 1);
-          result.pop();
-      }
-  }
+    return result.join('');
 };
