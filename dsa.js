@@ -1,75 +1,57 @@
-// 496. Next Greater Element I
-// Easy   56%
+// 500. Keyboard Row
+// Easy   59%
 
 
-// You are given two arrays (without duplicates) nums1 and nums2 where nums1’s
-// elements are subset of nums2. Find all the next greater numbers for nums1's
-// elements in the corresponding places of nums2.
-
-// The Next Greater Number of a number x in nums1 is the first greater number to
-// its right in nums2. If it does not exist, output -1 for this number.
+// Given a List of words, return the words that can be typed using letters of
+// alphabet on only one row's of American keyboard like the image below.
 
 // Example 1:
 
-// Input: nums1 = [4,1,2], nums2 = [1,3,4,2].
-// Output: [-1,3,-1]
-// Explanation:
-//     For number 4 in the first array, you cannot find the next greater number
-// for it in the second array, so output -1.
-//     For number 1 in the first array, the next greater number for it in the
-// second array is 3.
-//     For number 2 in the first array, there is no next greater number for it in
-// the second array, so output -1.
-
-// Example 2:
-
-// Input: nums1 = [2,4], nums2 = [1,2,3,4].
-// Output: [3,-1]
-// Explanation:
-//     For number 2 in the first array, the next greater number for it in the
-// second array is 3.
-//     For number 4 in the first array, there is no next greater number for it in
-// the second array, so output -1.
+// Input: ["Hello", "Alaska", "Dad", "Peace"]
+// Output: ["Alaska", "Dad"]
 
 // Note:
 
-// All elements in nums1 and nums2 are unique.
-// The length of both nums1 and nums2 would not exceed 1000.
+// You may use one character in the keyboard more than once.
+// You may assume the input string will only contain letters of alphabet.
 
 
 /**
- * @param {number[]} findNums
- * @param {number[]} nums
- * @return {number[]}
+ * @param {string[]} words
+ * @return {string[]}
  */
-const nextGreaterElement = function(findNums, nums) {
-  const n = findNums.length,
-        result = Array(n).fill(-1)
-  for (let i = 0; i < n; i++) {
-    let find = false
-    for (let num of nums) {
-      if (find && findNums[i] < num) {
-        result[i] = num
-        break
-      }
-      if (findNums[i] === num) find = true
+const findWords = function(words) {
+  const keyboard = ['QWERTYUIOP', 'ASDFGHJKL', 'ZXCVBNM'], hash = {}
+  for (let i = 0; i < 3; i++) {
+    for (let l of keyboard[i]) {
+      hash[l] = i
     }
   }
+
+  const result = []
+  for (let i = 0, n = words.length; i < n; i++) {
+    const upper = words[i].toUpperCase(),
+          len = upper.length,
+          rowNum = hash[upper[0]]
+    let j = 0
+    while (j < len && hash[upper[j]] === rowNum) j++
+    if (j >= len) result.push(words[i])
+  }
+
   return result
 }
 
 ;[
-  [[4,1,2], [1,3,4,2]],         // [-1,3,-1]
-  [[2,4], [1,2,3,4]],           // [3,-1]
-].forEach(args => {
-  console.log(nextGreaterElement(...args))
+  ["Hello", "Alaska", "Dad", "Peace"], // ["Alaska", "Dad"]
+].forEach(words => {
+  console.log(findWords(words))
 })
 
 
 // Solution:
-// O(n * m)
-// 为每个在 findNums 的元素，遍历一遍 nums 数组，
-// 记录一个是否已经找到该元素的变量，只有当找到，才能找比其大的数
+// 先用一个哈希表来缓存每个大写字母所在的行数，
+// 再把每个单词的全部字母变成大写，
+// 最后看每个字母是不是在同一行。
 
 
 // Submission Result: Accepted
