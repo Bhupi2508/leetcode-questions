@@ -1,53 +1,55 @@
-// 5. Longest Palindromic Substring
-// Medium  25%
+// 6. ZigZag Conversion
+// Medium  26%
 
-// Given a string s, find the longest palindromic substring in s. You may assume
-// that the maximum length of s is 1000.
+// The string "PAYPALISHIRING" is written in a zigzag pattern on a given number
+// of rows like this: (you may want to display this pattern in a fixed font for
+// better legibility)
 
-// Example:
-// Input: "babad"
-// Output: "bab"
+// P   A   H   N
+// A P L S I I G
+// Y   I   R
 
-// Note: "aba" is also a valid answer.
+// And then read line by line: "PAHNAPLSIIGYIR"
 
-// Example:
-// Input: "cbbd"
-// Output: "bb"
+// Write the code that will take a string and make this conversion given a
+// number of rows:
+
+// string convert(string text, int nRows);
+
+// convert("PAYPALISHIRING", 3) should return "PAHNAPLSIIGYIR".
 
 /**
  * @param {string} s
+ * @param {number} numRows
  * @return {string}
  */
-const longestPalindrome = function(s) {
-  s = '#' + s.split('').join('#') + '#'
+const convert = function(s, numRows) {
+  if (numRows <= 1) return s
 
-  const n = s.length
-  let start = 0, end = 0
-  for (let i = 0; i < n; i++) {
-    let j = 0
-    while (i - j >= 0 && i + j < n && s[i - j] === s[i + j]) j++
-    if (2 * (--j) > end - start) {
-      start = i - j
-      end = i + j
-    }
+  const rows = Array(numRows).fill('')
+  let pos = 0, direct = true
+  for (let i = 0, n = s.length; i < n; i++) {
+    if (pos === 0) direct = true
+    if (pos === numRows - 1) direct = false
+
+    rows[pos] += s[i]
+    pos += direct ? 1 : -1
   }
 
-  return s.slice(start, end).split('#').join('')
+  return rows.join('')
 }
 
 ;[
-  'babad',                      // 'bab'
-  'cbbd',                       // 'cbbd'
-  'ccc',                        // 'ccc'
-].forEach(s => {
-  console.log(longestPalindrome(s))
+  ['PAYPALISHIRING', 3],        // 'PAHNAPLSIIGYIR'
+  ['AB', 1],                    // 'AB'
+  ['ABCDEFGHIJKLMN', 4],        // 'AGMBFHLNCEIKDJ'
+].forEach(args => {
+  console.log(convert(...args))
 })
 
 // Solution:
-// 两个字符之间插入一个标记（如 #），整个字符串两边也分别添加。
-// 这样字符串中就不会出现两个连续且相同的字符，处理起来更方便。
-// 这个思想很新颖。
-
-// 每遍历到一个字符，就计算其左右的最大对称长度。保留当前最长的左右字符下标。
+// 每行用一个数组保存。
+// 每行利用“电梯”的升降的方法来添加字符。
+// 用一个变量来保存的升降的方向。
 
 // Submission Result: Accepted
