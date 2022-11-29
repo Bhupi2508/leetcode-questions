@@ -1,64 +1,93 @@
-// 543. Diameter of Binary Tree
-// Easy   44%
+// 547. Friend Circles
+// Medium   49%
 
+//  There are N students in a class. Some of them are friends, while some are
+//  not. Their friendship is transitive in nature. For example, if A is a direct
+//  friend of B, and B is a direct friend of C, then A is an indirect friend of
+//  C. And we defined a friend circle is a group of students who are direct or
+//  indirect friends.
 
-// Given a binary tree, you need to compute the length of the diameter of the
-// tree. The diameter of a binary tree is the length of the longest path between
-// any two nodes in a tree. This path may or may not pass through the root.
+// Given a N*N matrix M representing the friend relationship between students in
+// the class. If M[i][j] = 1, then the ith and jth students are direct friends
+// with each other, otherwise not. And you have to output the total number of
+// friend circles among all the students.
 
-// Example:
-// Given a binary tree
+// Example 1:
 
-//           1
-//          / \
-//         2   3
-//        / \
-//       4   5
+// Input:
+// [[1,1,0],
+//  [1,1,0],
+//  [0,0,1]]
+// Output: 2
+// Explanation:The 0th and 1st students are direct friends, so they are in a
+// friend circle. The 2nd student himself is in a friend circle. So return 2.
 
-// Return 3, which is the length of the path [4,2,1,3] or [5,2,1,3].
+// Example 2:
+
+// Input:
+// [[1,1,0],
+//  [1,1,1],
+//  [0,1,1]]
+// Output: 1
+// Explanation:The 0th and 1st students are direct friends, the 1st and 2nd
+// students are direct friends, so the 0th and 2nd students are indirect
+// friends. All of them are in the same friend circle, so return 1.
 
 // Note:
-// The length of path between two nodes is represented by the number of edges
-// between them.
+// 1. N is in range [1,200].
+// 2. M[i][i] = 1 for all students.
+// 3. f M[i][j] = 1, then M[j][i] = 1.
 
 
 /**
- * Definition for a binary tree node.
- * function TreeNode(val) {
- *   this.val = val;
- *   this.left = this.right = null;
- * }
- */
-
-/**
- * @param {TreeNode} root
+ * @param {number[][]} M
  * @return {number}
  */
-const diameterOfBinaryTree = function(root) {
-  function iter(root) {
-    if (root == void 0) return { diameter: 0, height: 0 }
-    const left = iter(root.left), right = iter(root.right)
-    return {
-      diameter: Math.max(
-        left.height + right.height,
-        Math.max(left.diameter, right.diameter)
-      ),
-      height: Math.max(left.height, right.height) + 1
+
+const findCircleNum = function(M) {
+  const n = M.length, used = Array(n)
+  function dfs(i) {
+    if (used[i]) return
+    used[i] = true
+    for (let j = 0; j < n; j++) {
+      if (M[i][j]) dfs(j)
     }
   }
-  return iter(root).diameter
+
+  let result = 0
+  for (let i = 0; i < n; i++) {
+    if (!used[i]) {
+      result++
+      dfs(i)
+    }
+  }
+  return result
 }
 
-const TreeNode = require('../structs/TreeNode')
 ;[
-  [1,2,3,4,5],         // 3
-].forEach((array) => {
-  console.log(diameterOfBinaryTree(TreeNode.from(array)))
+  [
+    [1,1,0],
+    [1,1,0],
+    [0,0,1]
+  ],
+  [
+    [1,1,0],
+    [1,1,1],
+    [0,1,1]
+  ],
+  [
+    [1,0,0,1],
+    [0,1,1,0],
+    [0,1,1,1],
+    [1,0,1,1]
+  ],
+].forEach(M => {
+  console.log(findCircleNum(M))
 })
 
 // Solution:
-// 在那个节点中，记录以该节点为根的树的高度以及当前最大直径。
-// 不断将最大直径向上传递。
-// 因为直径不一定穿过根节点。
+// 使用 DFS 。
+// 对于没有被使用过的数，使用 DFS 。
+// 每完成一次 DFS 都算是形成一个朋友圈。
 
 // Submission Result: Accepted
