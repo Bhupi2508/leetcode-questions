@@ -6,44 +6,25 @@
  * }
  */
 /**
- * Key: just use inorderTraversal to traverse the tree. Inorder traversal
- * travels the node in a ascending order because it is a BST...
- *
  * @param {TreeNode} root
- * @param {number} k
- * @return {number}
+ * @param {TreeNode} p
+ * @param {TreeNode} q
+ * @return {TreeNode}
  */
-var kthSmallest = function(root, k) {
-    var stack = [];
-    var node = root;
-
-    while (node || stack.length > 0) {
-        if (node) {
-            stack.push(node);
-            node = node.left;
-        } else {
-            node = stack.pop();
-            k--;
-            if (k === 0) return node.val;
-            node = node.right;
-        }
-    }
-};
-
-// second try
-var kthSmallest = function(root, k) {
-    var stack = [];
-
-    while (root || stack.length > 0) {
-        while (root) {
-            stack.push(root);
-            root = root.left;
-        }
-        root = stack.pop();
-        k--;
-        if (k === 0) return root.val;
-        root = root.right;
+var lowestCommonAncestor = function(root, p, q) {
+    if (!root || root === p || root === q) {
+        return root;
     }
 
-    return 0;
+    var left = lowestCommonAncestor(root.left, p, q);
+    var right = lowestCommonAncestor(root.right, p, q);
+
+    if (!left) {
+        return right;
+    }
+    if (!right) {
+        return left;
+    }
+    
+    return root;
 };
