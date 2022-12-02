@@ -1,66 +1,145 @@
-// 526. Beautiful Arrangement
-// Medium   54%
-
-
-// Suppose you have N integers from 1 to N. We define a beautiful arrangement as
-// an used that is constructed by these N numbers successfully if one of the
-// following is true for the ith position (1 <= i <= N) in this used:
-
-// 1. The number at the ith position is divisible by i.
-// 2. i is divisible by the number at the ith position.
-
-// Now given N, how many beautiful arrangements can you construct?
-
-// Example 1:
-
-// Input: 2
-// Output: 2
-// Explanation:
-
-// The first beautiful arrangement is [1, 2]:
-// Number at the 1st position (i=1) is 1, and 1 is divisible by i (i=1).
-// Number at the 2nd position (i=2) is 2, and 2 is divisible by i (i=2).
-
-// The second beautiful arrangement is [2, 1]:
-// Number at the 1st position (i=1) is 2, and 2 is divisible by i (i=1).
-// Number at the 2nd position (i=2) is 1, and i (i=2) is divisible by 1.
-
-// Note: N is a positive integer and will not exceed 15.
-
-
-/**
- * @param {number} N
- * @return {number}
- */
-const countArrangement = function(N) {
-  function iter(i, used) {
-    if (i === N + 1) return 1
-    let result = 0
-    for (let j = 1; j <= N; j++) {
-      if (!used[j] && (i % j === 0 || j % i === 0)) {
-        used[j] = true
-        result += iter(i + 1, used)
-        used[j] = false
-      }
-    }
-    return result
-  }
-  return iter(1, [])
-}
-
-;[
-  1,                            // 1
-  2,                            // 2
-  3,                            // 3
-  13,                           // 4237
-  14,                           // 10680
-].forEach(N => {
-  console.log(countArrangement(N))
-})
-
-// Solution:
-// 用一个数组记录某个数是否被使用过。
-// 使用递归迭代，
-// 找出每个位置可以放置的数。
-
-// Submission Result: Accepted
+// 529. Minesweeper
+// Medium   49%
+
+// Let's play the minesweeper game (Wikipedia, online game)!
+
+// You are given a 2D char matrix representing the game board. 'M' represents an
+// unrevealed mine, 'E' represents an unrevealed empty square, 'B' represents a
+// revealed blank square that has no adjacent (above, below, left, right, and
+// all 4 diagonals) mines, digit ('1' to '8') represents how many mines are
+// adjacent to this revealed square, and finally 'X' represents a revealed mine.
+
+// Now given the next click position (row and column indices) among all the
+// unrevealed squares ('M' or 'E'), return the board after revealing this
+// position according to the following rules:
+
+//  1. If a mine ('M') is revealed, then the game is over - change it to 'X'.
+//  2. If an empty square ('E') with no adjacent mines is revealed, then change
+//     it to revealed blank ('B') and all of its adjacent unrevealed squares
+//     should be revealed recursively.
+//  3. If an empty square ('E') with at least one adjacent mine is revealed,
+//     then change it to a digit ('1' to '8') representing the number of
+//     adjacent mines.
+//  4. Return the board when no more squares will be revealed.
+
+
+// Example 1:
+
+// Input:
+// [['E', 'E', 'E', 'E', 'E'],
+//  ['E', 'E', 'M', 'E', 'E'],
+//  ['E', 'E', 'E', 'E', 'E'],
+//  ['E', 'E', 'E', 'E', 'E']]
+
+// Click : [3,0]
+
+// Output:
+// [['B', '1', 'E', '1', 'B'],
+//  ['B', '1', 'M', '1', 'B'],
+//  ['B', '1', '1', '1', 'B'],
+//  ['B', 'B', 'B', 'B', 'B']]
+
+// Explanation:
+
+
+// Example 2:
+
+// Input:
+// [['B', '1', 'E', '1', 'B'],
+//  ['B', '1', 'M', '1', 'B'],
+//  ['B', '1', '1', '1', 'B'],
+//  ['B', 'B', 'B', 'B', 'B']]
+
+// Click : [1,2]
+
+// Output:
+// [['B', '1', 'E', '1', 'B'],
+//  ['B', '1', 'X', '1', 'B'],
+//  ['B', '1', '1', '1', 'B'],
+//  ['B', 'B', 'B', 'B', 'B']]
+
+// Explanation:
+
+// Note:
+//  1. The range of the input matrix's height and width is [1,50].
+//  2. The click position will only be an unrevealed square ('M' or 'E'), which
+//     also means the input board contains at least one clickable square.
+//  3. The input board won't be a stage when game is over (some mines have been
+//     revealed).
+//  4. For simplicity, not mentioned rules should be ignored in this problem.
+//     For example, you don't need to reveal all the unrevealed mines when the
+//     game is over, consider any cases that you will win the game or flag any
+//     squares.
+
+
+/**
+ * @param {character[][]} board
+ * @param {number[]} click
+ * @return {character[][]}
+ */
+const updateBoard = function(board, click) {
+  function countMine(i, j) {
+    let count = 0
+    for (let a = i - 1; a <= i + 1; a++) {
+      for (let b = j - 1; b <= j + 1; b++) {
+        if (board[a] && board[a][b] === 'M') count++
+      }
+    }
+    return count
+  }
+
+  function iter(i, j) {
+    if (board[i] == null && board[i][j] == null) return
+    if (board[i][j] === 'M') board[i][j] = 'X'
+    else {
+      const count = countMine(i, j)
+      if (count > 0) board[i][j] = '' + count
+      else {
+        board[i][j] = 'B'
+        for (let a = i - 1; a <= i + 1; a++) {
+          for (let b = j - 1; b <= j + 1; b++) {
+            if (board[a] && board[a][b] === 'E') iter(a, b)
+          }
+        }
+      }
+    }
+  }
+
+  iter(click[0], click[1])
+  return board
+}
+
+;[
+  [
+    [['E', 'E', 'E', 'E', 'E'],
+     ['E', 'E', 'M', 'E', 'E'],
+     ['E', 'E', 'E', 'E', 'E'],
+     ['E', 'E', 'E', 'E', 'E']],
+    [3, 0]
+  ],
+  [
+    [['B', '1', 'E', '1', 'B'],
+     ['B', '1', 'M', '1', 'B'],
+     ['B', '1', '1', '1', 'B'],
+     ['B', 'B', 'B', 'B', 'B']],
+    [1, 2]
+  ],
+  [
+    [["E","E","E","E","E","E","E","E"],
+     ["E","E","E","E","E","E","E","M"],
+     ["E","E","M","E","E","E","E","E"],
+     ["M","E","E","E","E","E","E","E"],
+     ["E","E","E","E","E","E","E","E"],
+     ["E","E","E","E","E","E","E","E"],
+     ["E","E","E","E","E","E","E","E"],
+     ["E","E","M","M","E","E","E","E"]],
+    [0,0]
+  ]
+].forEach(([board, click]) => {
+  console.log(updateBoard(board, click))
+})
+
+// Solution:
+// DFS 解决，每次都检查周围的是否雷，是否已经遍历过。
+
+// Submission Result: Accepted
