@@ -1,65 +1,98 @@
-// 60. Permutation Sequence
-// Medium   28%
+// 61. Rotate List
+// Medium   24%
 
-// The set [1,2,3,…,n] contains a total of n! unique permutations.
+// Given a list, rotate the list to the right by k places, where k is
+// non-negative.
 
-// By listing and labeling all of the permutations in order,
-// We get the following sequence (ie, for n = 3):
-
-// "123"
-// "132"
-// "213"
-// "231"
-// "312"
-// "321"
-
-// Given n and k, return the kth permutation sequence.
-
-// Note: Given n will be between 1 and 9 inclusive.
+// For example:
+// Given 1->2->3->4->5->NULL and k = 2,
+// return 4->5->1->2->3->NULL.
 
 /**
- * @param {number} n
- * @param {number} k
- * @return {string}
+ * Definition for singly-linked list.
+ * function ListNode(val) {
+ *     this.val = val;
+ *     this.next = null;
+ * }
  */
-const getPermutation = function(n, k) {
-  const cands = Array(n)
-  let factorial = 1
-  for (let i = 0; i < n; i++) {
-    cands[i] = i + 1
-    factorial *= i + 1
+
+/**
+ * @param {ListNode} head
+ * @param {number} k
+ * @return {ListNode}
+ */
+const rotateRight = function(head, k) {
+  if (head === null || k === 0) return head
+
+  let p = head, q = head, total = 0
+  for (let i = k; i > 0 && q !== null; i--) {
+    q = q.next
+    total++
   }
 
-  let res = ''
-  for (let i = n; i > 0; i--) {
-    factorial /= i
-    const index = Math.trunc((k - 1) / factorial)
-    res += cands.splice(index, 1)[0]
-    k -= factorial * index
+  if (q === null) {
+    if (k % total === 0) return head
+    else {
+      q = head
+      for (let i = 0; i < k % total; i++) q = q.next
+    }
   }
-  return res
+
+  while (q.next !== null) {
+    q = q.next
+    p = p.next
+  }
+
+  const newHead = p.next
+  p.next = null
+  q.next = head
+
+  return newHead
 }
 
+const latest = function(head, k) {
+  function iter(node, i) {
+    if (node.next == null) {
+      k %= i
+      if (k === 0) return head
+      node.next = head
+      return node
+    }
+
+    let newHead = iter(node.next, i + 1)
+    if (--k === 0) {
+      newHead = node.next
+      node.next = null
+    }
+    return newHead
+  }
+
+  return head ? iter(head, 1) : head
+}
+
+const ListNode = require('../structs/ListNode')
 ;[
-  [3, 4],
-].forEach(([n, k]) => {
-  console.log(getPermutation(n, k))
+  [[1,2,3,4,5], 2],
+  [[1,2], 101],
+  [[1], 0],
+  [[1], 1]
+].forEach(([array, k]) => {
+  console.log((rotateRight(ListNode.from(array), k) || '').toString())
+  console.log(latest(ListNode.from(array), k).toString())
 })
 
 // Solution:
-// 从第一个字符开始向后一个个生成。
-// 先构造一个可变数组，从1到n。使用过的数字，可从数组中删除。
-// 每次都只需要使用数组中的数和不断更新的k进行生成字符。
+// 使用迭代递归函数，来形成一个栈。
+// 先遍历整个链表，直到最后一个节点，并记录链表的长度。
+// 使用链表长度更新k, 因为当k大于链表长度时，需要使用取模运算，即k=k%n(n为长度)。
 
-// 给定n和k，
-// 先计算 n! 表示 n 个数生成的所有字符串。
-// (n - 1)! 表示 所有生成的按顺序的字符串的第一个字符相同的数量。
-// 如 n = 3 时，
-// '1'、'2'、'3' 为第一个字符的数量都为 2 = (n - 1)!
+// 若第一次更新k时，就等于0，则直接返回头节点；若不为0，则将链头连到链尾后，形成环。
+// 之后就一层层返回，每返回一层，k都需要减一。
 
-// 确定第一个字符后，从数组中删去该数字，并更新k，
-// k需要减去第一个数所在的开始的位置。
+// 当k等于0时，说明该节点的下一个节点为右边到左边的第k个节点，将下一个节点作为新的头部，
+// 并将该节点的next指针设为null，并返回新的头部
+// 若k不为0，则直接返回上一层返回的头部。
 
-// 之后只需要不断重复，因为每次k和n都会更新，像是只需要生成第一个数一样。
+// 最后得到的新的头部，即是所求的链表的头部。
 
 // Submission Result: Accepted
