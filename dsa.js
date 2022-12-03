@@ -1,72 +1,48 @@
-// 57. Insert Interval
-// Hard   28%
+// 58. Length of Last Word
+// Easy   31%
 
-// Given a set of non-overlapping intervals, insert a new interval into the
-// intervals (merge if necessary).
+// Given a string s consists of upper/lower-case alphabets and empty space
+// characters ' ', return the length of last word in the string.
 
-// You may assume that the intervals were initially sorted according to their
-// start times.
+// If the last word does not exist, return 0.
 
-// Example 1: Given intervals [1,3],[6,9], insert and merge [2,5] in as
-// [1,5],[6,9].
+// Note: A word is defined as a character sequence consists of non-space
+// characters only.
 
-// Example 2: Given [1,2],[3,5],[6,7],[8,10],[12,16], insert and merge [4,9] in
-// as [1,2],[3,10],[12,16].
-
-// This is because the new interval [4,9] overlaps with [3,5],[6,7],[8,10].
+// For example,
+// Given s = "Hello World",
+// return 5.
 
 /**
- * Definition for an interval.
+ * @param {string} s
+ * @return {number}
  */
-
-function Interval(start, end) {
-  this.start = start
-  this.end = end
-}
-
-function createIntervals(array) {
-  return array.map(v => new Interval(v[0], v[1]))
-}
-
-/**
- * @param {Interval[]} intervals
- * @param {Interval} newInterval
- * @return {Interval[]}
- */
-const insert = function(intervals, newInterval) {
-  const result = [], n = intervals.length
-  let i = 0
-  while (i < n && intervals[i].end < newInterval.start) result.push(intervals[i++])
-
-  while (i < n && intervals[i].start <= newInterval.end) {
-    newInterval = new Interval(
-      Math.min(newInterval.start, intervals[i].start),
-      Math.max(newInterval.end, intervals[i].end)
-    )
-    i++
+const lengthOfLastWord = function(s) {
+  let result = 0
+  for (let i = s.length - 1; i >= 0; i--){
+    if (s[i] !== ' ') result++
+    else if (result !== 0) return result
   }
-  result.push(newInterval)
-
-  while (i < n) result.push(intervals[i++])
   return result
 }
 
 ;[
-  [[[1, 3], [6, 9]], [2, 5]],
-  [[[1, 2], [3, 5], [6, 7], [8, 10], [12, 16]], [4, 9]],
-  [[[1, 5]], [0, 3]],
-  [[[1, 5], [6, 8]], [0, 9]],
-  [[], [1, 5]],
-  [[[1, 5]], [6, 8]],
-  [[[1, 5]], [0, 1]],
-].forEach(([pairs, aPair]) => {
-  console.log(insert(createIntervals(pairs), new Interval(...aPair)))
+  '',                           // 0
+  'a',                          // 1
+  'abas',                       // 4
+  'adf af',                     // 2
+  'a as asdf adfas',            // 5
+  'a  ',                        // 1
+  'abc ab ',                    // 2
+  ' assf asdf   asf   ',        // 3
+].forEach(s => {
+  console.log(lengthOfLastWord(s))
 })
 
 // Solution:
-// 直接向前的方式。
-// 先将不会重叠间隔添加到答案中。
-// 再不断将会重叠合并成新的间隔，作为参数间隔的值。
-// 最后再将不会重叠的剩下的间隔添加到答案中。
+// 从后向前读，
+// 若不为空格，则加一，
+// 若为空格，且结果不为0，则返回结果，
+// 否则继续。（去掉后缀空格）
 
 // Submission Result: Accepted
