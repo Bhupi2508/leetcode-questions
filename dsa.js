@@ -1,54 +1,65 @@
 /**
- * Solution: BFS
- * use a queue to save candidates from wordList on each level.
- * find next next candiate from the queue.
- *
- * @param {string} beginWord
- * @param {string} endWord
- * @param {Set} wordList
- *   Note: wordList is a Set object, see:
- *   https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set
+ * Definition for a binary tree node.
+ * function TreeNode(val) {
+ *     this.val = val;
+ *     this.left = this.right = null;
+ * }
+ */
+/**
+ * @param {TreeNode} root
  * @return {number}
  */
-var ladderLength = function(beginWord, endWord, wordList) {
-    if (!beginWord) return 0;
-    var queue = [beginWord];
-    var step = 1;
-    wordList.add(endWord);
-    while (queue.length > 0) {
-        var queueLength = queue.length;
-        for (var i = 0; i < queueLength; i++) {
-            var word = queue.shift();
-            if (word === endWord) return step;
-            for (var k = 0; k < word.length; k++) {
-                var tmp = word[k];
-                for (var j = 97; j <= 122; j++) {
-                    if (word.charCodeAt(k) !== j) {
-                        charAtK = String.fromCharCode(j);
-                        word = word.substring(0, k) + charAtK + word.substring(k + 1);
-                        if (wordList.has(word)) {
-                            // save the candidate to the queue of this level
-                            queue.push(word);
-                            // meanwhile, delete this candidate from wordList
-                            wordList.delete(word);
-                        }
-                    }
-                }
-                // reset word, for next character change
-                word = word.substring(0, k) + tmp + word.substring(k + 1);
-            }
-        }
-        step++;
+var sumNumbers = function(root) {
+    if (!root) return 0;
+    var total = [];
+    helper(root, 0, total);
+    var sum = 0;
+    for (var i = 0; i < total.length; i++) {
+        sum += total[i];
     }
-
-    return 0;
+    return sum;
 };
 
-// for testing
-// var a = 'hit';
-// var b = 'cog';
-// var set = new Set(["hot","dot","dog","lot","log"]);
-// var a = 'a';
-// var b = 'c';
-// var set = new Set(['a', 'b', 'c']);
-// console.log(ladderLength(a, b, set));
+var helper = function(root, sum, total) {
+    sum = 10 * sum + root.val;
+    if (root.left === null && root.right === null) {
+        total.push(sum);
+        return;
+    }
+    if (root.left) {
+        helper(root.left, sum, total);
+    }
+    if (root.right) {
+        helper(root.right, sum, total);
+    }
+};
+
+// a better and more concise solution
+var sumNumbers = function(root) {
+    return helper(root, 0);
+};
+
+var helper = function(root, sum) {
+    if (!root)  return 0;
+    if (root.left === null && root.right === null) {
+        return 10 * sum + root.val;
+    }
+    return  helper(root.left, 10 * sum + root.val)
+            + helper(root.right, 10 * sum + root.val);
+};
+
+// a third DFS method. Top-down
+var sumNumbers = function(root) {
+    if (!root) return 0;
+    return helper(root, 0, 0);
+};
+
+function helper(root, currNum, sum) {
+    if (!root) return sum;
+    currNum = root.val + 10 * currNum;
+    if (!root.left && !root.right) {
+        sum += currNum;
+        return sum;
+    }
+    return helper(root.left, currNum, sum) + helper(root.right, currNum, sum)
+}
