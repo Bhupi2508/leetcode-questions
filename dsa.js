@@ -1,54 +1,60 @@
-// 409. Longest Palindrome
-// Easy   45%
+// 412. Fizz Buzz
+// Easy   58%
 
 
-// Given a string which consists of lowercase or uppercase letters, find the
-// length of the longest palindromes that can be built with those letters.
+// Write a program that outputs the string representation of numbers from 1 to n.
 
-// This is case sensitive, for example "Aa" is not considered a palindrome here.
-
-// Note:
-// Assume the length of given string will not exceed 1,010.
+// But for multiples of three it should output “Fizz” instead of the number and
+// for the multiples of five output “Buzz”. For numbers which are multiples of
+// both three and five output “FizzBuzz”.
 
 // Example:
 
-// Input:
-// "abccccdd"
+// n = 15,
 
-// Output:
-// 7
-
-// Explanation:
-// One longest palindrome that can be built is "dccaccd", whose length is 7.
+// Return:
+// [
+//     "1",
+//     "2",
+//     "Fizz",
+//     "4",
+//     "Buzz",
+//     "Fizz",
+//     "7",
+//     "8",
+//     "Fizz",
+//     "Buzz",
+//     "11",
+//     "Fizz",
+//     "13",
+//     "14",
+//     "FizzBuzz"
+// ]
 
 
 /**
- * @param {string} s
- * @return {number}
+ * @param {number} n
+ * @return {string[]}
  */
-const longestPalindrome = function(s) {
-  const n = s.length, hash = {}
-  for (let i = 0; i < n; i++) hash[s[i]] = hash[s[i]] ? 0 : 1
-
-  let count = 0
-  for (let c in hash) count += hash[c] ? 1 : 0
-  return n - (count ? count - 1 : 0)
+const fizzBuzz = function(n) {
+  const result = []
+  for (let i = 1; i <= n; i++) {
+    result.push(
+      (i % 3 && i % 5)
+        ? '' + i
+        : (i % 3 ? '' : 'Fizz') + (i % 5 ? '' : 'Buzz')
+    )
+  }
+  return result
 }
 
 ;[
-  'abccccdd',                   // 7
-  'bb',                         // 2
-].forEach(s => {
-  console.log(longestPalindrome(s))
+  15,
+].forEach(n => {
+  console.log(fizzBuzz(n))
 })
 
 // Solution:
-// 用哈希表来保存每个字符在字符串中出现的次数的奇偶性。
-// 出现为偶数次的字符一定能用来组成回文字符。
-// 而出现为奇数次的字符中，有一个不能出现在回文字符中（除了选中的作为中间的那一个）
-
-// 计算奇数次的字符个数，如果为 0, 那说明字符串中的每个字符都选中，
-// 否则只选择其中一个，其他删除各一个。
-
+// % 运算
 
 // Submission Result: Accepted
