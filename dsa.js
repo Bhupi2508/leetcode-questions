@@ -1,59 +1,33 @@
 /**
- * @param {number} num
- * @return {string}
+ * Dynamic programming
+ *
+ * @param {number[][]} triangle
+ * @return {number}
  */
-var intToRoman = function(num) {
-    var M = ["", "M", "MM", "MMM"];
-    var C = ["", "C", "CC", "CCC", "CD", "D", "DC", "DCC", "DCCC", "CM"];
-    var X = ["", "X", "XX", "XXX", "XL", "L", "LX", "LXX", "LXXX", "XC"];
-    var I = ["", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX"];
-    return M[Math.floor(num/1000)] + C[Math.floor((num%1000)/100)] + X[Math.floor((num%100)/10)] + I[num%10];
+// straightforward, top-down, space O(N^2)
+var minimumTotal = function(triangle) {
+    var dp = [triangle[0]];
+    for (var i = 1; i < triangle.length; i++) {
+        // in JavaScript, remember to have a new array for each row.
+        dp[i] = [];
+        for (var j = 0; j < triangle[i].length; j++) {
+            if (j === 0) dp[i][j] = dp[i - 1][j] + triangle[i][j];
+            else if (j === triangle[i].length - 1) dp[i][j] = dp[i - 1][j - 1] + triangle[i][j];
+            else dp[i][j] = Math.min(dp[i - 1][j - 1], dp[i - 1][j]) + triangle[i][j];
+        }
+    }
+    return Math.min.apply(null, dp[triangle.length - 1]);
 };
 
-
-// this is awkward because the order of object keys is not reserved
-var intToRoman = function(num) {
-    var map = {
-        1000: 'M',
-        900: 'CM',
-        500: 'D',
-        400: 'CD',
-        100: 'C',
-        90: 'XC',
-        50: 'L',
-        40: 'XL',
-        10: 'X',
-        9: 'IX',
-        5: 'V',
-        4: 'IV',
-        1: 'I'
-    };
-    var romanStr = '';
-
-    Object.keys(map).sort(function(a, b) {
-        return b - a;
-    }).forEach(function (val) {
-        while (num >= val) {
-            num -= val;
-            romanStr += map[val];
+// bottom-up, space O(N)
+var minimumTotal = function(triangle) {
+    var length = triangle.length;
+    var sum = triangle[length - 1];
+    for (var i = length - 2; i >= 0; i--) {
+        for (var j = 0; j < triangle[i].length; j++) {
+            sum[j] = Math.min(sum[j], sum[j + 1]) + triangle[i][j];
         }
-    });
-
-    return romanStr;
-};
-
-// although you can use two arrays to do it.
-var intToRoman = function(num) {
-    var vals = [1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1];
-    var strs = ['M', 'CM', 'D', 'CD', 'C','XC', 'L', 'XL', 'X', 'IX', 'V', 'IV', 'I'];
-    var romanStr = '';
-
-    vals.forEach(function (val, index) {
-        while (num >= val) {
-            num -= val;
-            romanStr += strs[index];
-        }
-    });
-
-    return romanStr;
+        console.log(sum);
+    }
+    return sum[0];
 };
