@@ -1,44 +1,53 @@
-// 1051. Height Checker
-// Easy   68%
+// 1071. Greatest Common Divisor of Strings
+// Easy   54%
 
 
-// Students are asked to stand in non-decreasing order of heights for an annual
-// photo.
-// Return the minimum number of students that must move in order for all students
-// to be standing in non-decreasing order of height.
+// For strings S and T, we say "T divides S" if and only if S = T + ... + T  (T
+// concatenated with itself 1 or more times)
+// Return the largest string X such that X divides str1 and X divides str2.
 
 // Example 1:
-// Input: heights = [1,1,4,2,1,3]
-// Output: 3
+// Input: str1 = "ABCABC", str2 = "ABC"
+// Output: "ABC"
+// Example 2:
+// Input: str1 = "ABABAB", str2 = "ABAB"
+// Output: "AB"
+// Example 3:
+// Input: str1 = "LEET", str2 = "CODE"
+// Output: ""
 
-// Constraints:
-//     1 <= heights.length <= 100
-//     1 <= heights[i] <= 100
+// Note:
+//     1 <= str1.length <= 1000
+//     1 <= str2.length <= 1000
+//     str1[i] and str2[i] are English uppercase letters.
 
 
 /**
- * @param {number[]} heights
- * @return {number}
+ * @param {string} str1
+ * @param {string} str2
+ * @return {string}
  */
-const heightChecker = function(heights) {
-  const arr = [...heights]
-  arr.sort((a, b) => a - b)
-  let count = 0
-  for (let i = 0; i < heights.length; i++) {
-    if (arr[i] !== heights[i]) count++
-  }
-  return count
+const gcdOfStrings = function(str1, str2) {
+  if (str1 == str2) return str1
+  if (str1.length == str2.length) return ''
+  if (str1.length < str2.length) return gcdOfStrings(str2, str1)
+  if (str1.substring(0, str2.length) != str2) return ''
+  return gcdOfStrings(str2, str1.substring(str2.length, str1.length))
 }
 
 ;[
-  [1,1,4,2,1,3],    // 3
-  [1,2,3,4,5,3],    // 3
-  [3,2,1],          // 2
-].forEach((heights) => {
-  console.log(heightChecker(heights))
+  ['ABCABC', 'ABC'],            // 'ABC'
+  ['ABABAB', 'ABAB'],           // 'AB'
+  ['LEET', 'CODE'],             // ''
+  ['AAAAAAAA', 'AAAA'],         // 'AAAA'
+  ['TTTTT', 'TTTTTTTTT'],       // 'T'
+].forEach(([str1, str2]) => {
+  console.log(gcdOfStrings(str1, str2))
 })
 
 // Solution:
-// 复制数组，先排序，再和原数组比较，找出位置不同的数的个数。
+// 类似求最大公约数
+// 因为是字符串，所以可以使用更相减损术
+// 长字符串减短字符串，再将剩余字符串与短字符串进行相减，直到两个字符串相等为止
 
 // Submission Result: Accepted
