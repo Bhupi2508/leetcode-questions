@@ -1,47 +1,86 @@
-// 739. Daily Temperatures
-// Medium   52%
+// 744. Find Smallest Letter Greater Than Target
+// Easy   55%
 
 
-// Given a list of daily temperatures, produce a list that, for each day in the
-// input, tells you how many days you would have to wait until a warmer
-// temperature.  If there is no future day for which this is possible, put 0
-// instead.
+// Given a list of sorted characters letters containing only lowercase letters,
+// and given a target letter target, find the smallest element in the list that
+// is larger than the given target.
 
-// For example, given the list temperatures = [73, 74, 75, 71, 69, 72, 76, 73],
-// your output should be [1, 1, 4, 2, 1, 1, 0, 0].
+// Letters also wrap around.  For example, if the target is target = 'z' and
+// letters = ['a', 'b'], the answer is 'a'.
+
+// Examples:
+
+// Input:
+// letters = ["c", "f", "j"]
+// target = "a"
+// Output: "c"
+
+// Input:
+// letters = ["c", "f", "j"]
+// target = "c"
+// Output: "f"
+
+// Input:
+// letters = ["c", "f", "j"]
+// target = "d"
+// Output: "f"
+
+// Input:
+// letters = ["c", "f", "j"]
+// target = "g"
+// Output: "j"
+
+// Input:
+// letters = ["c", "f", "j"]
+// target = "j"
+// Output: "c"
+
+// Input:
+// letters = ["c", "f", "j"]
+// target = "k"
+// Output: "c"
 
 // Note:
-// The length of temperatures will be in the range [1, 30000].
-// Each temperature will be an integer in the range [30, 100].
+
+// letters has a length in range [2, 10000].
+// letters consists of lowercase letters, and contains at least 2 unique letters.
+// target is a lowercase letter.
 
 
 /**
- * @param {number[]} temperatures
- * @return {number[]}
+ * @param {character[]} letters
+ * @param {character} target
+ * @return {character}
  */
-const dailyTemperatures = function(temperatures) {
-  const result = [0], stack = [0]
-  for (let i = 1, n = temperatures.length; i < n; i++) {
-    while (temperatures[i] > temperatures[stack[stack.length - 1]]) {
-      const j = stack.pop()
-      result[j] = i - j
-    }
-    result[i] = 0
-    stack.push(i)
+const nextGreatestLetter = function(letters, target) {
+  const n = letters.length
+  let i = 0, j = n - 1
+  while (i < j) {
+    const mid = (i + j) >> 1
+    if (letters[mid] <= target) i = mid + 1
+    else j = mid - 1
   }
-  return result
+  return letters[(letters[i] > target ? i : i + 1) % n]
 }
 
 ;[
-  [73,74,75,71,69,72,76,73],    // [1,1,4,2,1,1,0,0]
-].forEach(temperatures => {
-  console.log(dailyTemperatures(temperatures))
+  [['c', 'f', 'j'], 'a'],                          // 'c'
+  [['c', 'f', 'j'], 'c'],                          // 'f'
+  [['c', 'f', 'j'], 'd'],                          // 'f'
+  [['c', 'f', 'j'], 'g'],                          // 'j'
+  [['c', 'f', 'j'], 'j'],                          // 'c'
+  [['c', 'f', 'j'], 'k'],                          // 'c'
+  [['e','e','e','e','e','e','n','n','n','n'], 'e'] // 'n'
+].forEach(args => {
+  console.log(nextGreatestLetter(...args))
 })
 
 // Solution:
-// 使用栈来保存数的位置。
-// 栈里自底向上依次保存递减的温度，
-// 每天都从顶部开始检查栈里哪天温度比今天低，取出并计算那天到今天的天数，
-// 保存在那天的槽里，直到遇到一个比今天温度高的。最后将这天推入栈顶。
+// 使用二分查找法，
+// 若中位数小于或等于目标数，则检查后半部分，否则检查前半部分。
+// 最后找到一个大于或等于目标数的数，
+// 若大于，则返回该数，
+// 若等于，则返回下一个数，因为循环，所以使用取模运算。
 
 // Submission Result: Accepted
