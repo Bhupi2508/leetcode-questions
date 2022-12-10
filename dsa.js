@@ -1,59 +1,55 @@
-// 447. Number of Boomerangs
-// Easy   45%
+// 448. Find All Numbers Disappeared in an Array
+// Easy   51%
 
 
-// Given n points in the plane that are all pairwise distinct, a "boomerang" is a
-// tuple of points (i, j, k) such that the distance between i and j equals the
-// distance between i and k (the order of the tuple matters).
+// Given an array of integers where 1 ≤ a[i] ≤ n (n = size of array), some
+// elements appear twice and others appear once.
 
-// Find the number of boomerangs. You may assume that n will be at most 500 and
-// coordinates of points are all in the range [-10000, 10000] (inclusive).
+// Find all the elements of [1, n] inclusive that do not appear in this array.
+
+// Could you do it without extra space and in O(n) runtime? You may assume the
+// returned list does not count as extra space.
 
 // Example:
 
 // Input:
-// [[0,0],[1,0],[2,0]]
+// [4,3,2,7,8,2,3,1]
 
 // Output:
-// 2
-
-// Explanation:
-// The two boomerangs are [[1,0],[0,0],[2,0]] and [[1,0],[2,0],[0,0]]
+// [5,6]
 
 
 /**
- * @param {number[][]} points
- * @return {number}
+ * @param {number[]} nums
+ * @return {number[]}
  */
-const numberOfBoomerangs = function(points) {
-  const { sqrt, pow } = Math
-  const distance = (a, b) => sqrt(pow(a[0] - b[0], 2) + pow(a[1] - b[1], 2))
+const findDisappearedNumbers = function(nums) {
+  const n = nums.length
+  for (let i = 0; i < n;) {
+    const num = nums[i]
+    if (num !== i + 1 && num !== nums[num - 1]) {
+      [nums[i], nums[num - 1]] = [nums[num - 1], num]
+    } else {
+      i++
+    }
+  }
 
-  const n = points.length
-  let result = 0
+  const result = []
   for (let i = 0; i < n; i++) {
-    const hash = {}
-    for (let j = 0; j < n; j++) {
-      const d = distance(points[i], points[j])
-      if (!hash[d]) hash[d] = 0
-      hash[d]++
-    }
-    for (let key in hash) {
-      result += hash[key] * (hash[key] - 1)
-    }
+    if (nums[i] !== i + 1) result.push(i + 1)
   }
   return result
 }
 
 ;[
-  [[0,0],[1,0],[2,0]],          // 2
-].forEach(points => {
-  console.log(numberOfBoomerangs(points))
+  [4,3,2,7,8,2,3,1],            // [5,6]
+].forEach(nums => {
+  console.log(findDisappearedNumbers(nums))
 })
 
 // Solution:
-// 对于每个点，计算其到其他点的距离，将距离保存在哈希表中。
-// 在哈希表中，键名为距离值，值为距离为键名的数量。
-// 再对每个距离数量 a，求 a * (a - 1) (长度为2的排列数)
+// 在原数组中交换元素。
+// 如果该位置的值与位置号不同，则与该值的位置交换。
+// 遍历该数组的元素，若位置的值与位置不同，则添加到结果中。
 
 // Submission Result: Accepted
