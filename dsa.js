@@ -1,43 +1,46 @@
-// 1299. Replace Elements with Greatest Element on Right Side
-// Easy   75%
+// 1304. Find N Unique Integers Sum up to Zero
+// Easy   76%
 
 
-// Given an array arr, replace every element in that array with the greatest
-// element among the elements to its right, and replace the last element with -1.
-// After doing so, return the array.
+// Given an integer n, return any array containing n unique integers such that
+// they add up to 0.
 
 // Example 1:
-// Input: arr = [17,18,5,4,6,1]
-// Output: [18,6,6,6,1,-1]
+// Input: n = 5
+// Output: [-7,-1,1,3,4]
+// Explanation: These arrays also are accepted [-5,-1,1,2,3] , [-3,-1,2,-2,4].
+// Example 2:
+// Input: n = 3
+// Output: [-1,0,1]
+// Example 3:
+// Input: n = 1
+// Output: [0]
 
 // Constraints:
-//     1 <= arr.length <= 10^4
-//     1 <= arr[i] <= 10^5
+//     1 <= n <= 1000
 
 
 /**
- * @param {number[]} arr
+ * @param {number} n
  * @return {number[]}
  */
-const replaceElements = function(arr) {
-  let last = -1
-  for (let i = arr.length - 1; i >= 0; i--) {
-    let biger = Math.max(last, arr[i + 1] || -1)
-    last = arr[i]
-    arr[i] = biger
-  }
-  return arr
+const sumZero = function(n) {
+  let res = n % 2 ? [0] : []
+  for (let i = 1; i < n; i++) res.push(-i * 2, i * 2)
+  return res
 }
 
 ;[
-  [17,18,5,4,6,1], // [18,6,6,6,1,-1]
-].forEach((arr) => {
-  console.log(replaceElements(arr))
+  5,
+  3,
+  1,
+  4
+].forEach((n) => {
+  console.log(sumZero(n))
 })
 
 // Solution:
-// 从数组的后面开始处理和替换
-// 使用 last 保存当前位置的数
-// 每次比较 last 和已替换的最左边的数，取其大者，填入当前位置
+// n 为偶数时，生成 n/2 对正负数，如（1，-1）
+// n 为奇数时，再偶数基础上加个 0
 
 // Submission Result: Accepted
