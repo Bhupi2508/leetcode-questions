@@ -1,63 +1,64 @@
-// 1380. Lucky Numbers in a Matrix
-// Easy   72%
+// 1385. Find the Distance Value Between Two Arrays
+// Easy   68%
 
 
-// Given a m * n matrix of distinct numbers, return all lucky numbers in the
-// matrix in any order.
-// A lucky number is an element of the matrix such that it is the minimum element
-// in its row and maximum in its column.
+// Given two integer arrays arr1 and arr2, and the integer d, return the distance
+// value between the two arrays.
+// The distance value is defined as the number of elements arr1[i] such that
+// there is not any element arr2[j] where |arr1[i]-arr2[j]| <= d.
 
 // Example 1:
-// Input: matrix = [[3,7,8],[9,11,13],[15,16,17]]
-// Output: [15]
-// Explanation: 15 is the only lucky number since it is the minimum in its row
-// and the maximum in its column
+// Input: arr1 = [4,5,8], arr2 = [10,9,1,8], d = 2
+// Output: 2
+// Explanation:
+// For arr1[0]=4 we have:
+// |4-10|=6 > d=2
+// |4-9|=5 > d=2
+// |4-1|=3 > d=2
+// |4-8|=4 > d=2
+// For arr1[1]=5 we have:
+// |5-10|=5 > d=2
+// |5-9|=4 > d=2
+// |5-1|=4 > d=2
+// |5-8|=3 > d=2
+// For arr1[2]=8 we have:
+// |8-10|=2 <= d=2
+// |8-9|=1 <= d=2
+// |8-1|=7 > d=2
+// |8-8|=0 <= d=2
 // Example 2:
-// Input: matrix = [[1,10,4,2],[9,3,8,7],[15,16,17,12]]
-// Output: [12]
-// Explanation: 12 is the only lucky number since it is the minimum in its row
-// and the maximum in its column.
+// Input: arr1 = [1,4,2,3], arr2 = [-4,-3,6,10,20,30], d = 3
+// Output: 2
 // Example 3:
-// Input: matrix = [[7,8],[1,2]]
-// Output: [7]
+// Input: arr1 = [2,1,100,3], arr2 = [-5,-2,10,-3,7], d = 6
+// Output: 1
 
 // Constraints:
-//     m == mat.length
-//     n == mat[i].length
-//     1 <= n, m <= 50
-//     1 <= matrix[i][j] <= 10^5.
-//     All elements in the matrix are distinct.
+//     1 <= arr1.length, arr2.length <= 500
+//     -10^3 <= arr1[i], arr2[j] <= 10^3
+//     0 <= d <= 100
 
 
 /**
- * @param {number[][]} matrix
- * @return {number[]}
+ * @param {number[]} arr1
+ * @param {number[]} arr2
+ * @param {number} d
+ * @return {number}
  */
-const luckyNumbers  = function(matrix) {
-  const res = [], n = matrix.length, m = matrix[0].length
-  for (let i = 0; i < n; i++) {
-    let col = 0
-    for (let j = 0; j < m; j++) {
-      if (matrix[i][j] < matrix[i][col]) col = j
-    }
-    let isMax = true
-    for (let k = 0; k < n; k++) {
-      if (matrix[k][col] > matrix[i][col]) isMax = false
-    }
-    if (isMax) res.push(matrix[i][col])
-  }
-  return res
+const findTheDistanceValue = function(arr1, arr2, d) {
+  return arr1.reduce((res, v1) => res + (arr2.every(v2 => Math.abs(v1 - v2) > d ? 1 : 0)), 0)
 }
 
 ;[
-  [[3,7,8],[9,11,13],[15,16,17]],
-  [[1,10,4,2],[9,3,8,7],[15,16,17,12]],
-  [[7,8],[1,2]],
-].forEach((matrix) => {
-  console.log(luckyNumbers(matrix))
+  [[4,5,8], [10,9,1,8], 2],
+  [[1,4,2,3], [-4,-3,6,10,20,30], 3],
+  [[2,1,100,3], [-5,-2,10,-3,7], 6],
+].forEach(([arr1, arr2, d]) => {
+  console.log(findTheDistanceValue(arr1, arr2, d))
 })
 
 // Solution:
-// 先找到每行中的最小值，再看看是否为其所在列的最大值
+// 题意：返回符合要求的 arr1[i] 的个数。
+// 两层遍历，用 every 函数检查符合的 arr1[i]，用 reduce 函数统计个数。
 
 // Submission Result: Accepted
