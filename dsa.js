@@ -1,65 +1,65 @@
-// 821. Shortest Distance to a Character
-// Easy   66%
+// 824. Goat Latin
+// Easy   61%
 
 
-// Given a string S and a character C, return an array of integers representing
-// the shortest distance from the character C in the string.
+// A sentence S is given, composed of words separated by spaces. Each word
+// consists of lowercase and uppercase letters only.
+// We would like to convert the sentence to "Goat Latin" (a made-up language
+// similar to Pig Latin.)
+// The rules of Goat Latin are as follows:
+//     If a word begins with a vowel (a, e, i, o, or u), append "ma" to the end
+// of the word.
+//     For example, the word 'apple' becomes 'applema'.
+
+//     If a word begins with a consonant (i.e. not a vowel), remove the first
+// letter and append it to the end, then add "ma".
+//     For example, the word "goat" becomes "oatgma".
+
+//     Add one letter 'a' to the end of each word per its word index in the
+// sentence, starting with 1.
+//     For example, the first word gets "a" added to the end, the second word
+// gets "aa" added to the end and so on.
+// Return the final sentence representing the conversion from S to Goat Latin.
+
 // Example 1:
-// Input: S = "loveleetcode", C = 'e'
-// Output: [3, 2, 1, 0, 1, 0, 0, 1, 2, 2, 1, 0]
+// Input: "I speak Goat Latin"
+// Output: "Imaa peaksmaaa oatGmaaaa atinLmaaaaa"
+// Example 2:
+// Input: "The quick brown fox jumped over the lazy dog"
+// Output: "heTmaa uickqmaaa rownbmaaaa oxfmaaaaa umpedjmaaaaaa overmaaaaaaa
+// hetmaaaaaaaa azylmaaaaaaaaa ogdmaaaaaaaaaa"
 
-// Note:
-//     S string length is in [1, 10000].
-//     C is a single character, and guaranteed to be in string S.
-//     All letters in S and C are lowercase.
+// Notes:
+//     S contains only uppercase, lowercase and spaces. Exactly one space between
+// each word.
+//     1 <= S.length <= 150.
 
 
 /**
  * @param {string} S
- * @param {character} C
- * @return {number[]}
+ * @return {string}
  */
-const shortestToChar = function(S, C) {
-  const n = S.length
-  const res = Array(n)
-  let d = 10000
-  for (let i = 0; i < n; i++) {
-    res[i] = d++
-    if (S[i] === C) {
-      for (let j = i; j >= 0 && res[j] > i - j; j--) res[j] = i - j
-      d = 1
-    }
+const toGoatLatin = function(S) {
+  const words = S.split(' ')
+
+  const VOWEL = 'aeiouAEIOU'
+  let res = ''
+  for (let i = 0; i < words.length; i++) {
+    res += ' ' +
+      (VOWEL.includes(words[i][0]) ? words[i] : words[i].substring(1) + words[i][0])
+      + 'm' + 'a'.repeat(i + 2)
   }
-  return res
-}
-const better = function(S, C) {
-  let n = S.length, res = Array(n), pos = -n
-  for (let i = 0; i < n; i++) {
-    if (S[i] === C) pos = i
-    res[i] = i - pos
-  }
-  for (let i = pos - 1; i >= 0; i--) {
-    if (S[i] === C) pos = i
-    res[i] = Math.min(res[i], pos - i)
-  }
-  return res
+  return res.substring(1)
 }
 
 ;[
-  ['loveleetcode', 'e'],
-].forEach(([S, C]) => {
-  console.log(shortestToChar(S, C))
-  console.log(better(S, C))
+  'I speak Goat Latin',
+  'The quick brown fox jumped over the lazy dog',
+].forEach((S) => {
+  console.log(toGoatLatin(S))
 })
 
 // Solution:
-// 1. 回溯
-// 在未遇到 C 时，先填充最大值（占位，如 10000）
-// 遇到 C 后，回溯填充之前的位置 j ，填入 i-j，直到遇到一个更小的值，
-// 并将 d=1，并在之后依次填充 d，d+1，d+2...，直至遇到下一个 C。
-
-// 2. 两个方向遍历
-// 先从头开始遍历一遍，填入两个 C 之间的递减的值，
-// 再从最后一个 C 向前遍历，将填入递增的值。
+// 根据题意直接转换每个字符串即可
 
 // Submission Result: Accepted
