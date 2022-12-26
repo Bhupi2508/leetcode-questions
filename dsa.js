@@ -1,30 +1,26 @@
 /**
- * @see inline comments
- * @param {number[]} gas
- * @param {number[]} cost
+ * @param {number[]} nums
  * @return {number}
  */
-var canCompleteCircuit = function(gas, cost) {
-    var total = 0;
-    var sumRemaining = 0;
-    var start = 0;
-
-    for (var i = 0; i < gas.length; i++) {
-        var remaining = gas[i] - cost[i];
-        // track total remaining gas until i
-        if (sumRemaining >= 0) {
-            sumRemaining += remaining;
-        } else {
-            // if total remaing is smaller than 0, set start from i,
-            start = i;
-            // now the total remaining is the remaining at current i
-            sumRemaining = remaining;
-        }
-        total += remaining;
+// accepted, but not perfect
+var singleNumber = function(nums) {
+  var appears = {};
+  for (var i = 0; i < nums.length; i++) {
+    if (appears[nums[i]]) {
+      delete appears[nums[i]];
+    } else {
+      appears[nums[i]] = 1;
     }
+  }
 
-    // at the end, if total >= 0, it means there must be a circle to finish, and the
-    // start is the start
-    if (total >= 0) return start;
-    else return -1;
+  return parseInt(Object.keys(appears)[0]);
+};
+
+// a better solution: use XOR. XOR same number is 0
+var singleNumber = function(nums) {
+    var result = 0;
+    for (var i = 0; i < nums.length; i++) {
+        result = nums[i] ^ result;
+    }
+    return result;
 };
