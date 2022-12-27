@@ -1,54 +1,80 @@
-// 64. Minimum Path Sum
-// Medium   38%
+// 65. Valid Number
+// Hard 12% locked:false
 
-// Given a m x n grid filled with non-negative numbers, find a path from top
-// left to bottom right which minimizes the sum of all numbers along its path.
+// Validate if a given string is numeric.
 
-// Note: You can only move either down or right at any point in time.
+// Some examples:
+// "0" => true
+// " 0.1 " => true
+// "abc" => false
+// "1 a" => false
+// "2e10" => true
 
-// Example 1:
+// Note: It is intended for the problem statement to be ambiguous. You should
+// gather all requirements up front before implementing one.
 
-// [[1,3,1],
-//  [1,5,1],
-//  [4,2,1]]
+// Update (2015-02-10):
 
-// Given the above grid map, return 7. Because the path 1→3→1→1→1 minimizes
-// the sum.
+// The signature of the C++ function had been updated. If you still see your
+// function signature accepts a const char * argument, please click the reload
+// button to reset your code definition.
+
+// '' => false
+// ' ' => false
+// ' 1' => true
+// '1   ' => true
+// ' 1 2' => false
+
+// '.12' => true
+// '123.' => true
+// '.' => false
+
+// e or E
+// '1.2e-22' => true
+// '1e1.2' => false
+// '1e2e12' => false
+// '3e' => false
+// 'e3' => false
 
 /**
- * @param {number[][]} grid
- * @return {number}
+ * @param {string} s
+ * @return {boolean}
  */
-const minPathSum = function(grid) {
-  const m = grid.length, n = grid[0].length
-  const dp = Array(n)
-  dp[0] = grid[0][0]
-  for (let i = 1; i < n; i++) dp[i] = dp[i - 1] + grid[0][i]
-  for (let i = 1; i < m; i++) {
-    dp[0] +=  grid[i][0]
-    for (let j = 1; j < n; j++) {
-      dp[j] = grid[i][j] + Math.min(dp[j - 1], dp[j])
-    }
+const isNumber = function(s) {
+  if (s === void 0 || s === null || s.length === 0) return false
+
+  const matchSpace = (i) => {
+    while (s[i] === ' ') i++
+    return i
   }
-  return dp[n - 1]
+
+  const isDigit = (c) => c !== ' ' && !Number.isNaN(c - '0')
+  const matchInt = (i, sign) => {
+    if (sign && (s[i] === '+' || s[i] === '-')) i++
+    while (isDigit(s[i])) i++
+    return i
+  }
+
+  const n = s.length
+  let i = 0
+  i = matchSpace(i)
+  if (i === n) return false
+
+  let least = false
+  i = matchInt(i, true)
+  if (isDigit(s[i - 1])) least = true
+
+  if (s[i] === '.') {
+    i = matchInt(i + 1, false)
+    if (isDigit(s[i - 1])) least = true
+  }
+  if (least === false) return false
+
+  if (s[i] === 'e') {
+    i = matchInt(i + 1, true)
+    if (!isDigit(s[i - 1])) return false
+  }
+
+  i = matchSpace(i)
+  return i === n
 }
-
-;[
-  [
-    [1, 3],
-    [2, 1]
-  ],
-  [
-    [1,3,1],
-    [1,5,1],
-    [4,2,1]
-  ],
-].forEach(grid => {
-  console.log(minPathSum(grid))
-})
-
-// Solution:
-// 同 62-unique-paths.js 一样使用动态规划
-// 只是在其基础上多了路径权数。
-
-// Submission Result: Accepted
