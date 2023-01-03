@@ -1,80 +1,78 @@
 /**
- * solution: search boarders first, if there is an "O", search this O's neighbors,
- * if there is a connected "O", keeping searching.
- * The "O" can be captured only if it is connected to the "O" exsiting on the boarders
- * In other words, it can get out the board.
+ * Solution: backtracking, DFS
  *
- * @param {character[][]} board
- * @return {void} Do not return anything, modify board in-place instead.
+ * @param {string} s
+ * @return {string[][]}
  */
-var solve = function(board) {
-    var xIndex = [];
-    var yIndex = [];
-    var rows = board.length;
-    if (rows === 0) return;
-    var cols = board[0].length;
+var partition = function(s) {
+    var result = [];
+    var results = [];
+    if (!s) return results;
+    helper(s, 0, result, results);
+    return results;
+};
 
-    for (var i = 0; i < rows; i++) {
-        if (board[i][0] === 'O') {
-            xIndex.push(i);
-            yIndex.push(0);
-        }
-
-        if (board[i][cols - 1] === 'O') {
-            xIndex.push(i);
-            yIndex.push(cols - 1);
-        }
+var helper = function(s, start, result, results) {
+    if (start >= s.length) {
+        results.push(result.slice());
+        result = [];
     }
 
-    for (i = 0; i < cols; i++) {
-        if (board[0][i] === 'O') {
-            xIndex.push(0);
-            yIndex.push(i);
+    for (var i = start; i < s.length; i++) {
+        var newStr = s.substring(start, i + 1);
+        if (isPalindrome(newStr)) {
+          result.push(newStr);
+          helper(s, i + 1, result, results);
+          result.pop();
         }
-
-        if (board[rows - 1][i] === 'O') {
-            xIndex.push(rows - 1);
-            yIndex.push(i);
-        }
-    }
-    var k = 0;
-    while (k < xIndex.length) {
-        var x = xIndex[k];
-        var y = yIndex[k];
-        board[x][y] = 'Y';
-        if (x > 1 && board[x - 1][y] === 'O') {
-            xIndex.push(x - 1);
-            yIndex.push(y);
-        }
-        if (x < rows - 2 && board[x + 1][y] === 'O') {
-            xIndex.push(x + 1);
-            yIndex.push(y);
-        }
-        if (y > 1 && board[x][y - 1] === 'O') {
-            xIndex.push(x);
-            yIndex.push(y - 1);
-        }
-        if (y < cols - 2 && board[x][y + 1] === 'O') {
-            xIndex.push(x);
-            yIndex.push(y + 1);
-        }
-        k++;
-    }
-
-    for (var j = 0; j < rows; j++) {
-        for (var h = 0; h < cols; h++) {
-            if (board[j][h] === 'O') {
-                board[j][h] = 'X';
-            }
-            if (board[j][h] === 'Y') {
-                board[j][h] = 'O';
-            }
-        }
-
     }
 };
 
-// test cases
-// ["OOO","OOO","OOO"]
-// ["XXXX","XOOX","XXOX", "XOXX"]
-// ["XOX","XOX","XOX"]
+var isPalindrome = function(s) {
+    if (!s || s.length === 1) return true;
+    var length = s.length;
+    for (var i = 0; i < length; i++) {
+        if (s[i] !== s[length - i - 1]) return false;
+    }
+
+    return true;
+};
+
+// testing cases
+// var s = 'aab';
+// console.log(partition(s));
+
+// second method, use a dp matrix. (isPal)
+// Same O(n^2), but faster
+var partition = function(s) {
+    var result = [];
+    var results = [];
+    if (!s) return results;
+    var length = s.length;
+    var isPal = [];
+    for (var i = length - 1; i >= 0; i--) {
+        isPal[i] = [];
+        for(var j = i; j < length; j++) {
+            if ((j - i <= 2 || isPal[i+1][j-1]) && s[i] == s[j])
+                isPal[i][j] = true;
+        }
+    }
+
+    helper(s, 0, result, results, isPal);
+    return results;
+};
+
+var helper = function(s, start, result, results, isPal) {
+    if (start >= s.length) {
+        results.push(result.slice());
+        return;
+    }
+
+    for (var i = start; i < s.length; i++) {
+        if (isPal[start][i]) {
+            result.push(s.substring(start, i + 1));
+            helper(s, i + 1, result, results, isPal);
+            result.pop();
+        }
+    }
+};
