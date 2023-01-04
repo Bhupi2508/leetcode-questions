@@ -1,47 +1,57 @@
-// 1189. Maximum Number of Balloons
-// Easy   61%
+// 1200. Minimum Absolute Difference
+// Easy   67%
 
 
-// Given a string text, you want to use the characters of text to form as many
-// instances of the word "balloon" as possible.
-// You can use each character in text at most once. Return the maximum number of
-// instances that can be formed.
+// Given an array of distinct integers arr, find all pairs of elements with the
+// minimum absolute difference of any two elements.
+// Return a list of pairs in ascending order(with respect to pairs), each pair
+// [a, b] follows
+//     a, b are from arr
+//     a < b
+//     b - a equals to the minimum absolute difference of any two elements in arr
 
 // Example 1:
-// Input: text = "nlaebolko"
-// Output: 1
+// Input: arr = [4,2,1,3]
+// Output: [[1,2],[2,3],[3,4]]
+// Explanation: The minimum absolute difference is 1. List all pairs with
+// difference equal to 1 in ascending order.
 // Example 2:
-// Input: text = "loonbalxballpoon"
-// Output: 2
+// Input: arr = [1,3,6,10,15]
+// Output: [[1,3]]
 // Example 3:
-// Input: text = "leetcode"
-// Output: 0
+// Input: arr = [3,8,-10,23,19,-4,-14,27]
+// Output: [[-14,-10],[19,23],[23,27]]
 
 // Constraints:
-//     1 <= text.length <= 10^4
-//     text consists of lower case English letters only.
+//     2 <= arr.length <= 10^5
+//     -10^6 <= arr[i] <= 10^6
 
 
 /**
- * @param {string} text
- * @return {number}
+ * @param {number[]} arr
+ * @return {number[][]}
  */
-const maxNumberOfBalloons = function(text) {
-  const hash = { b: 0, a: 0, l: 0, o: 0, n: 0 }
-  for (let c of text) if (hash[c] >= 0) hash[c]++
-  return Math.min(hash['b'], hash['a'], Math.floor(hash['l'] / 2), Math.floor(hash['o'] / 2), hash['n'])
+const minimumAbsDifference = function(arr) {
+  arr.sort((a, b) => a - b)
+  const res = [], n = arr.length
+  let min = 2000000
+  for (let i = 1; i < n; i++) min = Math.min(min, arr[i] - arr[i - 1])
+  for (let i = 1; i < n; i++)
+    if (arr[i] - arr[i - 1] === min) res.push([arr[i - 1], arr[i]])
+  return res
 }
 
 ;[
-  'nlaebolko',
-  'loonbalxballpoon',
-  'leetcode',
-].forEach((text) => {
-  console.log(maxNumberOfBalloons(text))
+  [4,2,1,3],
+  [1,3,6,10,15],
+  [3,8,-10,23,19,-4,-14,27],
+].forEach((arr) => {
+  console.log(minimumAbsDifference(arr))
 })
 
 // Solution:
-// 使用 hash 记录字符串中字母 'b', 'a', 'l', 'o', 'n' 的数量
-// 取其数量的最小值即可（其中 'l', 'o' 需要除 2，因为这两个字母在 'balloon' 中出现了两次）
+// 先按从小到大排序数组
+// 遍历一遍数组，计算出每两个相邻数的差中的最小值 min
+// 再遍历一遍数组，取出差等于 min 的所有数对。
 
 // Submission Result: Accepted
