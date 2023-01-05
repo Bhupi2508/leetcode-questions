@@ -1,50 +1,60 @@
-// 961. N-Repeated Element in Size 2N Array
-// Easy   73%
+// 965. Univalued Binary Tree
+// Easy   67%
 
 
-// In a array A of size 2N, there are N+1 unique elements, and exactly one of
-// these elements is repeated N times.
-// Return the element repeated N times.
+// A binary tree is univalued if every node in the tree has the same value.
+// Return true if and only if the given tree is univalued.
 
 // Example 1:
-// Input: [1,2,3,3]
-// Output: 3
+// Input: [1,1,1,1,1,null,1]
+// Output: true
 // Example 2:
-// Input: [2,1,2,5,3,2]
-// Output: 2
-// Example 3:
-// Input: [5,1,5,2,5,3,5,4]
-// Output: 5
+// Input: [2,2,2,5,2]
+// Output: false
 
 // Note:
-//     4 <= A.length <= 10000
-//     0 <= A[i] < 10000
-//     A.length is even
+//     The number of nodes in the given tree will be in the range [1, 100].
+//     Each node's value will be an integer in the range [0, 99].
 
 
 /**
- * @param {number[]} A
- * @return {number}
+ * Definition for a binary tree node.
+ * function TreeNode(val) {
+ *   this.val = val;
+ *   this.left = this.right = null;
+ * }
  */
-const repeatedNTimes = function(A) {
-  let i = 0, j = 0
-  while (i === j || A[i] !== A[j]) {
-    i = (Math.random() * A.length) >> 0
-    j = (Math.random() * A.length) >> 0
+
+/**
+ * @param {TreeNode} root
+ * @return {boolean}
+ */
+const isUnivalTree = function(root) {
+  if (root.left) {
+    if (root.val !== root.left.val) return false
   }
-  return A[i]
+  if (root.right) {
+    if (root.val !== root.right.val) return false
+  }
+  if (root.left) {
+    if (!isUnivalTree(root.left)) return false
+  }
+  if (root.right) {
+    if (!isUnivalTree(root.right)) return false
+  }
+  return true
 }
 
+
+const TreeNode = require('../structs/TreeNode')
 ;[
-  [1, 2, 3, 3], // 3
-  [2, 1, 2, 5, 3, 2], // 2
-  [5, 1, 5, 2, 5, 3, 5, 4], // 5
-  [2, 1, 2, 5, 3, 2], // 2
-].forEach((A) => {
-  console.log(repeatedNTimes(A))
+  [1,1,1,1,1,null,1], // true
+  [2,2,2,5,2], // false
+].forEach((array) => {
+  console.log(isUnivalTree(TreeNode.from(array)))
 })
 
 // Solution:
-// 随机取两个数，若相同则为重复n遍的数。
+// 深度遍历，递归解决即可。
 
-// Submission Result: Accept
+// Submission Result: Accepted
