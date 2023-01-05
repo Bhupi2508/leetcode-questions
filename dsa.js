@@ -1,67 +1,54 @@
-// 1290. Convert Binary Number in a Linked List to Integer
-// Easy   80%
+// 1295. Find Numbers with Even Number of Digits
+// Easy   84%
 
 
-// Given head which is a reference node to a singly-linked list. The value of
-// each node in the linked list is either 0 or 1. The linked list holds the
-// binary representation of a number.
-// Return the decimal value of the number in the linked list.
+// Given an array nums of integers, return how many of them contain an even
+// number of digits.
 
 // Example 1:
-// Input: head = [1,0,1]
-// Output: 5
-// Explanation: (101) in base 2 = (5) in base 10
+// Input: nums = [12,345,2,6,7896]
+// Output: 2
+// Explanation:
+// 12 contains 2 digits (even number of digits).
+// 345 contains 3 digits (odd number of digits).
+// 2 contains 1 digit (odd number of digits).
+// 6 contains 1 digit (odd number of digits).
+// 7896 contains 4 digits (even number of digits).
+// Therefore only 12 and 7896 contain an even number of digits.
 // Example 2:
-// Input: head = [0]
-// Output: 0
-// Example 3:
-// Input: head = [1]
+// Input: nums = [555,901,482,1771]
 // Output: 1
-// Example 4:
-// Input: head = [1,0,0,1,0,0,1,1,1,0,0,0,0,0,0]
-// Output: 18880
-// Example 5:
-// Input: head = [0,0]
-// Output: 0
+// Explanation:
+// Only 1771 contains an even number of digits.
 
 // Constraints:
-//     The Linked List is not empty.
-//     Number of nodes will not exceed 30.
-//     Each node's value is either 0 or 1.
+//     1 <= nums.length <= 500
+//     1 <= nums[i] <= 10^5
 
 
 /**
- * Definition for singly-linked list.
- * function ListNode(val, next) {
- * this.val = (val===undefined ? 0 : val)
- *     this.next = (next===undefined ? null : next)
- * }
- */
-/**
- * @param {ListNode} head
+ * @param {number[]} nums
  * @return {number}
  */
-const getDecimalValue = function(head) {
-  let res = 0
-  while (head) {
-    res = res * 2 + head.val
-    head = head.next
-  }
-  return res
+const findNumbers = function(nums) {
+  // return nums.reduce((pre, n) => pre + (String(n).length % 2 ^ 1), 0)
+  return nums.reduce((p, n) => p + (n === 100000 || (10000 > n && n > 999) || (100 > n && n > 9) ? 1 : 0), 0)
 }
 
-const ListNode = require('../structs/ListNode')
 ;[
-  [1,0,1], // 5
-  [0], // 0
-  [1], // 1
-  [1,0,0,1,0,0,1,1,1,0,0,0,0,0,0], //18880
-  [0,0], // 0
-].forEach((arr) => {
-  console.log(getDecimalValue(ListNode.from(arr)))
+  [12,345,2,6,7896],
+  [555,901,482,1771],
+  [100000],
+].forEach((nums) => {
+  console.log(findNumbers(nums))
 })
 
 // Solution:
-// 遍历链表，每遍历一个节点，就将 res 乘 2（或左移一位），再加上该节点的值。
+// 转成字符串判断位数。
+
+// 或 判断数值是否在以下范围内：
+// 1）n == 100000
+// 2) 9999 >= n >= 1000, 即 10000 > n > 999
+// 3) 99 >= n >= 10， 即 100 > n > 9
 
 // Submission Result: Accepted
