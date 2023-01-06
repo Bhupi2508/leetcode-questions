@@ -1,65 +1,80 @@
 /**
- * Definition for a binary tree node.
- * function TreeNode(val) {
- *     this.val = val;
- *     this.left = this.right = null;
- * }
+ * solution: search boarders first, if there is an "O", search this O's neighbors,
+ * if there is a connected "O", keeping searching.
+ * The "O" can be captured only if it is connected to the "O" exsiting on the boarders
+ * In other words, it can get out the board.
+ *
+ * @param {character[][]} board
+ * @return {void} Do not return anything, modify board in-place instead.
  */
-/**
- * @param {TreeNode} root
- * @return {number}
- */
-var sumNumbers = function(root) {
-    if (!root) return 0;
-    var total = [];
-    helper(root, 0, total);
-    var sum = 0;
-    for (var i = 0; i < total.length; i++) {
-        sum += total[i];
+var solve = function(board) {
+    var xIndex = [];
+    var yIndex = [];
+    var rows = board.length;
+    if (rows === 0) return;
+    var cols = board[0].length;
+
+    for (var i = 0; i < rows; i++) {
+        if (board[i][0] === 'O') {
+            xIndex.push(i);
+            yIndex.push(0);
+        }
+
+        if (board[i][cols - 1] === 'O') {
+            xIndex.push(i);
+            yIndex.push(cols - 1);
+        }
     }
-    return sum;
+
+    for (i = 0; i < cols; i++) {
+        if (board[0][i] === 'O') {
+            xIndex.push(0);
+            yIndex.push(i);
+        }
+
+        if (board[rows - 1][i] === 'O') {
+            xIndex.push(rows - 1);
+            yIndex.push(i);
+        }
+    }
+    var k = 0;
+    while (k < xIndex.length) {
+        var x = xIndex[k];
+        var y = yIndex[k];
+        board[x][y] = 'Y';
+        if (x > 1 && board[x - 1][y] === 'O') {
+            xIndex.push(x - 1);
+            yIndex.push(y);
+        }
+        if (x < rows - 2 && board[x + 1][y] === 'O') {
+            xIndex.push(x + 1);
+            yIndex.push(y);
+        }
+        if (y > 1 && board[x][y - 1] === 'O') {
+            xIndex.push(x);
+            yIndex.push(y - 1);
+        }
+        if (y < cols - 2 && board[x][y + 1] === 'O') {
+            xIndex.push(x);
+            yIndex.push(y + 1);
+        }
+        k++;
+    }
+
+    for (var j = 0; j < rows; j++) {
+        for (var h = 0; h < cols; h++) {
+            if (board[j][h] === 'O') {
+                board[j][h] = 'X';
+            }
+            if (board[j][h] === 'Y') {
+                board[j][h] = 'O';
+            }
+        }
+
+    }
 };
 
-var helper = function(root, sum, total) {
-    sum = 10 * sum + root.val;
-    if (root.left === null && root.right === null) {
-        total.push(sum);
-        return;
-    }
-    if (root.left) {
-        helper(root.left, sum, total);
-    }
-    if (root.right) {
-        helper(root.right, sum, total);
-    }
-};
-
-// a better and more concise solution
-var sumNumbers = function(root) {
-    return helper(root, 0);
-};
-
-var helper = function(root, sum) {
-    if (!root)  return 0;
-    if (root.left === null && root.right === null) {
-        return 10 * sum + root.val;
-    }
-    return  helper(root.left, 10 * sum + root.val)
-            + helper(root.right, 10 * sum + root.val);
-};
-
-// a third DFS method. Top-down
-var sumNumbers = function(root) {
-    if (!root) return 0;
-    return helper(root, 0, 0);
-};
-
-function helper(root, currNum, sum) {
-    if (!root) return sum;
-    currNum = root.val + 10 * currNum;
-    if (!root.left && !root.right) {
-        sum += currNum;
-        return sum;
-    }
-    return helper(root.left, currNum, sum) + helper(root.right, currNum, sum)
-}
+// test cases
+// ["OOO","OOO","OOO"]
+// ["XXXX","XOOX","XXOX", "XOXX"]
+// ["XOX","XOX","XOX"]
