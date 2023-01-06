@@ -1,50 +1,46 @@
-// 27. Remove Element
-// Easy   39%
+// 28. Implement strStr()
+// Easy   28%
 
+// Implement strStr().
 
-// Given an array and a value, remove all instances of that value in place and
-// return the new length.
+// Returns the index of the first occurrence of needle in haystack, or -1 if
+// needle is not part of haystack.
 
-// Do not allocate extra space for another array, you must do this in place with
-// constant memory.
+// Example 1:
+// Input: haystack = "hello", needle = "ll"
+// Output: 2
 
-// The order of elements can be changed. It doesn't matter what you leave beyond
-// the new length.
-
-// Example:
-// Given input array nums = [3,2,2,3], val = 3
-
-// Your function should return length = 2, with the first two elements of nums
-// being 2.
+// Example 2:
+// Input: haystack = "aaaaa", needle = "bba"
+// Output: -1
 
 /**
- * @param {number[]} nums
- * @param {number} val
+ * @param {string} haystack
+ * @param {string} needle
  * @return {number}
  */
-const removeElement = function(nums, val) {
-  let i = 0, j = nums.length - 1
-  while (i <= j) {
-    if (nums[i] === val) {
-      nums[i] = nums[j]
-      j--
-    } else {
-      i++
+const strStr = function(haystack, needle) {
+  for (let i = 0; ; i++) {
+    for (let j = 0; ; j++) {
+      if (j === needle.length) return i
+      if (i + j === haystack.length) return -1
+      if (needle[j] !== haystack[i + j]) break
     }
   }
-  return j + 1
 }
 
 ;[
-  [[3, 2, 2, 3], 3],                 // [2, 2, 2, 3] 2
-  [[1,2,3,4,5,3,5,2,3,6], 3],        // [1,2,6,4,5,2,5] 7
-  [[1], 1],                          // [1] 0
+  ['hello', 'll'],              // 2
+  ['aaaaa', 'bba'],             // -1
 ].forEach(args => {
-  console.log(removeElement(...args))
+  console.log(strStr(...args))
 })
 
 // Solution:
-// 找到需要删除的数，就用最后的数来代替它（放到它的位置上）。
-// i用于遍历，j用于最后的可用交换数。
+// i遍历haystack的每个字符
+// j用于比较haystack子字符串与needle是否相同
+// 当j等于needle的长度时，正好完成匹配
+// 当i+j等于haystack的长度时，说明i之后的长度不足以匹配
+// 当子字符串不同时，直接跳过该头字符，换下一个。
 
 // Submission Result: Accepted
