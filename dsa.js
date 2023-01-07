@@ -1,71 +1,71 @@
-// 665. Non-decreasing Array
-// Easy 21% locked:false
+// 667. Beautiful Arrangement II
+// Medium   51%
 
 
-// Given an array with n integers, your task is to check if it could become
-// non-decreasing by modifying at most 1 element.
+// Given two integers n and k, you need to construct a list which contains n
+// different positive integers ranging from 1 to n and obeys the following
+// requirement:
 
-// We define an array is non-decreasing if array[i] <= array[i + 1] holds for
-// every i (1 <= i < n).
+// Suppose this list is [a1, a2, a3, ... , an], then the list [|a1 - a2|, |a2 -
+// a3|, |a3 - a4|, ... , |an-1 - an|] has exactly k distinct integers.
+
+// If there are multiple answers, print any of them.
 
 // Example 1:
 
-// Input: [4,2,3]
-// Output: True
-// Explanation: You could modify the first 4 to 1 to get a non-decreasing array.
+// Input: n = 3, k = 1
+// Output: [1, 2, 3]
+// Explanation: The [1, 2, 3] has three different positive integers ranging from
+// 1 to 3, and the [1, 1] has exactly 1 distinct integer: 1.
 
 // Example 2:
 
-// Input: [4,2,1]
-// Output: False
-// Explanation: You can't get a non-decreasing array by modify at most one
-// element.
+// Input: n = 3, k = 2
+// Output: [1, 3, 2]
+// Explanation: The [1, 3, 2] has three different positive integers ranging from
+// 1 to 3, and the [2, 1] has exactly 2 distinct integers: 1 and 2.
 
 // Note:
-// The n belongs to [1, 10,000].
+
+// The n and k are in the range 1 <= k < n <= 10^4.
 
 
 /**
- * @param {number[]} nums
- * @return {boolean}
+ * @param {number} n
+ * @param {number} k
+ * @return {number[]}
  */
-const checkPossibility = function(nums) {
-  for (let end = nums.length - 1, i = 0, first = true; i < end; i++) {
-    if (nums[i] > nums[i + 1]) {
-      if (!first) return false
-      if ((nums[i - 1] || -Infinity) > nums[i + 1] &&
-          nums[i] > (nums[i + 2] || Infinity)) return false
-      first = false
+const constructArray = function(n, k) {
+  const result = [1]
+  for (let i = 1; i < n; i++) {
+    if (k > 0) {
+      result[i] = result[i - 1] + ((i % 2 ? 1 : -1) * k--)
+    } else {
+      result[i] = i + 1
     }
   }
-  return true
+  return result
 }
 
 ;[
-  [],                           // true
-  [-1],                         // true
-  [4, 2, 3],                    // true
-  [4, 2, 1],                    // false
-  [2, 3, 4, 3, 4],              // true
-  [2, 3, 4, 2, 3],              // false
-  [2, 3, 3, 2, 4],              // true
-].forEach((nums) => {
-  console.log(checkPossibility(nums))
+  [3, 1],                       // [1, 2, 3]
+  [3, 2],                       // [1, 3, 2]
+  [16, 5],
+  [16, 6],
+].forEach(args => {
+  console.log(constructArray(...args))
 })
 
 // Solution:
+// 找规律
+// 初始化第一个数为 1
+// 构造第二个数到第 1+k 个数，每个数是前一个数的基础上加或减一个数p
+// 若对于第i个数，其中i为奇数则加，若为偶数则减。
+// 数p初始化为k，每次使用都减一。
 
-// 迭代一次。
-// 变量 first 保证最多只改变一次。
-// 若过程中，没有减小，则检查通过。
-// 否则，第一次遇到减小的值时，判断是否能将改成合适的值（只关心能不能改成，而不
-// 关心改成什么值），能则继续，否则返回 false。
+// 第k+1个数后的数的值都为其下标加一。
 
-// 关键在于判断能否改成合适的值
-// 只有以下两种情况能改成：
-// 1. nums[i-1] <= nums[i+1]
-//    这种情况 nums[i] 只要改成满足 nums[i-1] <= nums[i] <= nums[i+1] 即可
-// 2. nums[i] <= nums[i+2]
-//    这种情况 nums[i+1] 只要改成满足 nums[i] <= nums[i+1] <= nums[i+2] 即可
+// 主要是找规律吧，没有特别的思想。
+// 有空可以用不完全归纳法证明一下其逻辑正确性。
 
 // Submission Result: Accepted
