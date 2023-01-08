@@ -1,61 +1,80 @@
-// 78. Subsets
-// Medium   41%
+// 79. Word Search
+// Medium 27% locked:false
 
-// Given a set of distinct integers, nums, return all possible subsets.
+// Given a 2D board and a word, find if the word exists in the grid.
 
-// Note: The solution set must not contain duplicate subsets.
+// The word can be constructed from letters of sequentially adjacent cell, where
+// "adjacent" cells are those horizontally or vertically neighboring. The same
+// letter cell may not be used more than once.
 
 // For example,
-// If nums = [1,2,3], a solution is:
+// Given board =
 
 // [
-//   [3],
-//   [1],
-//   [2],
-//   [1,2,3],
-//   [1,3],
-//   [2,3],
-//   [1,2],
-//   []
+//   ['A','B','C','E'],
+//   ['S','F','C','S'],
+//   ['A','D','E','E']
 // ]
 
+// word = "ABCCED", -> returns true,
+// word = "SEE", -> returns true,
+// word = "ABCB", -> returns false.
 
 /**
- * @param {number[]} nums
- * @return {number[][]}
+ * @param {character[][]} board
+ * @param {string} word
+ * @return {boolean}
  */
-const subsets = function(nums) {
-  const n = nums.length
-  const res = []
+const exist = function(board, word) {
+  const m = board.length, n = board[0].length, w = word.length
+  if (w === 0) return true
 
-  const combine = (array, m, i) => {
-    if (array.length === m) res.push(array.map(v => nums[v]))
-    else {
-      for (; i < n; i++) {
-        array.push(i)
-        combine(array, m, i + 1)
-        array.pop()
+  function match(i, j, c) {
+    let isExist = false
+    if (0 <= i && i < m && 0 <= j && j < n) {
+      if (board[i][j] === word[c]) {
+        const tmp = word[c]
+        board[i][j] = true
+        if (next(i, j, c + 1)) isExist = true
+        board[i][j] = tmp
       }
     }
-  }
-  for (let i = 0; i <= n; i++) {
-    combine([], i, 0)
+    return isExist
   }
 
-  return res
+  const next = (i, j, c) => c >= w ||
+        match(i - 1, j, c) ||
+        match(i, j + 1, c) ||
+        match(i + 1, j, c) ||
+        match(i, j - 1, c)
+
+  for (let i = 0; i < m; i++) {
+    for (let j = 0; j < n; j++) {
+      if (match(i, j, 0)) return true
+    }
+  }
+
+  return false
 }
 
+
+const board = [
+  ['A','B','C','E'],
+  ['S','F','C','S'],
+  ['A','D','E','E']
+]
+
 ;[
-  [],
-  [2, 3, 4, 5],
-  [1, 2, 3],
-].forEach(nums => {
-  console.log(subsets(nums))
+  [board, 'ABCCED'],            // true
+  [board, 'SEE'],               // true
+  [board, 'ABCB'],              // false
+].forEach(args => {
+  console.log(exist(...args))
 })
 
+
 // Solution:
-// 求一个数组的所有子集（包括空集和本身）。
-// 使用 77-combinations 中的组合函数。
-// 分别找出长度为 0 到数组长度的所有组合。
+// 使用 DFS 遍历矩阵。
+// 每匹配一个字符，就在原矩阵中做标记，并在回溯时还原。
 
 // Submission Result: Accepted
