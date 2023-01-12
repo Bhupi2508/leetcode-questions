@@ -1,54 +1,43 @@
-// 1295. Find Numbers with Even Number of Digits
-// Easy   84%
+// 1299. Replace Elements with Greatest Element on Right Side
+// Easy   75%
 
 
-// Given an array nums of integers, return how many of them contain an even
-// number of digits.
+// Given an array arr, replace every element in that array with the greatest
+// element among the elements to its right, and replace the last element with -1.
+// After doing so, return the array.
 
 // Example 1:
-// Input: nums = [12,345,2,6,7896]
-// Output: 2
-// Explanation:
-// 12 contains 2 digits (even number of digits).
-// 345 contains 3 digits (odd number of digits).
-// 2 contains 1 digit (odd number of digits).
-// 6 contains 1 digit (odd number of digits).
-// 7896 contains 4 digits (even number of digits).
-// Therefore only 12 and 7896 contain an even number of digits.
-// Example 2:
-// Input: nums = [555,901,482,1771]
-// Output: 1
-// Explanation:
-// Only 1771 contains an even number of digits.
+// Input: arr = [17,18,5,4,6,1]
+// Output: [18,6,6,6,1,-1]
 
 // Constraints:
-//     1 <= nums.length <= 500
-//     1 <= nums[i] <= 10^5
+//     1 <= arr.length <= 10^4
+//     1 <= arr[i] <= 10^5
 
 
 /**
- * @param {number[]} nums
- * @return {number}
+ * @param {number[]} arr
+ * @return {number[]}
  */
-const findNumbers = function(nums) {
-  // return nums.reduce((pre, n) => pre + (String(n).length % 2 ^ 1), 0)
-  return nums.reduce((p, n) => p + (n === 100000 || (10000 > n && n > 999) || (100 > n && n > 9) ? 1 : 0), 0)
+const replaceElements = function(arr) {
+  let last = -1
+  for (let i = arr.length - 1; i >= 0; i--) {
+    let biger = Math.max(last, arr[i + 1] || -1)
+    last = arr[i]
+    arr[i] = biger
+  }
+  return arr
 }
 
 ;[
-  [12,345,2,6,7896],
-  [555,901,482,1771],
-  [100000],
-].forEach((nums) => {
-  console.log(findNumbers(nums))
+  [17,18,5,4,6,1], // [18,6,6,6,1,-1]
+].forEach((arr) => {
+  console.log(replaceElements(arr))
 })
 
 // Solution:
-// 转成字符串判断位数。
-
-// 或 判断数值是否在以下范围内：
-// 1）n == 100000
-// 2) 9999 >= n >= 1000, 即 10000 > n > 999
-// 3) 99 >= n >= 10， 即 100 > n > 9
+// 从数组的后面开始处理和替换
+// 使用 last 保存当前位置的数
+// 每次比较 last 和已替换的最左边的数，取其大者，填入当前位置
 
 // Submission Result: Accepted
