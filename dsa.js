@@ -1,67 +1,70 @@
-// 697. Degree of an Array
-// Easy 48% locked:false
+// 700. Search in a Binary Search Tree
+// Easy   71%
 
 
-
-// Given a non-empty array of non-negative integers nums, the degree of this
-// array is defined as the maximum frequency of any one of its elements.
-
-// Your task is to find the smallest possible length of a (contiguous) subarray
-// of nums, that has the same degree as nums.
-
-// Example 1:
-
-// Input: [1, 2, 2, 3, 1]
-// Output: 2
-// Explanation:
-// The input array has a degree of 2 because both elements 1 and 2 appear twice.
-// Of the subarrays that have the same degree:
-// [1, 2, 2, 3, 1], [1, 2, 2, 3], [2, 2, 3, 1], [1, 2, 2], [2, 2, 3], [2, 2]
-// The shortest length is 2. So return 2.
-
-// Example 2:
-
-// Input: [1,2,2,3,1,4,2]
-// Output: 6
-
-// Note:
-
-// nums.length will be between 1 and 50,000.
-// nums[i] will be an integer between 0 and 49,999.
-
+// Given the root node of a binary search tree (BST) and a value. You need to
+// find the node in the BST that the node's value equals the given value. Return
+// the subtree rooted with that node. If such node doesn't exist, you should
+// return NULL.
+// For example,
+// Given the tree:
+//         4
+//        / \
+//       2   7
+//      / \
+//     1   3
+// And the value to search: 2
+// You should return this subtree:
+//       2
+//      / \
+//     1   3
+// In the example above, if we want to search the value 5, since there is no node
+// with value 5, we should return NULL.
+// Note that an empty tree is represented by NULL, therefore you would see the
+// expected output (serialized tree format) as [], not null.
 
 
 /**
- * @param {number[]} nums
- * @return {number}
+ * Definition for a binary tree node.
+ * function TreeNode(val, left, right) {
+ * this.val = (val===undefined ? 0 : val)
+ *     this.left = (left===undefined ? null : left)
+ *     this.right = (right===undefined ? null : right)
+ * }
  */
-const findShortestSubArray = function(nums) {
-  const length = nums.length
-  if (length === 0) return 0
-
-  const hash = {}
-  let result = Infinity,
-      maxFreq = 0
-  for (let i = 0; i < length; i++) {
-    const key = nums[i]
-    if (hash[key]) {
-      hash[key].push(i)
-    } else {
-      hash[key] = [i]
-    }
-
-    const array = hash[key],
-          len = array.length
-    if (len >= maxFreq) {
-      const width = array[len - 1] - array[0] + 1
-      result = (len === maxFreq ? Math.min(result, width) : width)
-      maxFreq = len
-    }
+/**
+ * @param {TreeNode} root
+ * @param {number} val
+ * @return {TreeNode}
+ */
+const searchBST = function(root, val) {
+  while (root) {
+    if (root.val === val) return root
+    root = root.val > val ? root.left : root.right
   }
-
-  return result
+  return root
 }
 
-console.log(findShortestSubArray([1, 2, 2, 3, 1, 4, 2]))
+const recursion = function(root, val) {
+  if (root === null || root.val === val) return root
+  return searchBST(root.val > val ? root.left : root.right, val)
+}
+
+const TreeNode = require('../structs/TreeNode')
+;[
+  [[4,2,7,1,3], 2],
+  [[4,2,7,1,3], 5],
+  [[4,2,7,1,3], 4],
+  [[4,2,7,1,3], 7],
+  [[4,2,7,1,3], 1],
+  [[4,2,7,1,3], 3],
+].forEach(([array, val]) => {
+  console.log(searchBST(TreeNode.from(array), val))
+})
+
+// Solution:
+// 1. 递归
+
+// 2. 循环
 
 // Submission Result: Accepted
