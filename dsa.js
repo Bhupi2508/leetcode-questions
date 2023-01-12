@@ -1,69 +1,52 @@
-// 941. Valid Mountain Array
-// Easy   36%
+// 942. DI String Match
+// Easy   71%
 
 
-// Given an array A of integers, return true if and only if it is a valid
-// mountain array.
-// Recall that A is a mountain array if and only if:
-//     A.length >= 3
-//     There exists some i with 0 < i < A.length - 1 such that:
-
-//         A[0] < A[1] < ... A[i-1] < A[i]
-//         A[i] > A[i+1] > ... > A[A.length - 1]
-
-
-//           ^
-//        /| |\
-//      /| | | |\
-//    /| | | | | |\
-//   0 2 3 4 5 2 1 0
+// Given a string S that only contains "I" (increase) or "D" (decrease), let N =
+// S.length.
+// Return any permutation A of [0, 1, ..., N] such that for all i = 0, ..., N-1:
+//     If S[i] == "I", then A[i] < A[i+1]
+//     If S[i] == "D", then A[i] > A[i+1]
 
 // Example 1:
-// Input: [2,1]
-// Output: false
+// Input: "IDID"
+// Output: [0,4,1,3,2]
 // Example 2:
-// Input: [3,5,5]
-// Output: false
+// Input: "III"
+// Output: [0,1,2,3]
 // Example 3:
-// Input: [0,3,2,1]
-// Output: true
+// Input: "DDI"
+// Output: [3,2,0,1]
 
 // Note:
-//     0 <= A.length <= 10000
-//     0 <= A[i] <= 10000
-
-
+//     1 <= S.length <= 10000
+//     S only contains characters "I" or "D".
 
 
 /**
- * @param {number[]} A
- * @return {boolean}
+ * @param {string} S
+ * @return {number[]}
  */
-const validMountainArray = function(A) {
-  const len = A.length
-  if (len < 3) return false
-  let p = 0, q = len - 1
-  while (p !== q && A[p] < A[p + 1]) p++
-  while (p !== q && A[q - 1] > A[q]) q--
-  return p !== 0 && q !== len - 1 && p === q
+const diStringMatch = function(S) {
+  let p = 0, q = S.length
+  const result = []
+  for (let c of S) result.push(c == 'I' ? p++ : q--)
+  result.push(p)
+  return result
 }
 
 ;[
-  [2,1],      // false
-  [3,5,5],    // false
-  [0,3,2,1],  // true
-  [0,2,3,4,5,2,1,0], // true
-  [0,2,3,3,5,2,1,0], // false
-  [4,3,2,1,0],       // false
-  [0,1,2,3,4],       // false
-].forEach((A) => {
-  console.log(validMountainArray(A))
+  'IDID', // [0,4,1,3,2]
+  'III',  // [0,1,2,3]
+  'DDI',  // [3,2,0,1]
+].forEach((S) => {
+  console.log(diStringMatch(S))
 })
 
 // Solution:
-// 想象两个人从山的两边开始爬山，只能向上爬，不能走平路和下坡。
-// 两人各自爬到第一个小山峰时停下来
-// 最后，若两人在同一个位置则返回 true
-// 且两人中任何一个都必须走出一步。
+// 先将 p 和 q 指向数列 [0, 1, ..., N] 的两端，从两端开始取数，
+// 遍历字符串
+// 若字符为 'I'，则将 最左端的数（最小）插入，这样就确保了无论后一位是什么数，都会大于该数。
+// 若字符不为 'I' （为 'D'），则将 最右端的数（最大）插入，理由同上（小于）。
 
 // Submission Result: Accepted
