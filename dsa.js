@@ -1,10 +1,11 @@
-// 95. Unique Binary Search Trees II
-// Medium 31% locked:false
+// 96. Unique Binary Search Trees
+// Medium   41%
 
-// Given an integer n, generate all structurally unique BST's (binary search trees) that store values 1...n.
+// Given n, how many structurally unique BST's (binary search trees) that store
+// values 1...n?
 
 // For example,
-// Given n = 3, your program should return all 5 unique BST's shown below.
+// Given n = 3, there are a total of 5 unique BST's.
 
 // 1         3     3      2      1
 //  \       /     /      / \      \
@@ -14,39 +15,57 @@
 
 
 /**
- * Definition for a binary tree tree.
- * function TreeNode(val) {
- *   this.val = val
- *   this.left = this.right = null
- * }
- */
-
-/**
  * @param {number} n
- * @return {TreeNode[]}
+ * @return {number}
  */
-const generateTrees = function(n) {
-  if (n <= 0) return []
-  const iter = (p, q) => {
-    if (p > q) return [null]
-    if (p === q) return [new TreeNode(p)]
-
-    const trees = []
-    for (let k = 0; k <= q - p; k++) {
-      const left = iter(p, p + k - 1),
-            right = iter(p + k + 1, q)
-      for (let l of left) {
-        for (let r of right) {
-          const root = new TreeNode(p + k)
-          root.left = l
-          root.right = r
-          trees.push(root)
-        }
-      }
+const numTrees = function(n) {
+  if (n <= 0) return 0
+  const res = [1, 1]            // in order to elegant, set res[0] = 1
+  for (let i = 2; i <= n; i++) {
+    res[i] = 0
+    for (let left = 0; left < i; left++) {
+      const right = i - left - 1
+      res[i] += res[left] * res[right]
     }
-
-    return trees
   }
-  return iter(1, n)
+  return res[n]
 }
-console.log(generateTrees(4))
+
+;[
+  0,                            // 0
+  1,                            // 1
+  2,                            // 2
+  3,                            // 5
+  4,                            // 14
+  5,                            // 42
+  6,                            // 132
+].forEach(n => {
+  console.log(numTrees(n))
+})
+
+
+// Solution:
+// 0 0
+// 1 1
+// 2 (1*1)+(1*1)=2
+// 3 (1*2)+(1*1)+(2*1)=5
+// 4 (1*5)+(1*2)+(2*1)+(5*1)=14
+// 5 (1*14)+(1*5)+(2*2)+(5*1)+(12*1)=38
+// 6 (1*38)+(1*12)+(2*5)+(5*2)+(12*1)+(38*1)=132
+// ...
+
+// 这与计算斐波那契数是类似的问题，不能使用递归，这样会出现大量重复计算。
+// 于是也和生成斐波那契数一样，使用动态规划。
+
+// 假设有6个节点
+// 在 i=6 的迭代过程中，每个数字都可以作为根节点，
+// 以下是以 3 为根节点时，能够构造的不同的树的解释。
+
+// O   O  @  O  O  O
+//  \ /   |   \   /
+// 左子树  根  右子树
+// F(2)=2    F(3)=5
+
+// F(2) * F(3) = 2 * 5 = 10
+
+// Submission Result: Accepted
