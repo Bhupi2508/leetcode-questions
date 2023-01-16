@@ -1,51 +1,64 @@
-// 541. Reverse String II
-// Easy   43%
+// 543. Diameter of Binary Tree
+// Easy   44%
 
 
-// Given a string and an integer k, you need to reverse the first k characters
-// for every 2k characters counting from the start of the string. If there are
-// less than k characters left, reverse all of them. If there are less than 2k
-// but greater than or equal to k characters, then reverse the first k characters
-// and left the other as original.
+// Given a binary tree, you need to compute the length of the diameter of the
+// tree. The diameter of a binary tree is the length of the longest path between
+// any two nodes in a tree. This path may or may not pass through the root.
 
 // Example:
+// Given a binary tree
 
-// Input: s = "abcdefg", k = 2
-// Output: "bacdfeg"
+//           1
+//          / \
+//         2   3
+//        / \
+//       4   5
 
-// Restrictions:
+// Return 3, which is the length of the path [4,2,1,3] or [5,2,1,3].
 
-//  The string consists of lower English letters only.
-//  Length of the given string and k will in the range [1, 10000]
+// Note:
+// The length of path between two nodes is represented by the number of edges
+// between them.
 
 
 /**
- * @param {string} s
- * @param {number} k
- * @return {string}
+ * Definition for a binary tree node.
+ * function TreeNode(val) {
+ *   this.val = val;
+ *   this.left = this.right = null;
+ * }
  */
-const reverseStr = function(s, k) {
-  const array = []
-  for (let i = 0, n = s.length; i < n; i++) {
-    if (i % k === 0) array.push([])
-    array[array.length - 1].push(s[i])
+
+/**
+ * @param {TreeNode} root
+ * @return {number}
+ */
+const diameterOfBinaryTree = function(root) {
+  function iter(root) {
+    if (root == void 0) return { diameter: 0, height: 0 }
+    const left = iter(root.left), right = iter(root.right)
+    return {
+      diameter: Math.max(
+        left.height + right.height,
+        Math.max(left.diameter, right.diameter)
+      ),
+      height: Math.max(left.height, right.height) + 1
+    }
   }
-  for (let i = 0, n = array.length; i < n; i++ ) {
-    if (i % 2 === 0) array[i] = array[i].reverse()
-    array[i] = array[i].join('')
-  }
-  return array.join('')
+  return iter(root).diameter
 }
 
+const TreeNode = require('../structs/TreeNode')
 ;[
-  ['abcdefg', 2],               // 'bacdfeg'
-].forEach(args => {
-  console.log(reverseStr(...args))
+  [1,2,3,4,5],         // 3
+].forEach((array) => {
+  console.log(diameterOfBinaryTree(TreeNode.from(array)))
 })
 
-
 // Solution:
-// 1. 先以 k 为长度分组，
-// 2. 组号为偶数的组倒置。
+// 在那个节点中，记录以该节点为根的树的高度以及当前最大直径。
+// 不断将最大直径向上传递。
+// 因为直径不一定穿过根节点。
 
 // Submission Result: Accepted
