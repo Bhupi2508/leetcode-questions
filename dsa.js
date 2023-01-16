@@ -1,62 +1,43 @@
-// 338. Counting Bits
-// Medium   61%
+// 342. Power of Four
+// Easy   38%
 
-// Given a non negative integer number num. For every numbers i in the range 0 ≤
-// i ≤ num calculate the number of 1's in their binary representation and return
-// them as an array.
+
+// Given an integer (signed 32 bits), write a function to check whether it is a
+// power of 4.
 
 // Example:
-// For num = 5 you should return [0,1,1,2,1,2].
+// Given num = 16, return true.
+// Given num = 5, return false.
 
-// Follow up:
+// Follow up: Could you solve it without loops/recursion?
 
-// It is very easy to come up with a solution with run time O(n*sizeof(integer)).
-// But can you do it in linear time O(n) /possibly in a single pass?
-// Space complexity should be O(n).
-// Can you do it like a boss? Do it without using any builtin function like
-// __builtin_popcount  in c++ or in any other language.
-
-// Credits:Special thanks to @ syedee  for adding this problem and creating all
+// Credits:Special thanks to @yukuairoy  for adding this problem and creating all
 // test cases.
 
 
 /**
  * @param {number} num
- * @return {number[]}
+ * @return {boolean}
  */
-const countBits = function(num) {
-  if (num === 0) return [0]
-  const result = [0], power = Math.floor(Math.log2(num)) + 1
-  for (let i = 0; i < power; i++) {
-    result.push(...result.map(v => v + 1))
-  }
-  return result.slice(0, num + 1)
+const isPowerOfFour = function(num) {
+  return Number.isInteger(Math.log(num) / Math.log(4))
 }
 
 ;[
-  5,                            // [0,1,1,2,1,2]
+  16,                           // true
+  5,                            // false
+  1,                            // true
+  0,                            // false
+  -16,                          // false
 ].forEach(num => {
-  console.log(countBits(num))
+  console.log(isPowerOfFour(num))
 })
 
+
 // Solution:
-// 按二进制位数来给每个数字分组，如下（0为0位数）
-// 0       0
-// ---------
-// 1       1
-// ---------
-// 2      10
-// 3      11
-// ---------
-// 4     100
-// 5     101
-// 6     110
-// 7     111
-
-// 从中可看出，每个组中的数都是其前面全部组的连接后的数加上一个1形成的
-// 如 6=110 对应 2=10， 5=101 对应 1=01
-
-// 因此每个数 i 的二进制中一的个数都可通过数 (i - （2^log(i) + 1)) 中一的个数再加上 1
-// 获得。
+// 假设 4^n = num，当 n 为整数时，num 为 以4为底数的幂
+// 两边取以4为底的对数 log_4(4 ^ n) = log_4(num)
+// n = log_4(num)
+// n = log_e(num) / log_e(4)，因为没有合适的取对数函数，只能换用 e 为底的
 
 // Submission Result: Accepted
