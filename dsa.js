@@ -1,64 +1,85 @@
-// 115. Distinct Subsequences
-// Hard   31%
+// 116. Populating Next Right Pointers in Each Node
+// Medium   36%
 
-// Given a string S and a string T, count the number of distinct subsequences of
-// S which equals T.
+// Given a binary tree
 
-// A subsequence of a string is a new string which is formed from the original
-// string by deleting some (can be none) of the characters without disturbing
-// the relative positions of the remaining characters. (ie, "ACE" is a
-// subsequence of "ABCDE" while "AEC" is not).
+// struct TreeLinkNode {
+//   TreeLinkNode *left;
+//   TreeLinkNode *right;
+//   TreeLinkNode *next;
+// }
 
-// Here is an example:
-// S = "rabbbit", T = "rabbit"
-// Return 3.
+// Populate each next pointer to point to its next right node. If there is no
+// next right node, the next pointer should be set to NULL.
+
+// Initially, all next pointers are set to NULL.
+
+// Note:
+// - You may only use constant extra space.
+// - You may assume that it is a perfect binary tree (ie, all leaves are at the
+//   same level, and every parent has two children).
+
+// For example,
+// Given the following perfect binary tree,
+
+//      1
+//    /  \
+//   2    3
+//  / \  / \
+// 4  5  6  7
+
+// After calling your function, the tree should look like:
+
+//      1 -> NULL
+//    /  \
+//   2 -> 3 -> NULL
+//  / \  / \
+// 4->5->6->7 -> NULL
 
 /**
- * @param {string} s
- * @param {string} t
- * @return {number}
+ * Definition for binary tree with next pointer.
+ * function TreeLinkNode(val) {
+ *   this.val = val
+ *   this.left = this.right = this.next = null
+ * }
  */
-const numDistinct = function(s, t) {
-  const n = s.length, m = t.length
 
-  const dp = Array(m + 1)
-  dp[0] = Array(n + 1).fill(1)
-
-  for (let i = 0; i < m; i++) {
-    dp[i + 1] = Array(n + 1).fill(0)
-    for (let j = i; j < n; j++) {
-      if (s[j] === t[i]) {
-        dp[i + 1][j + 1] = dp[i][j] + dp[i + 1][j]
-      } else {
-        dp[i + 1][j + 1] = dp[i + 1][j]
+/**
+ * @param {TreeLinkNode} root
+ * @return {void} Do not return anything, modify tree in-place instead.
+ */
+const connect = function(root) {
+  if (root == null) return
+  let pre = root
+  let cur = null
+  while (pre.left) {
+    cur = pre
+    while (cur) {
+      cur.left.next = cur.right
+      if (cur.next) {
+        cur.right.next = cur.next.left
       }
+      cur = cur.next
     }
+    pre = pre.left
   }
-
-  return dp[m][n]
 }
 
+const TreeLinkNode = require('../structs/TreeLinkNode')
 ;[
-  ['rabbbit', 'rabbit'],
-].forEach(args => {
-  console.log(numDistinct(...args))
+  [1,2,3,4,5,6,7],
+].forEach(array => {
+  const tree = TreeLinkNode.from(array)
+  connect(tree)
+  console.log(tree)
 })
 
 // Solution:
-// 使用动态规划表, 如下。
-//     r a b b b i t
-//  ----------------
-//  |1 1 1 1 1 1 1 1
-// r|0 1 1 1 1 1 1 1
-// a|0 0 1 1 1 1 1 1
-// b|0 0 0 1 2 3 3 3
-// b|0 0 0 0 1 3 3 3
-// i|0 0 0 0 0 0 3 3
-// t|0 0 0 0 0 0 0 3
-
-// 构造一个 (m+1)*(n+1) 的动态规划表。
-// 当没有匹配字符时，当前可生成的子序列和前一步一样，所以只是复制前一个的值 dp[i + 1][j]。
-// 当匹配时，则需要看该字符在 s 和 t 的位置 j 和 i，之前的所能匹配的个数，即 dp[i][j]，
-// 并加上之前匹配的值，即 dp[i + 1][j]。
+// 每一层中，都从最左边的节点开始，假设该层已经连接完毕，并开始进行下一层的连接。
+// 1. 连接当前节点的左右子节点；
+// 2. 开始连接当前节点的右子节点和下一个节点的左子节点；
+// 3. 进入下一个节点；
+// 4. 重复 1，2，3，直到该层最后一个节点；
+// 5. 进入下一层，并从第一个节点开始。
 
 // Submission Result: Accepted
