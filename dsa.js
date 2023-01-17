@@ -1,55 +1,47 @@
-// 2. Add Two Numbers
-// Medium  27%
+// 3. Longest Substring Without Repeating Characters
+// Medium  24%
 
-// You are given two non-empty linked lists representing two non-negative
-// integers. The digits are stored in reverse order and each of their nodes
-// contain a single digit. Add the two numbers and return it as a linked list.
+// Given a string, find the length of the longest substring without repeating
+// characters.
 
-// You may assume the two numbers do not contain any leading zero, except the
-// number 0 itself.
+// Examples:
 
-// Input: (2 -> 4 -> 3) + (5 -> 6 -> 4)
-// Output: 7 -> 0 -> 8
+// Given "abcabcbb", the answer is "abc", which the length is 3.
 
-/**
- * Definition for singly-linked list.
- * function ListNode(val) {
- *     this.val = val;
- *     this.next = null;
- * }
- */
+// Given "bbbbb", the answer is "b", with the length of 1.
+
+// Given "pwwkew", the answer is "wke", with the length of 3. Note that the
+// answer must be a substring, "pwke" is a subsequence and not a substring.
+
+// Given "dvdf", the answer is "vdf", which the length is 3.
 
 /**
- * @param {ListNode} l1
- * @param {ListNode} l2
- * @return {ListNode}
+ * @param {string} s
+ * @return {number}
  */
-const addTwoNumbers = function(l1, l2) {
-  const result = new ListNode()
-  let p = l1, q = l2, node = result, carry = 0
-  while (p || q || carry) {
-    const sum = (p ? p.val : 0) + (q ? q.val : 0) + carry
-    node.next = new ListNode(sum % 10)
-    carry = Math.trunc(sum / 10)
-    node = node.next
-    if (p) p = p.next
-    if (q) q = q.next
+const lengthOfLongestSubstring = function(s) {
+  const n = s.length, hash = {}
+  let result = 0
+  for (let i = 0, j = 0; i < n; i++) {
+    if (hash[s[i]]) j = Math.max(hash[s[i]], j)
+    result = Math.max(result, i - j + 1)
+    hash[s[i]] = i + 1
   }
-  return result.next
+  return result
 }
 
-const ListNode = require('../structs/ListNode')
 ;[
-  [[9, 9], [1]],                // [0, 0, 1]
-  [[2, 4, 3], [5, 6, 4]],       // [7, 0, 8]
-].forEach(([A, B]) => {
-  const l1 = ListNode.from(A),
-        l2 = ListNode.from(B)
-  console.log((addTwoNumbers(l1, l2) || '').toString())
+  'abcabcbb',                   // 3
+  'bbbbb',                      // 1
+  'pwwkew',                     // 3
+  'c',                          // 1
+  'dvdf',                       // 3
+].forEach(s => {
+  console.log(lengthOfLongestSubstring(s))
 })
 
-
 // Solution:
-// 保存一个进位位，每次相加都带上进位位。
+// 用哈希保存出现过的字符，且记录字符的位置+1 。
+// 每次遇到哈希中出现过的字符，就计算当前字符到位置 - 哈希中该字符的值。
 
 // Submission Result: Accepted
