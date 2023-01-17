@@ -1,73 +1,115 @@
-// 985. Sum of Even Numbers After Queries
-// Easy   62%
+// 986. Interval List Intersections
+// Medium   67%
 
 
-// We have an array A of integers, and an array queries of queries.
-// For the i-th query val = queries[i][0], index = queries[i][1], we add val to
-// A[index].  Then, the answer to the i-th query is the sum of the even values of
-// A.
-// (Here, the given index = queries[i][1] is a 0-based index, and each query
-// permanently modifies the array A.)
-// Return the answer to all queries.  Your answer array should have answer[i] as
-// the answer to the i-th query.
+// Given two lists of closed intervals, each list of intervals is pairwise
+// disjoint and in sorted order.
+// Return the intersection of these two interval lists.
+// (Formally, a closed interval [a, b] (with a <= b) denotes the set of real
+// numbers x with a <= x <= b.  The intersection of two closed intervals is a set
+// of real numbers that is either empty, or can be represented as a closed
+// interval.  For example, the intersection of [1, 3] and [2, 4] is [2, 3].)
 
 // Example 1:
-// Input: A = [1,2,3,4], queries = [[1,0],[-3,1],[-4,0],[2,3]]
-// Output: [8,6,2,4]
-// Explanation:
-// At the beginning, the array is [1,2,3,4].
-// After adding 1 to A[0], the array is [2,2,3,4], and the sum of even values is
-// 2 + 2 + 4 = 8.
-// After adding -3 to A[1], the array is [2,-1,3,4], and the sum of even values
-// is 2 + 4 = 6.
-// After adding -4 to A[0], the array is [-2,-1,3,4], and the sum of even values
-// is -2 + 4 = 2.
-// After adding 2 to A[3], the array is [-2,-1,3,6], and the sum of even values
-// is -2 + 6 = 4.
+//
+//   A - -       - - - - -
+//   B   - - - -       - - - -
+// ans   -      |      - -
+//    0   2   4   6   8   10  12
+
+// Input: A = [[0,2],[5,10],[13,23],[24,25]], B = [[1,5],[8,12],[15,24],[25,26]]
+// Output: [[1,2],[5,5],[8,10],[15,23],[24,24],[25,25]]
 
 // Note:
-//     1 <= A.length <= 10000
-//     -10000 <= A[i] <= 10000
-//     1 <= queries.length <= 10000
-//     -10000 <= queries[i][0] <= 10000
-//     0 <= queries[i][1] < A.length
+//     0 <= A.length < 1000
+//     0 <= B.length < 1000
+//     0 <= A[i].start, A[i].end, B[i].start, B[i].end < 10^9
 
 
 /**
- * @param {number[]} A
- * @param {number[][]} queries
- * @return {number[]}
+ * @param {number[][]} A
+ * @param {number[][]} B
+ * @return {number[][]}
  */
-const sumEvenAfterQueries = function(A, queries) {
-  const result = []
-  let sum = A.reduce((s, v) => s += v % 2 ? 0 : v, 0)
-  for (let q of queries) {
-    if (A[q[1]] % 2 === 0) sum -= A[q[1]]
-    A[q[1]] += q[0]
-    if (A[q[1]] % 2 === 0) sum += A[q[1]]
-    result.push(sum)
+const intervalIntersection = function(A, B) {
+  const res = []
+  const m = A.length, n = B.length
+  let i = j = 0
+  while (i < m && j < n) {
+    const a = A[i], b = B[j]
+    if (a[1] >= b[0] && a[0] <= b[1]) {
+      if (a[0] < b[0]){
+        if (a[1] < b[1]) res.push([b[0], a[1]])
+        else res.push([...b])
+      } else {
+        if (a[1] < b[1]) res.push([...a])
+        else res.push([a[0], b[1]])
+      }
+    }
+
+    if (a[1] < b[1]) i++
+    else j++
   }
-  return result
+  return res
+}
+
+const aMoreConciseMethod = function(A, B) {
+  const res = []
+  for (let i = j = 0; i < A.length && j < B.length;) {
+    if (A[i][1] < B[j][0]) i++
+    else if (A[i][0] > B[j][1]) j++
+    else {
+      res.push([Math.max(A[i][0], B[j][0]), Math.min(A[i][1], B[j][1])])
+      if (A[i][1] < B[j][1]) i++
+      else j++
+    }
+  }
+  return res
 }
 
 ;[
-  [[1,2,3,4], [[1,0],[-3,1],[-4,0],[2,3]]], // [8, 6, 2, 4]
-].forEach(([A, queries]) => {
-  console.log(sumEvenAfterQueries(A, queries))
+  [[[0,2],[5,10],[13,23],[24,25]], [[1,5],[8,12],[15,24],[25,26]]],
+].forEach(([A, B]) => {
+  console.log(intervalIntersection(A, B))
+  console.log(aMoreConciseMethod(A, B))
 })
 
 // Solution:
-// 开始时先算所有偶数的和。
-// 在每次改变数时，有以下 4 种情况：
-// 1. 偶变偶，sum += q[0]
-// 2. 偶变奇，sum -= A[q[1]]
-// 3. 奇变偶，sum += A[q[1]] + q[0]
-// 4. 奇变奇，sum 不变
+// 同时遍历 A 和 B
+// 对于 A 和 B 中的任意两段直线，它们的关系有以下几种：
+// a = A[i], b = B[j]
 
-// 更好的编程方式
-// 在数值变前和变后，判断数的奇偶，并进行操作
-// 1. 变前为偶数则 sum 减去该数，奇数不做处理
-// 2. 改变数值
-// 3. 变后为偶数则 sum 加上该数，奇数不做处理
+// 1）无交集有两种情况
+//  1.1） a[1] < b[0]
+//      <---a--->
+//                   <---b--->
+//  此时 i++
+//  1.2） a[0] > b[1]
+//                     <---a--->
+//       <---b--->
+//  此时 j++
+
+// 2) 有交集 a[1] >= b[0]  &&  a[0] <= b[1]
+//  2.1) a[0] < b[0] && a[1] < b[1]
+//       <---a--->
+//              <---b--->
+//  [b[0], a[1]], i++
+//  2.2) a[0] >= b[0] && a[1] >= b[1]
+//              <---a--->
+//       <---b--->
+//  [a[0], b[1]], j++
+//  2.3) a[0] >= b[0] && a[1] < b[1]
+//          <---a--->
+//        <-----b------>
+//  [a[0], a[1]], i++
+//  2.4) a[0] < b[0] && a[1] >= b[1]
+//        <-----a------>
+//          <---b--->
+//  [b[0], b[1]], j++
+
+// 简化代码
+// 将有交集的所有情况归结为
+// 左边 max(a[0], b[0])
+// 右边 min(a[1], b[1])
 
 // Submission Result: Accepted
