@@ -1,88 +1,67 @@
-// 1337. The K Weakest Rows in a Matrix
-// Easy   68%
+// 1342. Number of Steps to Reduce a Number to Zero
+// Easy   87%
 
 
-// Given a m * n matrix mat of ones (representing soldiers) and zeros
-// (representing civilians), return the indexes of the k weakest rows in the
-// matrix ordered from the weakest to the strongest.
-// A row i is weaker than row j, if the number of soldiers in row i is less than
-// the number of soldiers in row j, or they have the same number of soldiers but
-// i is less than j. Soldiers are always stand in the frontier of a row, that is,
-// always ones may appear first and then zeros.
+// Given a non-negative integer num, return the number of steps to reduce it to
+// zero. If the current number is even, you have to divide it by 2, otherwise,
+// you have to subtract 1 from it.
 
 // Example 1:
-// Input: mat =
-// [[1,1,0,0,0],
-//  [1,1,1,1,0],
-//  [1,0,0,0,0],
-//  [1,1,0,0,0],
-//  [1,1,1,1,1]],
-// k = 3
-// Output: [2,0,3]
+// Input: num = 14
+// Output: 6
 // Explanation:
-// The number of soldiers for each row is:
-// row 0 -> 2
-// row 1 -> 4
-// row 2 -> 1
-// row 3 -> 2
-// row 4 -> 5
-// Rows ordered from the weakest to the strongest are [2,0,3,1,4]
+// Step 1) 14 is even; divide by 2 and obtain 7.
+// Step 2) 7 is odd; subtract 1 and obtain 6.
+// Step 3) 6 is even; divide by 2 and obtain 3.
+// Step 4) 3 is odd; subtract 1 and obtain 2.
+// Step 5) 2 is even; divide by 2 and obtain 1.
+// Step 6) 1 is odd; subtract 1 and obtain 0.
 // Example 2:
-// Input: mat =
-// [[1,0,0,0],
-//  [1,1,1,1],
-//  [1,0,0,0],
-//  [1,0,0,0]],
-// k = 2
-// Output: [0,2]
+// Input: num = 8
+// Output: 4
 // Explanation:
-// The number of soldiers for each row is:
-// row 0 -> 1
-// row 1 -> 4
-// row 2 -> 1
-// row 3 -> 1
-// Rows ordered from the weakest to the strongest are [0,2,3,1]
+// Step 1) 8 is even; divide by 2 and obtain 4.
+// Step 2) 4 is even; divide by 2 and obtain 2.
+// Step 3) 2 is even; divide by 2 and obtain 1.
+// Step 4) 1 is odd; subtract 1 and obtain 0.
+// Example 3:
+// Input: num = 123
+// Output: 12
 
 // Constraints:
-//     m == mat.length
-//     n == mat[i].length
-//     2 <= n, m <= 100
-//     1 <= k <= m
-//     matrix[i][j] is either 0 or 1.
+//     0 <= num <= 10^6
 
 
 /**
- * @param {number[][]} mat
- * @param {number} k
- * @return {number[]}
+ * @param {number} num
+ * @return {number}
  */
-const kWeakestRows = function(mat, k) {
-  const m = mat.length, n = mat[0].length
-  const res = []
-  for (let j = 0; j < n; j++) {
-    for (let i = 0; i < m; i++) {
-      if (mat[i][j] === 0 && !res.includes(i)) res.push(i)
-      if (res.length === k) return res
-    }
+const numberOfSteps  = function(num) {
+  if (num === 0) return 0
+  let res = -1
+  while (num > 0) {
+    res += num % 2 ? 2 : 1
+    num >>>= 1
   }
-  for (let i = 0; i < m && res.length < k; i++) if (!res.includes(i)) res.push(i)
   return res
 }
 
 ;[
-  [[[1,1,0,0,0],[1,1,1,1,0],[1,0,0,0,0],[1,1,0,0,0],[1,1,1,1,1]], 3],
-  [[[1,0,0,0],
-    [1,1,1,1],
-    [1,0,0,0],
-    [1,0,0,0]], 2],
-  [[[1,1,1,1,1,1],[1,1,1,1,1,1],[1,1,1,1,1,1]], 1],
-].forEach(([mat, k]) => {
-  console.log(kWeakestRows(mat, k))
+  0,
+  14,
+  8,
+  123,
+  100000,
+].forEach((num) => {
+  console.log(numberOfSteps(num))
 })
 
 // Solution:
-// 1. 统计每行1的个数，再排序。
+// 1. 直接计算
 
-// 2. 一列列遍历，发现 0 时，将该行添加到数组中，（重复的不添加）。
+// 2. 使用二进制计算，
+// 按照题意可以转换为：
+// - 数的二进制最后一位为 0 时，右移一位，计一次操作
+// - 数的二进制最后一位为 1 时，右移一位，计两次操作（先减1，在除2）
 
 // Submission Result: Accepted
