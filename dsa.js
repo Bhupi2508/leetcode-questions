@@ -1,53 +1,51 @@
-// 238. Product of Array Except Self
-// Medium   49%
+// 242. Valid Anagram
+// Easy   46%
 
 
-// Given an array of n integers where n > 1, nums, return an array output such
-// that output[i] is equal to the product of all the elements of nums except
-// nums[i].
+// Given two strings s and t, write a function to determine if t is an anagram of
+// s.
 
-// Solve it without division and in O(n).
+// For example,
+// s = "anagram", t = "nagaram", return true.
+// s = "rat", t = "car", return false.
 
-// For example, given [1,2,3,4], return [24,12,8,6].
+// Note:
+// You may assume the string contains only lowercase alphabets.
 
 // Follow up:
-// Could you solve it with constant space complexity? (Note: The output array
-// does not count as extra space for the purpose of space complexity analysis.)
+// What if the inputs contain unicode characters? How would you adapt your
+// solution to such case?
 
 
 /**
- * @param {number[]} nums
- * @return {number[]}
+ * @param {string} s
+ * @param {string} t
+ * @return {boolean}
  */
-const productExceptSelf = function(nums) {
-  const result = [1], n = nums.length
-  for (let i = 1; i < n; i++) {
-    result[i] = result[i - 1] * nums[i - 1]
+const isAnagram = function(s, t) {
+  if (s.length !== t.length) return false
+  const hash = {}
+  for (let c of s) hash[c] = (hash[c] || 0) + 1
+  for (let c of t) {
+    if (!hash[c]) return false
+    hash[c]--
   }
-
-  for (let i = n - 1, right = 1; i >= 0; i--) {
-    result[i] *= right
-    right *= nums[i]
-  }
-  return result
+  return true
 }
 
 ;[
-  [1,2,3,4],                    // [24, 12, 8, 6]
-  [0,4,0],                      // [0,0,0]
-].forEach(nums => {
-  console.log(productExceptSelf(nums))
+  ['anagram', 'nagaram'],       // true
+  ['rat', 'car'],               // false
+  ['ab', 'a'],                  // false
+  ['aacc', 'ccac'],             // false
+].forEach(args => {
+  console.log(isAnagram(...args))
 })
 
 // Solution:
-// 首先构造一个新的作为答案的数组。
-// 初始化第一个数为1；
-// 其后每个数都是前一个位置的数与输入数组相同位置的数的乘积。
-
-// 最后，新数组的每个位置，都是输入数组中的相同位置的 前面全部数字的乘积。
-
-// 再次从后面遍历到前面，每次记录每个位置之后的 全部数字的乘积，
-// 并让该数乘上该位置原来保留的 前面全部数字的乘积，
-// 这样就获得了除了其自身的所有数的乘积。
+// 若字符串的长度不同，那一定 false
+// 用哈希保存 s 字符串的那个出现字符及其次数。
+// 对于 t 字符串中的每个字符，判断其是否在哈希中出现，且其哈希值是否大于0，
+// 若不是则返回 false，如果全部通过则返回 true 。
 
 // Submission Result: Accepted
