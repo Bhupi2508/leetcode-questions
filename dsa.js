@@ -1,57 +1,70 @@
-// 605. Can Place Flowers
-// Easy   30%
+// 606. Construct String from Binary Tree
+// Easy   49%
 
 
-// Suppose you have a long flowerbed in which some of the plots are planted and
-// some are not. However, flowers cannot be planted in adjacent plots - they
-// would compete for water and both would die.
+// You need to construct a string consists of parenthesis and integers from a
+// binary tree with the preorder traversing way.
 
-// Given a flowerbed (represented as an array containing 0 and 1, where 0 means
-// empty and 1 means not empty), and a number n, return if n new flowers can be
-// planted in it without violating the no-adjacent-flowers rule.
+// The null node needs to be represented by empty parenthesis pair "()". And you
+// need to omit all the empty parenthesis pairs that don't affect the one-to-one
+// mapping relationship between the string and the original binary tree.
 
 // Example 1:
 
-// Input: flowerbed = [1,0,0,0,1], n = 1
-// Output: True
+// Input: Binary tree: [1,2,3,4]
+//        1
+//      /   \
+//     2     3
+//    /
+//   4
+
+// Output: "1(2(4))(3)"
+// Explanation: Originallay it needs to be "1(2(4)())(3()())", but you need to
+// omit all the unnecessary empty parenthesis pairs. And it will be "1(2(4))(3)".
 
 // Example 2:
 
-// Input: flowerbed = [1,0,0,0,1], n = 2
-// Output: False
+// Input: Binary tree: [1,2,3,null,4]
+//        1
+//      /   \
+//     2     3
+//      \
+//       4
 
-// Note:
-
-// The input array won't violate no-adjacent-flowers rule.
-// The input array size is in the range of [1, 20000].
-// n is a non-negative integer which won't exceed the input array size.
+// Output: "1(2()(4))(3)"
+// Explanation: Almost the same as the first example, except we can't omit the
+// first parenthesis pair to break the one-to-one mapping relationship between
+// the input and the output.
 
 
 /**
- * @param {number[]} flowerbed
- * @param {number} n
- * @return {boolean}
+ * Definition for a binary tree node.
+ * function TreeNode(val) {
+ *   this.val = val;
+ *   this.left = this.right = null;
+ * }
  */
-const canPlaceFlowers = function(flowerbed, n) {
-  for (let i = 0, len = flowerbed.length; i < len; i++) {
-    if (!flowerbed[i] && !flowerbed[i - 1] && !flowerbed[i + 1]) {
-      flowerbed[i] = 1
-      n--
-    }
-  }
-  return n <= 0
+
+/**
+ * @param {TreeNode} t
+ * @return {string}
+ */
+const tree2str = function(t) {
+  if (t == void 0) return ''
+  return '' + t.val +
+    (t.left ? '(' + tree2str(t.left) + ')' : (t.right ? '()' : '')) +
+    (t.right ? '(' + tree2str(t.right) + ')' : '')
 }
 
+const TreeNode = require('../structs/TreeNode')
 ;[
-  [[1,0,0,0,1], 1],             // true
-  [[1,0,0,0,1], 2],             // false
-  [[1,0,1], 0],                 // true
-  [[0,0,1,0,1], 1],             // true
-].forEach(args => {
-  console.log(canPlaceFlowers(...args))
+  [1,2,3,4],           // '1(2(4))(3)'
+  [1,2,3,null,4],      // '1(2()(4))(3)'
+].forEach((array) => {
+  console.log(tree2str(TreeNode.from(array)))
 })
 
 // Solution:
-// 不要空想，直接去种一遍。
+// 关键在于只有右节点，没有左节点时，做节点要用 ‘()’ 代替。
 
 // Submission Result: Accepted
