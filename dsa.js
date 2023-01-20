@@ -1,71 +1,88 @@
-// 667. Beautiful Arrangement II
-// Medium   51%
+// 669. Trim a Binary Search Tree
+// Easy 58% locked:false
 
 
-// Given two integers n and k, you need to construct a list which contains n
-// different positive integers ranging from 1 to n and obeys the following
-// requirement:
-
-// Suppose this list is [a1, a2, a3, ... , an], then the list [|a1 - a2|, |a2 -
-// a3|, |a3 - a4|, ... , |an-1 - an|] has exactly k distinct integers.
-
-// If there are multiple answers, print any of them.
+// Given a binary search tree and the lowest and highest boundaries as L and R,
+// trim the tree so that all its elements lies in [L, R] (R >= L). You might need
+// to change the root of the tree, so the result should return the new root of
+// the trimmed binary search tree.
 
 // Example 1:
 
-// Input: n = 3, k = 1
-// Output: [1, 2, 3]
-// Explanation: The [1, 2, 3] has three different positive integers ranging from
-// 1 to 3, and the [1, 1] has exactly 1 distinct integer: 1.
+// Input:
+//     1
+//    / \
+//   0   2
+
+//   L = 1
+//   R = 2
+
+// Output:
+//     1
+//       \
+//        2
 
 // Example 2:
 
-// Input: n = 3, k = 2
-// Output: [1, 3, 2]
-// Explanation: The [1, 3, 2] has three different positive integers ranging from
-// 1 to 3, and the [2, 1] has exactly 2 distinct integers: 1 and 2.
+// Input:
+//     3
+//    / \
+//   0   4
+//    \
+//     2
+//    /
+//   1
 
-// Note:
+//   L = 1
+//   R = 3
 
-// The n and k are in the range 1 <= k < n <= 10^4.
+// Output:
+//       3
+//      /
+//    2
+//   /
+//  1
 
 
 /**
- * @param {number} n
- * @param {number} k
- * @return {number[]}
+ * Definition for a binary tree node.
+ * function TreeNode(val) {
+ *   this.val = val;
+ *   this.left = this.right = null;
+ * }
  */
-const constructArray = function(n, k) {
-  const result = [1]
-  for (let i = 1; i < n; i++) {
-    if (k > 0) {
-      result[i] = result[i - 1] + ((i % 2 ? 1 : -1) * k--)
-    } else {
-      result[i] = i + 1
-    }
-  }
-  return result
+
+/**
+ * @param {TreeNode} root
+ * @param {number} L
+ * @param {number} R
+ * @return {TreeNode}
+ */
+const trimBST = function(root, L, R) {
+  if (root == void 0) return null
+  const val = root.val
+  if (val < L) return trimBST(root.right, L, R)
+  if (val > R) return trimBST(root.left, L, R)
+  root.left = trimBST(root.left, L, val)
+  root.right = trimBST(root.right, val, R)
+  return root
 }
 
+const TreeNode = require('../structs/TreeNode')
 ;[
-  [3, 1],                       // [1, 2, 3]
-  [3, 2],                       // [1, 3, 2]
-  [16, 5],
-  [16, 6],
-].forEach(args => {
-  console.log(constructArray(...args))
+  [[1, 0, 2], 1, 2],
+  [[3, 0, 4, null, 2, null, null, 1], 1, 3],
+].forEach(([array, L, R]) => {
+  console.log(trimBST(TreeNode.from(array), L, R))
 })
 
+
 // Solution:
-// 找规律
-// 初始化第一个数为 1
-// 构造第二个数到第 1+k 个数，每个数是前一个数的基础上加或减一个数p
-// 若对于第i个数，其中i为奇数则加，若为偶数则减。
-// 数p初始化为k，每次使用都减一。
-
-// 第k+1个数后的数的值都为其下标加一。
-
-// 主要是找规律吧，没有特别的思想。
-// 有空可以用不完全归纳法证明一下其逻辑正确性。
+// 递归求解。
+// 如果节点小于 L ，节点及其右子树是不可能在范围内的，递归寻找左子树符合要求的。
+// 如果节点大于 R ，同理。
+// 如果节点在范围内，则递归获得其符合要求的左右子节点。
+// 最后递归的进行要返回根节点，或null。
+// 思路很清晰。
 
 // Submission Result: Accepted
