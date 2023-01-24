@@ -1,115 +1,66 @@
-// 986. Interval List Intersections
-// Medium   67%
+// 989. Add to Array-Form of Integer
+// Easy   44%
 
 
-// Given two lists of closed intervals, each list of intervals is pairwise
-// disjoint and in sorted order.
-// Return the intersection of these two interval lists.
-// (Formally, a closed interval [a, b] (with a <= b) denotes the set of real
-// numbers x with a <= x <= b.  The intersection of two closed intervals is a set
-// of real numbers that is either empty, or can be represented as a closed
-// interval.  For example, the intersection of [1, 3] and [2, 4] is [2, 3].)
+// For a non-negative integer X, the array-form of X is an array of its digits in
+// left to right order.  For example, if X = 1231, then the array form is
+// [1,2,3,1].
+// Given the array-form A of a non-negative integer X, return the array-form of
+// the integer X+K.
 
 // Example 1:
-//
-//   A - -       - - - - -
-//   B   - - - -       - - - -
-// ans   -      |      - -
-//    0   2   4   6   8   10  12
+// Input: A = [1,2,0,0], K = 34
+// Output: [1,2,3,4]
+// Explanation: 1200 + 34 = 1234
+// Example 2:
+// Input: A = [2,7,4], K = 181
+// Output: [4,5,5]
+// Explanation: 274 + 181 = 455
+// Example 3:
+// Input: A = [2,1,5], K = 806
+// Output: [1,0,2,1]
+// Explanation: 215 + 806 = 1021
+// Example 4:
+// Input: A = [9,9,9,9,9,9,9,9,9,9], K = 1
+// Output: [1,0,0,0,0,0,0,0,0,0,0]
+// Explanation: 9999999999 + 1 = 10000000000
 
-// Input: A = [[0,2],[5,10],[13,23],[24,25]], B = [[1,5],[8,12],[15,24],[25,26]]
-// Output: [[1,2],[5,5],[8,10],[15,23],[24,24],[25,25]]
-
-// Note:
-//     0 <= A.length < 1000
-//     0 <= B.length < 1000
-//     0 <= A[i].start, A[i].end, B[i].start, B[i].end < 10^9
+// Note：
+//     1 <= A.length <= 10000
+//     0 <= A[i] <= 9
+//     0 <= K <= 10000
+//     If A.length > 1, then A[0] != 0
 
 
 /**
- * @param {number[][]} A
- * @param {number[][]} B
- * @return {number[][]}
+ * @param {number[]} A
+ * @param {number} K
+ * @return {number[]}
  */
-const intervalIntersection = function(A, B) {
-  const res = []
-  const m = A.length, n = B.length
-  let i = j = 0
-  while (i < m && j < n) {
-    const a = A[i], b = B[j]
-    if (a[1] >= b[0] && a[0] <= b[1]) {
-      if (a[0] < b[0]){
-        if (a[1] < b[1]) res.push([b[0], a[1]])
-        else res.push([...b])
-      } else {
-        if (a[1] < b[1]) res.push([...a])
-        else res.push([a[0], b[1]])
-      }
-    }
-
-    if (a[1] < b[1]) i++
-    else j++
+const addToArrayForm = function(A, K) {
+  const result = []
+  for (let i = A.length - 1; i >= 0; i--) {
+    result.unshift((A[i] + K) % 10)
+    K = ((A[i] + K) / 10) >>> 0
   }
-  return res
-}
-
-const aMoreConciseMethod = function(A, B) {
-  const res = []
-  for (let i = j = 0; i < A.length && j < B.length;) {
-    if (A[i][1] < B[j][0]) i++
-    else if (A[i][0] > B[j][1]) j++
-    else {
-      res.push([Math.max(A[i][0], B[j][0]), Math.min(A[i][1], B[j][1])])
-      if (A[i][1] < B[j][1]) i++
-      else j++
-    }
+  while (K > 0) {
+    result.unshift(K % 10)
+    K = (K / 10) >>> 0
   }
-  return res
+  return result
 }
 
 ;[
-  [[[0,2],[5,10],[13,23],[24,25]], [[1,5],[8,12],[15,24],[25,26]]],
-].forEach(([A, B]) => {
-  console.log(intervalIntersection(A, B))
-  console.log(aMoreConciseMethod(A, B))
+  [[1,2,0,0], 34], // [1,2,3,4]
+  [[2,7,4], 181], // [4,5,5]
+  [[2,1,5], 806], // [1,0,2,1]
+  [[9,9,9,9,9,9,9,9,9,9], 1], // [1,0,0,0,0,0,0,0,0,0,0]
+].forEach(([A, K]) => {
+  console.log(addToArrayForm(A, K))
 })
 
 // Solution:
-// 同时遍历 A 和 B
-// 对于 A 和 B 中的任意两段直线，它们的关系有以下几种：
-// a = A[i], b = B[j]
-
-// 1）无交集有两种情况
-//  1.1） a[1] < b[0]
-//      <---a--->
-//                   <---b--->
-//  此时 i++
-//  1.2） a[0] > b[1]
-//                     <---a--->
-//       <---b--->
-//  此时 j++
-
-// 2) 有交集 a[1] >= b[0]  &&  a[0] <= b[1]
-//  2.1) a[0] < b[0] && a[1] < b[1]
-//       <---a--->
-//              <---b--->
-//  [b[0], a[1]], i++
-//  2.2) a[0] >= b[0] && a[1] >= b[1]
-//              <---a--->
-//       <---b--->
-//  [a[0], b[1]], j++
-//  2.3) a[0] >= b[0] && a[1] < b[1]
-//          <---a--->
-//        <-----b------>
-//  [a[0], a[1]], i++
-//  2.4) a[0] < b[0] && a[1] >= b[1]
-//        <-----a------>
-//          <---b--->
-//  [b[0], b[1]], j++
-
-// 简化代码
-// 将有交集的所有情况归结为
-// 左边 max(a[0], b[0])
-// 右边 min(a[1], b[1])
+// 由于 A 的最大长度为 10000，所以不好使用内置加法
+// 使用十进制个位数加法来计算，计算时可以将进位保存在 K 中
 
 // Submission Result: Accepted
