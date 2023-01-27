@@ -1,87 +1,86 @@
-// 467. Unique Substrings in Wraparound String
-// Medium   33%
+// 475. Heaters
+// Easy   29%
 
 
-// Consider the string s to be the infinite wraparound string of
-// "abcdefghijklmnopqrstuvwxyz", so s will look like this:
-// "...zabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcd....".
+// Winter is coming! Your first job during the contest is to design a standard
+// heater with fixed warm radius to warm all the houses.
 
-// Now we have another string p. Your job is to find out how many unique
-// non-empty substrings of p are present in s. In particular, your input is the
-// string p and you need to output the number of different non-empty substrings
-// of p in the string s.
+// Now, you are given positions of houses and heaters on a horizontal line, find
+// out minimum radius of heaters so that all houses could be covered by those
+// heaters.
 
-// Note: p consists of only lowercase English letters and the size of p might be
-// over 10000.
+// So, your input will be the positions of houses and heaters seperately, and
+// your expected output will be the minimum radius standard of heaters.
+
+// Note:
+
+// Numbers of houses and heaters you are given are non-negative and will not
+// exceed 25000.
+// Positions of houses and heaters you are given are non-negative and will not
+// exceed 10^9.
+// As long as a house is in the heaters' warm radius range, it can be warmed.
+// All the heaters follow your radius standard and the warm radius will the same.
 
 // Example 1:
-// Input: "a"
+
+// Input: [1,2,3],[2]
 // Output: 1
-// Explanation: Only the substring "a" of string "a" is in the string s.
+// Explanation: The only heater was placed in the position 2, and if we use the
+// radius 1 standard, then all the houses can be warmed.
 
 // Example 2:
-// Input: "cac"
-// Output: 2
-// Explanation: There are two substrings "a", "c" of string "cac" in the string
-// s.
 
-// Example 3:
-// Input: "zab"
-// Output: 6
-// Explanation: There are six substrings "z", "a", "b", "za", "ab", "zab" of
-// string "zab" in the string s.
+// Input: [1,2,3,4],[1,4]
+// Output: 1
+// Explanation: The two heater was placed in the position 1 and 4. We need to use
+// radius 1 standard, then all the houses can be warmed.
 
 
 /**
- * @param {string} p
+ * @param {number[]} houses
+ * @param {number[]} heaters
  * @return {number}
  */
-const findSubstringInWraproundString = function(p) {
-  const slots = Array(26).fill(0)
-  let count = 1
-  for (let i = 0; i < p.length; i++) {
-    const pi = p.codePointAt(i)
-    const diff = pi - p.codePointAt(i - 1)
-    if (diff === 1 || diff === -25) {
-      count++
+const findRadius = function(houses, heaters) {
+  houses.sort((a, b) => a - b)
+  heaters.sort((a, b) => a - b)
+  const n = houses.length
+  let i = 0, j = 0, result = 0
+  while (i < n) {
+    const next = heaters[j + 1] || Infinity
+    if (houses[i] < next) {
+      result = Math.max(result, Math.min(
+        Math.abs(next - houses[i]),
+        Math.abs(heaters[j] - houses[i])
+      ))
+      i++
     } else {
-      count = 1
+      j++
     }
-    slots[pi - 97] = Math.max(slots[pi - 97], count)
   }
-
-  return slots.reduce((sum, v) => sum + v, 0)
+  return result
 }
 
 ;[
-  'a',   // 1
-  'cac', // 2
-  'zab', // 6
-  'yzaxyz', // 9
-  'aszadfjlkjzabsdfghijabcde', // 36
-  'yzabcdefghijklmnopqrstuvwxyz', // 403
-].forEach((p) => {
-  console.log(findSubstringInWraproundString(p))
+  [[1,2,3], [2]],               // 1
+  [[1,2,3,4], [1,4]],           // 1
+  [[1,2,3,4], [5]],             // 4
+  [[1,2,3,5,15], [2,30]],       // 13
+  [[1,2,3,5,15], [3,12]],       // 3
+].forEach(args => {
+  console.log(findRadius(...args))
 })
 
 // Solution:
-// 方法 1
-// 先找出连续的所有子字符串并计算其排列数，最后加起来得到答案。
-// 问题所在：子字符串可能重复，子字符串的子字符串也可能重复。
 
-// 方法 2
-// 使用一个hash集合，存放所有的字符串，没有重复，集合的长度即是答案。
-// 问题所在：时间复杂度大，空间复杂度也大。
+// 排序两个数组，这样它们就像是在一条线上了。
 
-// 方法 3
-// 使用 dp 算法，使用一个长度为 26（26个字母）的数组。
-// 数组保存以字母为首的子字符串的字符串长度的最大长度。
-//  1. 分出多个子字符串；
-//  2. 每个字符串中每个字符到末尾的长度，比较该字符对应的位置的数，若大于则替换；
-//  3. 累加数组的每个数，得到答案。
+// 首先考虑房子全部在加热器内部，即左右两边都有加热器。
+// 这种情况下每个房子计算其到左右两边的加热器的距离，
+// 选择连接最近的那个加热器。
+// 最后计算加热器需要的最短半径。
 
-// 如 'yzaxyz' 可分出两个子字符串 'yza' 和 'xyz'
-// 填入数组为 y = 3, z = 2, a = 1, x = 3
-// 答案为 3 + 2 + 1 + 3 = 9
+// 如果房子只有左边或右边有，那就没的选了，只能选有的那边。
+
 
 // Submission Result: Accepted
