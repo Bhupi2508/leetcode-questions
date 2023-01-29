@@ -1,33 +1,62 @@
 /**
- * key: sort each string in strs. If two strings are anagram to each other, then
- * after sorting, theses two strings are same. Use a map to track the same strings,
- * the string itself becomes the key, the value is the array of the anagram strings.
+ * Key: see inline comments. O(N^2). Space O(1).
  *
- * @param {string[]} strs
- * @return {string[][]}
+ * @param {string} s
+ * @return {string}
  */
-var groupAnagrams = function(strs) {
-    var map = {};
-    for (var i = 0; i < strs.length; i++) {
-        var strCopy = strs[i].split('');
-        strCopy.sort(strCompare);
-        if (strCopy.join('') in map) {
-            map[strCopy.join('')].push(strs[i]);
-        } else {
-            map[strCopy.join('')] = [strs[i]];
+var longestPalindrome = function(s) {
+    if (!s) return s;
+    var longest = s.substring(0, 1);
+    for (var i = 0; i < s.length; i++) {
+        // odd
+        var tmp = getPalindromeSubstring(s, i, i);
+        if (tmp.length > longest.length) {
+            longest = tmp;
+        }
+
+        // even, get longest palindrome with center of i, i+1
+        tmp = getPalindromeSubstring(s, i, i + 1);
+        if (tmp.length > longest.length) {
+            longest = tmp;
         }
     }
 
-    var result = [];
-    for (var key in map) {
-        result.push(map[key].sort(strCompare));
-    }
-
-    return result;
+    return longest;
 };
 
-var strCompare = function(a, b) {
-    if (a < b) return -1;
-    else if (a > b) return 1;
-    else return 0;
+// Given a center, either one letter or two letter,
+// Find longest palindrome
+var getPalindromeSubstring = function(s, i, j) {
+    while (i >= 0 && j < s.length && s[i] === s[j]) {
+        i--;
+        j++;
+    }
+
+    return s.substring(i + 1, j);
+};
+
+
+// dp method, should work. memory exceed limit
+// bottom-up.
+var longestPalindrome = function(s) {
+    if (!s) return s;
+    var longest = s.substring(0, 1);
+    var length = s.length;
+    var dp = [];
+    var maxLength = 1;
+    for (var i = length - 1; i >= 0; i--) {
+        dp[i] = [];
+        for (var j = i; j < length; j++) {
+            // j - i <= 2 is important, in case i + 1 is out of array boundary.
+            if (s[i] === s[j] && (j - i <= 2 || dp[i + 1][j - 1])) {
+                dp[i][j] = true;
+                if (j - i + 1 > maxLength) {
+                    maxLength = j - i + 1;
+                    longest = s.substring(i, j + 1);
+                }
+            }
+        }
+    }
+
+    return longest;
 };
