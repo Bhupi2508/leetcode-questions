@@ -1,48 +1,61 @@
-// 35. Search Insert Position
-// Easy   39%
+// 36. Valid Sudoku
+// Medium   36%
 
-// Given a sorted array and a target value, return the index if the target is
-// found. If not, return the index where it would be if it were inserted in
-// order.
+// Determine if a Sudoku is valid, according to: Sudoku Puzzles - The Rules.
 
-// You may assume no duplicates in the array.
+// The Sudoku board could be partially filled, where empty cells are filled with
+// the character '.'.
 
-// Here are few examples.
-// [1,3,5,6], 5 → 2
-// [1,3,5,6], 2 → 1
-// [1,3,5,6], 7 → 4
-// [1,3,5,6], 0 → 0
+
+// A partially filled sudoku which is valid.
+
+// Note: A valid Sudoku board (partially filled) is not necessarily solvable.
+// Only the filled cells need to be validated.
 
 /**
- * @param {number[]} nums
- * @param {number} target
- * @return {number}
+ * @param {character[][]} board
+ * @return {boolean}
  */
-const searchInsert = function(nums, target) {
-  let i = 0, j = nums.length - 1
-  while (i <= j) {
-    const mid = (i + j) >> 1
-    if (target < nums[mid]) j = mid - 1
-    else if (target > nums[mid]) i = mid + 1
-    else return mid
+const isValidSudoku = function(board) {
+  const n = 9, trunc = Math.trunc
+  for (let i = 0; i < n; i++) {
+    const checks = [{}, {}, {}]
+    for (let j = 0; j < n; j++) {
+      const c = [
+        board[i][j],
+        board[j][i],
+        board[trunc(i / 3) * 3 + trunc(j / 3)][j % 3 + i % 3 * 3]
+      ]
+      for (let k = 0; k < 3; k++) {
+        if (c[k] !== '.') {
+          if (checks[k][c[k]]) return false
+          checks[k][c[k]] = true
+        }
+      }
+    }
   }
-  return (i + j + 1) >> 1
+
+  return true
 }
 
 ;[
-  [[1,3,5,6], 5],               // 2
-  [[1,3,5,6], 2],               // 1
-  [[1,3,5,6], 7],               // 4
-  [[1,3,5,6], 0],               // 0
-].forEach(args => {
-  console.log(searchInsert(...args))
+  [
+    ".87654321",
+    "2........",
+    "3........",
+    "4........",
+    "5........",
+    "6........",
+    "7........",
+    "8........",
+    "9........"
+  ],                            // true
+].forEach(board => {
+  console.log(isValidSudoku(board))
 })
 
 // Solution:
-// 二分查找法
-// 若找到相同的数，则插入该位置（如题意)
-// 若未找到，则插入最后查找到的位置上。
-
-// 关键在于编码的细节上。
+// 分别检查行，列，宫是否合法。
+// 检查一个组是否有重复，使用哈希表来判断。
 
 // Submission Result: Accepted
