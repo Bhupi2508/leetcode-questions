@@ -1,38 +1,47 @@
-// 169. Majority Element
+// 171. Excel Sheet Column Number
 // Easy   47%
 
 
-// Given an array of size n, find the majority element. The majority element is
-// the element that appears more than └ n/2 ┘ times.
+// Related to question Excel Sheet Column Title
 
-// You may assume that the array is non-empty and the majority element always
-// exist in the array.
+// Given a column title as appear in an Excel sheet, return its corresponding
+// column number.
+
+// For example:
+
+//     A -> 1
+//     B -> 2
+//     C -> 3
+//     ...
+//     Z -> 26
+//     AA -> 27
+//     AB -> 28
 
 // Credits:Special thanks to @ts for adding this problem and creating all test
 // cases.
 
 
 /**
- * @param {number[]} nums
+ * @param {string} s
  * @return {number}
  */
-const majorityElement = function(nums) {
-  const hash = {}, n = nums.length, majority = Math.floor(n / 2)
+const titleToNumber = function(s) {
+  const n = s.length
+  let result = 0
   for (let i = 0; i < n; i++) {
-    const num = nums[i]
-    hash[num] = (hash[num] || 0) + 1
-    if (hash[num] > majority) return num
+    result = result * 26 +  s.charCodeAt(i) - 64
   }
-  return nums[0]
+  return result
 }
 
 ;[
-  [1],                          // 1
-].forEach(nums => {
-  console.log(majorityElement(nums))
+  'A',                          // 1
+  'asd',                        // 23670
+].forEach(s => {
+  console.log(titleToNumber(s))
 })
 
 // Solution:
-// 为元素计数，一般使用哈希。
+// 这像是26进制数转换为10进制一样。
 
 // Submission Result: Accepted
