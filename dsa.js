@@ -1,23 +1,33 @@
 /**
- * Key: because it is a n*n matrix, rotate from outer to inner level by level.
- * 
- * @param {number[][]} matrix
- * @return {void} Do not return anything, modify matrix in-place instead.
+ * key: sort each string in strs. If two strings are anagram to each other, then
+ * after sorting, theses two strings are same. Use a map to track the same strings,
+ * the string itself becomes the key, the value is the array of the anagram strings.
+ *
+ * @param {string[]} strs
+ * @return {string[][]}
  */
-var rotate = function(matrix) {
-    var diagonalStart = 0;
-    var length = matrix.length - 1;
-
-    while (diagonalStart <= length / 2) {
-        var i = diagonalStart;
-        if (i + i >= length) break;
-        for (var j = diagonalStart; j < length - i; j++) {
-            var tmp = matrix[i][j];
-            matrix[i][j] = matrix[length - j][i];
-            matrix[length - j][i] = matrix[length - i][length - j];
-            matrix[length - i][length - j] = matrix[j][length - i];
-            matrix[j][length - i] = tmp;
+var groupAnagrams = function(strs) {
+    var map = {};
+    for (var i = 0; i < strs.length; i++) {
+        var strCopy = strs[i].split('');
+        strCopy.sort(strCompare);
+        if (strCopy.join('') in map) {
+            map[strCopy.join('')].push(strs[i]);
+        } else {
+            map[strCopy.join('')] = [strs[i]];
         }
-        diagonalStart++;
     }
+
+    var result = [];
+    for (var key in map) {
+        result.push(map[key].sort(strCompare));
+    }
+
+    return result;
+};
+
+var strCompare = function(a, b) {
+    if (a < b) return -1;
+    else if (a > b) return 1;
+    else return 0;
 };
