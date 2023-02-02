@@ -1,64 +1,49 @@
-// 374. Guess Number Higher or Lower
-// Easy   42%
+// 383. Ransom Note
+// Easy   47%
 
 
-// We are playing the Guess Game. The game is as follows:
-// I pick a number from 1 to n. You have to guess which number I picked.
-// Every time you guess wrong, I'll tell you whether the number is higher or
-// lower.
-// You call a pre-defined API guess(int num) which returns 3 possible results
-// (-1, 1, or 0):
-// -1 : My number is lower
-//  1 : My number is higher
-//  0 : Congrats! You got it!
-// Example :
-// Input: n = 10, pick = 6
-// Output: 6
+// Given an arbitrary ransom note string and another string containing letters
+// from all the magazines, write a function that will return true if the ransom
+// note can be constructed from the magazines ; otherwise, it will return false.
+
+// Each letter in the magazine string can only be used once in your ransom note.
+
+// Note:
+// You may assume that both strings contain only lowercase letters.
+
+// canConstruct("a", "b") -> false
+// canConstruct("aa", "ab") -> false
+// canConstruct("aa", "aab") -> true
 
 
 /**
- * Forward declaration of guess API.
- * @param {number} num   your guess
- * @return 	        -1 if num is lower than the guess number
- *			             1 if num is higher than the guess number
- *                       otherwise return 0
- * var guess = function(num) {}
+ * @param {string} ransomNote
+ * @param {string} magazine
+ * @return {boolean}
  */
-
-/**
- * @param {number} n
- * @return {number}
- */
-const guessNumber = function(n) {
-  let i = 1, mid = 1, guessRes = 0
-  while (i < n) {
-    mid = (i + n) >>> 1
-    guessRes = guess(mid)
-    if (guessRes === 0) return mid
-    else if (guessRes === 1) i = mid + 1
-    else n = mid - 1
+const canConstruct = function(ransomNote, magazine) {
+  const hash = {}
+  for (let c of magazine) hash[c] = (hash[c] || 0) + 1
+  for (let c of ransomNote) {
+    if (!hash[c]) return false
+    hash[c]--
   }
-  return i
+  return true
 }
 
-const pick_obj = { number: 0 }
-function guess(num) {
-  if (pick_obj.number === num) return 0
-  else if (pick_obj.number > num) return 1
-  else return -1
-}
 ;[
-  [10, 6],
-  [100, 1],
-  [100, 100],
-  [10, -1],
-  [10, 11],
-].forEach(([n, pick]) => {
-  pick_obj.number = pick
-  console.log(guessNumber(n))
+  ['a', 'b'],                   // false
+  ['aa', 'ab'],                 // false
+  ['aa', 'aab'],                // true
+].forEach(args => {
+  console.log(canConstruct(...args))
 })
 
+
 // Solution:
-// 二分查找法来完成。
+// 第一次遍历，用哈希表保存 s 字符串中的字符及其个数。
+// 第二次遍历，遇到字符不存在或其数量为 0 时，返回 false。
+// 都存在且够用，则返回 true。
+
 
 // Submission Result: Accepted
