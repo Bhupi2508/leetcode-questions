@@ -1,84 +1,50 @@
-// 87. Scramble String
-// Hard 29% locked:false
+// 88. Merge Sorted Array
+// Easy   32%
 
-// Given a string s1, we may represent it as a binary tree by partitioning it to
-// two non-empty substrings recursively.
+// Given two sorted integer arrays nums1 and nums2, merge nums2 into nums1 as
+// one sorted array.
 
-// Below is one possible representation of s1 = "great":
-
-//     great
-//    /    \
-//   gr    eat
-//  / \    /  \
-// g   r  e   at
-//            / \
-//           a   t
-
-// To scramble the string, we may choose any non-leaf node and swap its two
-// children.
-
-// For example, if we choose the node "gr" and swap its two children, it
-// produces a scrambled string "rgeat".
-
-//     rgeat
-//    /    \
-//   rg    eat
-//  / \    /  \
-// r   g  e   at
-//           / \
-//          a   t
-
-// We say that "rgeat" is a scrambled string of "great".
-
-// Similarly, if we continue to swap the children of nodes "eat" and "at", it
-// produces a scrambled string "rgtae".
-
-//     rgtae
-//    /    \
-//   rg    tae
-//  / \    /  \
-// r   g  ta  e
-//       / \
-//      t   a
-
-// We say that "rgtae" is a scrambled string of "great".
-
-// Given two strings s1 and s2 of the same length, determine if s2 is a
-// scrambled string of s1.
-
+// Note: You may assume that nums1 has enough space (size that is greater or
+// equal to m + n) to hold additional elements from nums2. The number of
+// elements initialized in nums1 and nums2 are m and n respectively.
 
 /**
- * @param {string} s1
- * @param {string} s2
- * @return {boolean}
+ * @param {number[]} nums1
+ * @param {number} m
+ * @param {number[]} nums2
+ * @param {number} n
+ * @return {void} Do not return anything, modify nums1 in-place instead.
  */
-const isScramble = function(s1, s2) {
-  if (s1.length !== s2.length) return false
-
-  const n = s1.length
-  if (n === 0) return true
-
-  const match = (i, k, x, z) => {
-    console.log(i, k, x, z);
-    if (i <= k && x <= z && i - k === x - z) {
-      if (i === k) return s1[i] === s2[x]
-      if (s1.substring(i, k + 1) === s2.substring(x, z + 1)) return true
-
-      const j = (i + k + 1) >> 1, y = (x + z + 1) >> 1
-      if ((i + k) % 2 === 1) {
-        if ((match(i, j - 1, y, z) && match(j, k, x, y - 1)) ||
-            (match(i, j - 1, x, y - 1) && match(j, k, y, z))) return true
-      } else {
-        if ((match(i, j - 1, y + 1, z) && match(j, k, x, y)) ||
-            (match(i, j, y, z) && match(j + 1, k, x, y - 1)) ||
-            (match(i, j - 1, x, y - 1) && match(j, k, y, z)) ||
-            (match(i, j, x, y) && match(j + 1, k, y + 1, z))) return true
-      }
+const merge = function(nums1, m, nums2, n) {
+  let p = m - 1, q = n - 1, k = n + m - 1
+  while (q >= 0) {
+    if (p < 0 || nums1[p] <= nums2[q]) {
+      nums1[k--] = nums2[q--]
+    } else {
+      nums1[k--] = nums1[p--]
     }
-    return false
   }
-
-  return match(0, n - 1, 0, n - 1)
 }
 
-console.log(isScramble('abab', 'aabb'))
+;[
+  [
+    [1, 2, 2, 0, 0, 0], 3,
+    [4, 5, 6], 3,
+  ],
+  [
+    [3, 4, 9, 11, 0, 0, 0, 0, 0], 4,
+    [1, 5, 8, 10, 16], 5,
+  ],
+].forEach(args => {
+  merge(...args)
+  console.log(args[0])
+})
+
+// Solution:
+// 方法一：
+// 使用插入法，从头开始，找到合适的位置进行插入，后移其后数字。
+
+// 方法二：
+// 从后向前填，从两个数组末尾选择较大的数，并填入第一个数组的末尾。
+
+// Submission Result: Accepted
