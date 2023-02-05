@@ -1,86 +1,65 @@
-// 748. Shortest Completing Word
-// Easy   56%
+// 762. Prime Number of Set Bits in Binary Representation
+// Easy   62%
 
 
 
-// Find the minimum length word from a given dictionary words, which has all the
-// letters from the string licensePlate.  Such a word is said to complete the
-// given string licensePlate
-// Here, for letters we ignore case.  For example, "P" on the licensePlate still
-// matches "p" on the word.
-// It is guaranteed an answer exists.  If there are multiple answers, return the
-// one that occurs first in the array.
-// The license plate might have the same letter occurring multiple times.  For
-// example, given a licensePlate of "PP", the word "pair" does not complete the
-// licensePlate, but the word "supper" does.
-
+// Given two integers L and R, find the count of numbers in the range [L, R]
+// (inclusive) having a prime number of set bits in their binary representation.
+// (Recall that the number of set bits an integer has is the number of 1s present
+// when written in binary.  For example, 21 written in binary is 10101 which has
+// 3 set bits.  Also, 1 is not a prime.)
 // Example 1:
-// Input: licensePlate = "1s3 PSt", words = ["step", "steps", "stripe",
-// "stepple"]
-// Output: "steps"
-// Explanation: The smallest length word that contains the letters "S", "P", "S",
-// and "T".
-// Note that the answer is not "step", because the letter "s" must occur in the
-// word twice.
-// Also note that we ignored case for the purposes of comparing whether a letter
-// exists in the word.
-
+// Input: L = 6, R = 10
+// Output: 4
+// Explanation:
+// 6 -> 110 (2 set bits, 2 is prime)
+// 7 -> 111 (3 set bits, 3 is prime)
+// 9 -> 1001 (2 set bits , 2 is prime)
+// 10->1010 (2 set bits , 2 is prime)
 // Example 2:
-// Input: licensePlate = "1s3 456", words = ["looks", "pest", "stew", "show"]
-// Output: "pest"
-// Explanation: There are 3 smallest length words that contains the letters "s".
-// We return the one that occurred first.
-
+// Input: L = 10, R = 15
+// Output: 5
+// Explanation:
+// 10 -> 1010 (2 set bits, 2 is prime)
+// 11 -> 1011 (3 set bits, 3 is prime)
+// 12 -> 1100 (2 set bits, 2 is prime)
+// 13 -> 1101 (3 set bits, 3 is prime)
+// 14 -> 1110 (3 set bits, 3 is prime)
+// 15 -> 1111 (4 set bits, 4 is not prime)
 // Note:
-// licensePlate will be a string with length in range [1, 7].
-// licensePlate will contain digits, spaces, or letters (uppercase or lowercase).
-// words will have a length in the range [10, 1000].
-// Every words[i] will consist of lowercase letters, and have length in range [1,
-// 15].
+// L, R will be integers L  in the range [1, 10^6].
+// R - L will be at most 10000.
 
 
 /**
- * @param {string} licensePlate
- * @param {string[]} words
- * @return {string}
+ * @param {number} L
+ * @param {number} R
+ * @return {number}
  */
-const shortestCompletingWord = function(licensePlate, words) {
-  const hash = {}
-  for (let c of licensePlate) {
-    if (('a' <= c && c <= 'z') || ('A' <= c && c <= 'Z')) {
-      const l = c.toLowerCase()
-      hash[l] = (hash[l] || 0) + 1
-    }
-  }
-  let res = '0'.repeat(16), wHash, isIncluded
-  for (let word of words) {
-    wHash = {}, isIncluded = true
-    for (let c of word) wHash[c] = (wHash[c] || 0) + 1
-    for (let key in hash) {
-      if (hash[key] > (wHash[key] || 0)) {
-        isIncluded = false
-        break
-      }
-    }
-    if (isIncluded && word.length < res.length) res = word
+const countPrimeSetBits = function(L, R) {
+  const PRIMES = [2, 3, 5, 7, 11, 13, 17, 19]
+  let res = 0
+  for (let i = L; i <= R; i++) {
+    let count = 0
+    for (let j = i; j > 0; j = j >>> 1) if (j % 2) count++
+    if (PRIMES.includes(count)) res++
   }
   return res
 }
 
 ;[
-  // ['1s3 PSt', ['step','steps','stripe','stepple']],
-  // ['1s3 456', ["looks", "pest", "stew", "show"]],
-  [
-    "Ah71752",
-    ["suggest","letter","of","husband","easy","education","drug","prevent","writer","old"],
-  ], // 'husband'
-].forEach(([licensePlate, words]) => {
-  console.log(shortestCompletingWord(licensePlate, words))
+  [6, 10], // 4
+  [10, 15], // 5
+  [842, 888], // 23
+].forEach(([L, R]) => {
+  console.log(countPrimeSetBits(L, R))
 })
 
 // Solution:
-// 先数字符串中每个字母（都转换成小写）的个数，记录在 hash 中，
-// 遍历词组，数词中各个字母的个数，并与 hash 中的字符比较，必须每个字符的个数都要大于或等于
-// hash 中的，若都大于，则与 res 比较长度，取短的。
+// 计算每个数的二进制中的 1 的个数
+// 再判断该数是否是质数
+
+// 因为数从 1 到 10^6 (10^6 < 2^20)
+// 所以判断质数时，只需判断其是否为 [2, 3, 5, 7, 11, 13, 17, 19] 中的一个即可。
 
 // Submission Result: Accepted
