@@ -1,103 +1,74 @@
-// 894. All Possible Full Binary Trees
-// Medium   74%
+// 896. Monotonic Array
+// Easy   57%
 
 
-// A full binary tree is a binary tree where each node has exactly 0 or 2
-// children.
-// Return a list of all possible full binary trees with N nodes.  Each element of
-// the answer is the root node of one possible tree.
-// Each node of each tree in the answer must have node.val = 0.
-// You may return the final list of trees in any order.
+// An array is monotonic if it is either monotone increasing or monotone
+// decreasing.
+// An array A is monotone increasing if for all i <= j, A[i] <= A[j].  An array A
+// is monotone decreasing if for all i <= j, A[i] >= A[j].
+// Return true if and only if the given array A is monotonic.
 
 // Example 1:
-// Input: 7
-// Output:
-// [
-//  [0,0,0,null,null,0,0,null,null,0,0],
-//  [0,0,0,null,null,0,0,0,0],
-//  [0,0,0,0,0,0,0],
-//  [0,0,0,0,0,null,null,null,null,0,0],
-//  [0,0,0,0,0,null,null,0,0]
-// ]
-// Explanation:
+// Input: [1,2,2,3]
+// Output: true
+// Example 2:
+// Input: [6,5,4,4]
+// Output: true
+// Example 3:
+// Input: [1,3,2]
+// Output: false
+// Example 4:
+// Input: [1,2,4,5]
+// Output: true
+// Example 5:
+// Input: [1,1,1]
+// Output: true
 
 // Note:
-//     1 <= N <= 20
+//     1 <= A.length <= 50000
+//     -100000 <= A[i] <= 100000
 
 
 /**
- * Definition for a binary tree node.
- * function TreeNode(val, left, right) {
- * this.val = (val===undefined ? 0 : val)
- *     this.left = (left===undefined ? null : left)
- *     this.right = (right===undefined ? null : right)
- * }
+ * @param {number[]} A
+ * @return {boolean}
  */
-const TreeNode = require('../structs/TreeNode')
-
-/**
- * @param {number} N
- * @return {TreeNode[]}
- */
-const allPossibleFBT = function(N) {
-  if (N % 2 === 0) return []
-  const cache = new Map()
-  for (let i = 1; i <= N; i += 2) {
-    if (i === 1) cache.set(i, [new TreeNode(0)])
-    else {
-      const arr = []
-      for (let j = 1; j < i; j += 2) {
-        const leftList = cache.get(j)
-        const rightList = cache.get(i - j - 1)
-        for (let left of leftList) {
-          for (let right of rightList) {
-            arr.push(new TreeNode(0, left, right))
-          }
-        }
-      }
-      cache.set(i, arr)
-    }
+const isMonotonic = function(A) {
+  const l = A.length
+  if (l === 1) return true
+  const fn = A[0] > A[l - 1] ? ((a, b) => a - b >= 0) : ((a, b) => b - a >= 0)
+  for (let i = 1; i < l; i++) {
+    if (!fn(A[i - 1], A[i])) return false
   }
-  return cache.get(N)
+  return true
 }
 
-const recursive = function(N) {
-  const res = []
-  if (N % 2 === 0) return res
-  if (N === 1) return [new TreeNode(0)]
-
-  for (let i = 1; i < N; i += 2) {
-    const leftList = allPossibleFBT(i)
-    const rightList = allPossibleFBT(N - i - 1)
-    for (let left of leftList) {
-      for (let right of rightList) {
-        res.push(new TreeNode(0, left, right))
-      }
-    }
+const batter = function(A) {
+  let inc = true, dec = true, l = A.length
+  for (let i = 1; i < l; i++) {
+    if (A[i - 1] > A[i]) inc = false
+    if (A[i - 1] < A[i]) dec = false
   }
-
-  return res
+  return inc || dec
 }
 
 ;[
-  7,
-  2,
-].forEach((N) => {
-  console.log(allPossibleFBT(N))
+  [1,2,2,3], // true
+  [6,5,4,4], // true
+  [1,3,2],   // false
+  [1,2,4,5], // true
+  [1,1,1],   // true
+].forEach((A) => {
+  console.log(isMonotonic(A))
+  console.log(batter(A))
 })
 
 // Solution:
-// 1. 使用递归的方法
-// 令 N = L + 1 + R，且满足
-// 当 N = 1 时，L = R = 0
-// 当 N != 1 时， L > 0 && R > 0
-// 且 L 和 R 也满足与 N 同样的模式
-// 因此，N、L、R 都只能为奇数
-// 因此 N 为偶数时返回空数组
-// 当 N = 1 时返回 一个节点
-// 然后递归生成 L 和 R 的数组
-// 用每个 L 和 R 拼接成新的数组
+// 根据首尾数的大小关系来确定比较函数fn
+// 若全部通过则返回 true 否则 false
 
-// 2. 在方法1 的基础，使用缓存，不使用递归，避免重复计算。
+// 更好的方法
+// 遍历数组的时候，使用 inc 和 dec 记录数组是否为非递减和非递增的
+// 若两个都不是，则返回false
 
 // Submission Result: Accepted
