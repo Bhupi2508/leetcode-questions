@@ -1,54 +1,35 @@
-// 230. Kth Smallest Element in a BST
-// Medium   44%
+// 231. Power of Two
+// Easy   40%
 
 
-// Given a binary search tree, write a function kthSmallest to find the kth
-// smallest element in it.
+// Given an integer, write a function to determine if it is a power of two.
 
-// Note:
-// You may assume k is always valid, 1 ≤ k ≤ BST's total elements.
-
-// Follow up:
-// What if the BST is modified (insert/delete operations) often and you need to
-// find the kth smallest frequently? How would you optimize the kthSmallest
-// routine?
-
-// Credits:Special thanks to @ts for adding this problem and creating all test
-// cases.
+// Credits:Special thanks to @jianchao.li.fighter for adding this problem and
+// creating all test cases.
 
 
 /**
- * Definition for a binary tree node.
- * function TreeNode(val) {
- *   this.val = val;
- *   this.left = this.right = null;
- * }
+ * @param {number} n
+ * @return {boolean}
  */
-
-/**
- * @param {TreeNode} root
- * @param {number} k
- * @return {number}
- */
-const kthSmallest = function(root, k) {
-  function inorder(root) {
-    if (!root) return null
-    const left = inorder(root.left)
-    if (left !== null) return left
-    if (--k <= 0) return root.val
-    return inorder(root.right)
-  }
-  return inorder(root)
+const isPowerOfTwo = function(n) {
+  return Number.isInteger(Math.log2(n))
 }
 
-const TreeNode = require('../structs/TreeNode')
 ;[
-  [[3,1,7,null,2,5,8,null,null,4,6], 4], // 4
-].forEach(([array, k]) => {
-  console.log(kthSmallest(TreeNode.from(array), k))
+  2,                            // true
+  4,                            // true
+  6,                            // false
+  8,                            // true
+  0,                            // false
+  -2,                           // false
+  2048,                         // true
+].forEach(n => {
+  console.log(isPowerOfTwo(n))
 })
 
+
 // Solution:
-// 中序遍历一棵二叉查找树就像顺序遍历一个排好序的数组。
+// 对n取以2为底的对数，若结果为整数则为真，否则为假。
 
 // Submission Result: Accepted
