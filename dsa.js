@@ -1,33 +1,58 @@
-// 136. Single Number
-// Easy 54% locked:false
+// 141. Linked List Cycle
+// Easy   35%
 
-// Given an array of integers, every element appears twice except for one. Find
-// that single one.
 
-// Note: Your algorithm should have a linear runtime complexity. Could you
-// implement it without using extra memory?
+// Given a linked list, determine if it has a cycle in it.
+
+// Follow up:
+// Can you solve it without using extra space?
 
 /**
- * @param {number[]} nums
- * @return {number}
+ * Definition for singly-linked list.
+ * function ListNode(val) {
+ *     this.val = val;
+ *     this.next = null;
+ * }
  */
-const singleNumber = function(nums) {
-  let result = 0
-  for (let num of nums) result ^= num
-  return result
+
+/**
+ * @param {ListNode} head
+ * @return {boolean}
+ */
+const hasCycle = function(head) {
+  if (head == null || head.next == null) return false
+
+  let slow = head, fast = head.next
+  while (slow !== fast) {
+    if (fast == null || fast.next == null) return false
+    slow = slow.next
+    fast = fast.next.next
+  }
+  return true
 }
 
+const ListNode = require('../structs/ListNode')
+
+const cycle_0 = ListNode.from([0,1,2,3,4,5,6])
+const tail_0 = cycle_0.nth(6)
+tail_0.next = cycle_0
+
+const cycle_1 = ListNode.from([0,1,2,3,4,5,6])
+const tail_1 = cycle_1.nth(6)
+const nth_3 = cycle_1.nth(3)
+tail_1.next = nth_3
+
 ;[
-  [1,1,2,3,3],                  // 2
-].forEach(nums => {
-  console.log(singleNumber(nums))
+  ListNode.from([3,2,0,-4]),             // false
+  cycle_0,                               // true
+  cycle_1,                               // true
+].forEach(head => {
+  console.log(hasCycle(head))
 })
 
 // Solution:
-// 利用以下异或运算原理：
-// a ^ a = 0
-// a ^ 0 = a
-// 以及异或运算的交换律：
-// a ^ b ^ a = a ^ a ^ b = 0 ^ b = b
+// 方法1. 用一个标记来标记节点是否被放问过。
+
+// 方法2. 偏差遍历。若有循环，其相同节点迟早会相遇。
 
 // Submission Result: Accepted
