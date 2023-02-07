@@ -1,66 +1,54 @@
-// 1317. Convert Integer to the Sum of Two No-Zero Integers
-// Easy   59%
+// 1323. Maximum 69 Number
+// Easy   78%
 
 
-// Given an integer n. No-Zero integer is a positive integer which doesn't
-// contain any 0 in its decimal representation.
-// Return a list of two integers [A, B] where:
-//     A and B are No-Zero integers.
-//     A + B = n
-// It's guarateed that there is at least one valid solution. If there are many
-// valid solutions you can return any of them.
+// Given a positive integer num consisting only of digits 6 and 9.
+// Return the maximum number you can get by changing at most one digit (6 becomes
+// 9, and 9 becomes 6).
 
 // Example 1:
-// Input: n = 2
-// Output: [1,1]
-// Explanation: A = 1, B = 1. A + B = n and both A and B don't contain any 0 in
-// their decimal representation.
+// Input: num = 9669
+// Output: 9969
+// Explanation:
+// Changing the first digit results in 6669.
+// Changing the second digit results in 9969.
+// Changing the third digit results in 9699.
+// Changing the fourth digit results in 9666.
+// The maximum number is 9969.
 // Example 2:
-// Input: n = 11
-// Output: [2,9]
+// Input: num = 9996
+// Output: 9999
+// Explanation: Changing the last digit 6 to 9 results in the maximum number.
 // Example 3:
-// Input: n = 10000
-// Output: [1,9999]
-// Example 4:
-// Input: n = 69
-// Output: [1,68]
-// Example 5:
-// Input: n = 1010
-// Output: [11,999]
+// Input: num = 9999
+// Output: 9999
+// Explanation: It is better not to apply any change.
 
 // Constraints:
-//     2 <= n <= 10^4
+//     1 <= num <= 10^4
+//     num's digits are 6 or 9.
 
 
 /**
- * @param {number} n
- * @return {number[]}
+ * @param {number} num
+ * @return {number}
  */
-const getNoZeroIntegers = function(n) {
-  function hasZero(a) {
-    if (a % 10 === 0) return true
-    if (a < 10) return false
-    return hasZero((a / 10) >>> 0)
-  }
-
-  for (let i = 1; i < n; i++) {
-    if (hasZero(i) || hasZero(n - i)) continue
-    else return [i, n - i]
-  }
+const maximum69Number  = function(num) {
+  return parseInt(String(num).replace('6', '9'))
 }
 
 ;[
-  2,        // [1, 1]
-  11,       // [2, 9]
-  10000,    // [1, 9999]
-  69,       // [1, 68]
-  1010,     // [11, 999]
-].forEach((n) => {
-  console.log(getNoZeroIntegers(n))
+  9669, // 9969
+  9996, // 9999
+  9999, // 9999
+  96,
+  6666,
+  6969,
+].forEach((num) => {
+  console.log(maximum69Number(num))
 })
 
 // Solution:
-// 关键是如何判断一个数是否包含有零
-// 从 i = 1 开始判断，看 i 和 n - i 是否都为非含零的数，是则返回，否则继续。
+// 使用 replace() 函数替换第一个 6
 
 // Submission Result: Accepted
