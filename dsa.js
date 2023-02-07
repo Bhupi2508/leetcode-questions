@@ -1,66 +1,85 @@
-// 989. Add to Array-Form of Integer
-// Easy   44%
+// 993. Cousins in Binary Tree
+// Easy   52%
 
 
-// For a non-negative integer X, the array-form of X is an array of its digits in
-// left to right order.  For example, if X = 1231, then the array form is
-// [1,2,3,1].
-// Given the array-form A of a non-negative integer X, return the array-form of
-// the integer X+K.
+// In a binary tree, the root node is at depth 0, and children of each depth k
+// node are at depth k+1.
+// Two nodes of a binary tree are cousins if they have the same depth, but have
+// different parents.
+// We are given the root of a binary tree with unique values, and the values x
+// and y of two different nodes in the tree.
+// Return true if and only if the nodes corresponding to the values x and y are
+// cousins.
 
 // Example 1:
-// Input: A = [1,2,0,0], K = 34
-// Output: [1,2,3,4]
-// Explanation: 1200 + 34 = 1234
+// Input: root = [1,2,3,4], x = 4, y = 3
+// Output: false
 // Example 2:
-// Input: A = [2,7,4], K = 181
-// Output: [4,5,5]
-// Explanation: 274 + 181 = 455
+// Input: root = [1,2,3,null,4,null,5], x = 5, y = 4
+// Output: true
 // Example 3:
-// Input: A = [2,1,5], K = 806
-// Output: [1,0,2,1]
-// Explanation: 215 + 806 = 1021
-// Example 4:
-// Input: A = [9,9,9,9,9,9,9,9,9,9], K = 1
-// Output: [1,0,0,0,0,0,0,0,0,0,0]
-// Explanation: 9999999999 + 1 = 10000000000
+// Input: root = [1,2,3,null,4], x = 2,  y = 3
+// Output: false
 
-// Note：
-//     1 <= A.length <= 10000
-//     0 <= A[i] <= 9
-//     0 <= K <= 10000
-//     If A.length > 1, then A[0] != 0
+// Note:
+//     The number of nodes in the tree will be between 2 and 100.
+//     Each node has a unique integer value from 1 to 100.
+
 
 
 /**
- * @param {number[]} A
- * @param {number} K
- * @return {number[]}
+ * Definition for a binary tree node.
+ * function TreeNode(val) {
+ *   this.val = val;
+ *   this.left = this.right = null;
+ * }
  */
-const addToArrayForm = function(A, K) {
-  const result = []
-  for (let i = A.length - 1; i >= 0; i--) {
-    result.unshift((A[i] + K) % 10)
-    K = ((A[i] + K) / 10) >>> 0
+
+/**
+ * @param {TreeNode} root
+ * @param {number} x
+ * @param {number} y
+ * @return {boolean}
+ */
+const isCousins = function(root, x, y) {
+  const queue = [root]
+  let count = 0
+  while (queue.length > 0 && count === 0) {
+    for (let i = 0, l = queue.length; i < l; i++) {
+      const node = queue.shift()
+      if (node.val === x || node.val === y) count++
+      if (node.left && node.right) {
+        if (node.left.val === x && node.right.val === y) return false
+        if (node.left.val === y && node.right.val === x) return false
+      }
+      if (node.left) queue.push(node.left)
+      if (node.right) queue.push(node.right)
+    }
   }
-  while (K > 0) {
-    result.unshift(K % 10)
-    K = (K / 10) >>> 0
-  }
-  return result
+  return count === 2
 }
 
+const TreeNode = require('../structs/TreeNode')
 ;[
-  [[1,2,0,0], 34], // [1,2,3,4]
-  [[2,7,4], 181], // [4,5,5]
-  [[2,1,5], 806], // [1,0,2,1]
-  [[9,9,9,9,9,9,9,9,9,9], 1], // [1,0,0,0,0,0,0,0,0,0,0]
-].forEach(([A, K]) => {
-  console.log(addToArrayForm(A, K))
+  [[1,2,3,4], 4, 3], // false
+  [[1,2,3,null,4,null,5], 5, 4], // true
+  [[1,2,3,null,4], 2, 3], // false
+  [[1,2,3,4,null,5,null,6,7,8,9], 6, 8], // true
+  [[1,2,5,3,null,null,6,4], 3, 6], //true
+].forEach(([array, x, y]) => {
+  const root = TreeNode.from(array)
+  console.log(isCousins(root, x, y))
 })
 
 // Solution:
-// 由于 A 的最大长度为 10000，所以不好使用内置加法
-// 使用十进制个位数加法来计算，计算时可以将进位保存在 K 中
+// 使用 BFS 进行层级遍历，可以判断两个节点是否是在同一个深度的。
+
+// 关键在于如何判断两个节点是否有同一父节点
+
+// 方法 1 （比较笨）是两个两个节点遍历（包括空节点）
+// 这需要在遍历一个节点时，若节点不为空则同时添加其两个子节点到 queue 中（包括空子节点),
+// 遍历时，找到了 x 或 y，且为左节点，则直接跳过右节点
+
+// 方法2 直接在父节点判断
 
 // Submission Result: Accepted
