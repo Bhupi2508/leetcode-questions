@@ -1,75 +1,47 @@
-// 25. Reverse Nodes in k-Group
-// Hard   30%
+// 26. Remove Duplicates from Sorted Array
+// Easy   35%
 
-// Given a linked list, reverse the nodes of a linked list k at a time and
-// return its modified list.
+// Given a sorted array, remove the duplicates in place such that each element
+// appear only once and return the new length.
 
-// k is a positive integer and is less than or equal to the length of the linked
-// list. If the number of nodes is not a multiple of k then left-out nodes in
-// the end should remain as it is.
-
-// You may not alter the values in the nodes, only nodes itself may be changed.
-
-// Only constant memory is allowed.
+// Do not allocate extra space for another array, you must do this in place with
+// constant memory.
 
 // For example,
-// Given this linked list: 1->2->3->4->5
-// For k = 2, you should return: 2->1->4->3->5
-// For k = 3, you should return: 3->2->1->4->5
+// Given input array nums = [1,1,2],
+
+// Your function should return length = 2, with the first two elements of nums
+// being 1 and 2 respectively. It doesn't matter what you leave beyond the new
+// length.
 
 /**
- * Definition for singly-linked list.
- * function ListNode(val) {
- *     this.val = val;
- *     this.next = null;
- * }
+ * @param {number[]} nums
+ * @return {number}
  */
+const removeDuplicates = function(nums) {
+  const n = nums.length
+  if (n === 0) return 0
 
-
-/**
- * @param {ListNode} head
- * @param {number} k
- * @return {ListNode}
- */
-const reverseKGroup = function(head, k) {
-  let tail = head, count = 0
-  while (tail && ++count < k) tail = tail.next
-
-  if (count === k) {
-    tail.next = reverseKGroup(tail.next, k)
-
-    while (tail !== head) {
-      const tmp = head
-      head = head.next
-      tmp.next = tail.next
-      tail.next = tmp
+  let i = 0
+  for (let j = 1; j < n; j++) {
+    if (nums[j] !== nums[i]) {
+      i++
+      nums[i] = nums[j]
     }
   }
 
-  return head
+  return i + 1
 }
 
-const ListNode = require('../structs/ListNode')
 ;[
-  [[1, 2, 3, 4, 5], 2],  // [2,1,4,3,5]
-  [[1, 2, 3, 4, 5], 3],  // [3,2,1,4,5]
-  [[1, 2, 3, 4], 2],     // [2,1,4,3]
-  [[1, 2, 3, 4], 3],     // [3,2,1,4]
-].forEach(([array, k]) => {
-  console.log((reverseKGroup(ListNode.from(array), k) || '').toString())
+  [1, 2, 2, 3, 3, 3, 4],        // 4
+].forEach(nums => {
+  console.log(removeDuplicates(nums))
 })
 
 // Solution:
-// 使用递归结合 *头插法* 求解。
-// 1. 看当前链表长度时候大于或等于k。
-// 2. 若小于k，直接返回该链表。
-// 3. 若大于或等于，则将第k个节点后的链表进行递归，返回的链表返回原来的位置。
-// 4. 每个组（即当前链表中的第一个节点到第k个节点）中使用头插法。
-// 5. 返回头节点。
-
-// 头插入过程中，
-// 每次用一个临时变量保存头节点，而头节点变量指向下一个节点。
-// 以保存的最初的尾节点为头，将临时变量指向的节点插入到头之后。
-// 直到头节点和尾节点指向同一个节点。
+// 保存两个下标
+// j用于遍历整个数组
+// i用于交换后，前k个不同数的下标。
 
 // Submission Result: Accepted
