@@ -1,10 +1,21 @@
-// 111. Minimum Depth of Binary Tree
-// Easy   33%
+// 112. Path Sum
+// Easy   34%
 
-// Given a binary tree, find its minimum depth.
+// Given a binary tree and a sum, determine if the tree has a root-to-leaf path
+// such that adding up all the values along the path equals the given sum.
 
-// The minimum depth is the number of nodes along the shortest path from the
-// root node down to the nearest leaf node.
+// For example:
+// Given the below binary tree and sum = 22,
+
+//       5
+//      / \
+//     4   8
+//    /   / \
+//   11  13  4
+//  /  \      \
+// 7    2      1
+
+// return true, as there exist a root-to-leaf path 5->4->11->2 which sum is 22.
 
 /**
  * Definition for a binary tree node.
@@ -14,30 +25,28 @@
  * }
  */
 
+
 /**
  * @param {TreeNode} root
- * @return {number}
+ * @param {number} sum
+ * @return {boolean}
  */
-const minDepth = function(root) {
-  if (root == null) return 0
-  const left = minDepth(root.left)
-  const right = minDepth(root.right)
-  if (left === 0) return right + 1
-  if (right === 0) return left + 1
-  return  1 + Math.min(left, right)
+const hasPathSum = function(root, sum) {
+  if (root == null) return false
+  if (root.val === sum && root.left == null && root.right == null) return true
+  sum -= root.val
+  return hasPathSum(root.left, sum) || hasPathSum(root.right, sum)
 }
 
 const TreeNode = require('../structs/TreeNode')
 ;[
-  [1, 2],                       // 2
-  [3,9,20,null,null,15,7],      // 2
-  [1,2,2,3,3,null,null,4,4],    // 2
-].forEach(array => {
-  console.log(minDepth(TreeNode.from(array)))
+  [[5,4,8,11,null,13,4,7,2,null,null,null,1], 22], // true
+].forEach(([array, sum]) => {
+  console.log(hasPathSum(TreeNode.from(array), sum))
 })
 
 // Solution:
-// 将左右子树中最小的高度加一返回。
-// 注意空节点（null）不能当作最小高度，因此一边为 0 时，返回另一边加一。
+// 每当是叶子节点的时候，判断路径和时候为给定值。
+// 使用减法减小给定值，来代替路径和，可减少一个参数的传递。
 
 // Submission Result: Accepted
