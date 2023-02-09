@@ -1,24 +1,26 @@
 /**
- * Key
- * n = 0, return [0]
- * n = 1, return [0, 1]
- * n = 2, return [00, 01, 11, 10]
- * we can see that first n elements (first half) is from the results (n - 1),
- * in the second half of results array, first thing is to flip the highest bit to 1
- * the rest numbers of part two is symmetric of first half part after first bit.
+ * Key same solution as subsets, skip the duplicated nodes
+ * @see line 23
  *
- * @param {number} n
- * @return {number[]}
+ * @param {number[]} nums
+ * @return {number[][]}
  */
-var grayCode = function(n) {
-    var results = [0];
-    for (var i = 0; i < n; i++) {
-        var size = results.length;
-        for (var j = size - 1; j >= 0; j--) {
-            var val = results[j];
-            results.push(val | (1 << i));
-        }
-    }
-
+var subsetsWithDup = function(nums) {
+    nums.sort(function(a, b) {
+        return a - b;
+    });
+    var result = [];
+    var results = [result];
+    helper(nums, 0, result, results);
     return results;
+};
+
+var helper = function(nums, start, result, results) {
+    for (var i = start; i < nums.length; i++) {
+        result.push(nums[i]);
+        results.push(result.slice());
+        helper(nums, i + 1, result, results);
+        result.pop(nums[i]);
+        while (nums[i] === nums[i + 1]) i++;
+    }
 };
