@@ -1,44 +1,53 @@
-// 237. Delete Node in a Linked List
-// Easy   46%
+// 238. Product of Array Except Self
+// Medium   49%
 
 
-// Write a function to delete a node (except the tail) in a singly linked list,
-// given only access to that node.
+// Given an array of n integers where n > 1, nums, return an array output such
+// that output[i] is equal to the product of all the elements of nums except
+// nums[i].
 
-// Supposed the linked list is 1 -> 2 -> 3 -> 4 and you are given the third node
-// with value 3, the linked list should become 1 -> 2 -> 4 after calling your
-// function.
+// Solve it without division and in O(n).
+
+// For example, given [1,2,3,4], return [24,12,8,6].
+
+// Follow up:
+// Could you solve it with constant space complexity? (Note: The output array
+// does not count as extra space for the purpose of space complexity analysis.)
 
 
 /**
- * Definition for singly-linked list.
- * function ListNode(val) {
- *     this.val = val;
- *     this.next = null;
- * }
+ * @param {number[]} nums
+ * @return {number[]}
  */
+const productExceptSelf = function(nums) {
+  const result = [1], n = nums.length
+  for (let i = 1; i < n; i++) {
+    result[i] = result[i - 1] * nums[i - 1]
+  }
 
-/**
- * @param {ListNode} node
- * @return {void} Do not return anything, modify node in-place instead.
- */
-const deleteNode = function(node) {
-  node.val = node.next.val
-  node.next = node.next.next
+  for (let i = n - 1, right = 1; i >= 0; i--) {
+    result[i] *= right
+    right *= nums[i]
+  }
+  return result
 }
 
-const ListNode = require('../structs/ListNode')
 ;[
-  [[1,2,3,4], 2],              // 1 -> 2 -> 4
-].forEach(([array, k]) => {
-  const node = ListNode.from(array)
-  console.log(node.toString())
-  deleteNode(node.nth(k))
-  console.log(node.toString())
+  [1,2,3,4],                    // [24, 12, 8, 6]
+  [0,4,0],                      // [0,0,0]
+].forEach(nums => {
+  console.log(productExceptSelf(nums))
 })
 
 // Solution:
-// 既然不能获得前一个节点，那就该节点复制下一个节点的值，再删除下一个节点。
+// 首先构造一个新的作为答案的数组。
+// 初始化第一个数为1；
+// 其后每个数都是前一个位置的数与输入数组相同位置的数的乘积。
 
+// 最后，新数组的每个位置，都是输入数组中的相同位置的 前面全部数字的乘积。
+
+// 再次从后面遍历到前面，每次记录每个位置之后的 全部数字的乘积，
+// 并让该数乘上该位置原来保留的 前面全部数字的乘积，
+// 这样就获得了除了其自身的所有数的乘积。
 
 // Submission Result: Accepted
