@@ -1,69 +1,57 @@
-// 617. Merge Two Binary Trees
-// Easy   67%
+// 628. Maximum Product of Three Numbers
+// Easy   45%
 
 
-// Given two binary trees and imagine that when you put one of them to cover the
-// other, some nodes of the two trees are overlapped while the others are not.
-
-// You need to merge them into a new binary tree. The merge rule is that if two
-// nodes overlap, then sum node values up as the new value of the merged node.
-// Otherwise, the NOT null node will be used as the node of new tree.
+// Given an integer array, find three numbers whose product is maximum and output
+// the maximum product.
 
 // Example 1:
 
-// Input:
-// 	Tree 1                     Tree 2
-//           1                         2
-//          / \                       / \
-//         3   2                     1   3
-//        /                           \   \
-//       5                             4   7
-// Output:
-// Merged tree:
-// 	     3
-// 	    / \
-// 	   4   5
-// 	  / \   \
-// 	 5   4   7
+// Input: [1,2,3]
+// Output: 6
+
+// Example 2:
+
+// Input: [1,2,3,4]
+// Output: 24
 
 // Note:
-// The merging process must start from the root nodes of both trees.
+
+// The length of the given array will be in range [3,104] and all elements are in
+// the range [-1000, 1000].
+// Multiplication of any three numbers in the input won't exceed the range of
+// 32-bit signed integer.
 
 
 /**
- * Definition for a binary tree node.
- * function TreeNode(val) {
- *   this.val = val;
- *   this.left = this.right = null;
- * }
+ * @param {number[]} nums
+ * @return {number}
  */
-
-/**
- * @param {TreeNode} t1
- * @param {TreeNode} t2
- * @return {TreeNode}
- */
-const mergeTrees = function(t1, t2) {
-  if (t1 == void 0 && t2 == void 0) return null
-  const root = new TreeNode((t1 ? t1.val : 0) + (t2 ? t2.val : 0))
-  root.left = mergeTrees(t1 && t1.left, t2 && t2.left)
-  root.right = mergeTrees(t1 && t1.right, t2 && t2.right)
-  return root
+const maximumProduct = function(nums) {
+  const n = nums.length
+  nums.sort((a, b) => a - b)
+  return Math.max(
+    nums[n - 3] * nums[n - 2] * nums[n - 1],
+    nums[0] * nums[1] * nums[n - 1]
+  )
 }
 
-const TreeNode = require('../structs/TreeNode')
 ;[
-  [[1,3,2,5],[2,1,3,null,4,null,7]], // [3, 4, 5, 5, 4, null, 7]
-].forEach(([a, b]) => {
-  console.log(mergeTrees(TreeNode.from(a), TreeNode.from(b)))
+  [1,2,3],                      // 6
+  [1,2,3,4],                    // 24
+].forEach(nums => {
+  console.log(maximumProduct(nums))
 })
 
 // Solution:
-// 对于每个节点，它的值：
-// 1. t1/t2 的对应节点存在，则等于 t1 和 t2 对应节点的和
-// 2. 有一个存在，则等于存在节点的值
-// 3. 都为null, 则返回 null
+// 根据数组中的元素类型，分情况讨论：
+// 1. 全为正数且可以包括0，则选择 3 个最大的数相乘。
+// 2. 全为负数且可以包括0，同样选择 3 个最大的数相乘。
+// 3. 正/负/0都有，选择以下两种情况中较大的一种：
+//    1) 3 个最大的数相乘
+//    2) 一个最大的数，和两个最小的负数相乘
 
-// t1或t2的子节点不存在时，也要传递 null 值。
+// 数组排序。
+// 上面 3 种情况可以合并为一种（即情况3）。
 
 // Submission Result: Accepted
