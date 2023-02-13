@@ -1,63 +1,24 @@
 /**
- * Definition for singly-linked list.
- * function ListNode(val) {
- *     this.val = val;
- *     this.next = null;
- * }
+ * Key
+ * n = 0, return [0]
+ * n = 1, return [0, 1]
+ * n = 2, return [00, 01, 11, 10]
+ * we can see that first n elements (first half) is from the results (n - 1),
+ * in the second half of results array, first thing is to flip the highest bit to 1
+ * the rest numbers of part two is symmetric of first half part after first bit.
+ *
+ * @param {number} n
+ * @return {number[]}
  */
-/**
- * @param {ListNode} head
- * @param {number} x
- * @return {ListNode}
- */
-var partition = function(head, x) {
-    if (!head || !head.next) return head;
-    var first = new ListNode(null);
-    first.next = head;
-    var newHead = first;
-    while (first.next.val < x) {
-        first = first.next;
-        if (!first.next) return newHead.next;
-    }
-    var second = first;
-    while (second.next) {
-        while (second.next.val >= x) {
-            second = second.next;
-            if (!second.next) return newHead.next;
+var grayCode = function(n) {
+    var results = [0];
+    for (var i = 0; i < n; i++) {
+        var size = results.length;
+        for (var j = size - 1; j >= 0; j--) {
+            var val = results[j];
+            results.push(val | (1 << i));
         }
-        var firstNext = first.next;
-        var secondNext = second.next;
-        first.next = second.next;
-        second.next = secondNext.next;
-        secondNext.next = firstNext;
-        first = first.next;
     }
 
-    return newHead.next;
-};
-
-// use two extra list, 1st list tracks node less than x,
-// 2nd list tracks nodes >= x
-// clean and concise
-var partition = function(head, x) {
-    var dummy1 = new ListNode(null);
-    var dummy2 = new ListNode(null);
-    var curr1 = dummy1;
-    var curr2 = dummy2;
-
-    while (head) {
-        if (head.val < x) {
-            curr1.next = head;
-            curr1 = curr1.next;
-        } else {
-            curr2.next = head;
-            curr2 = curr2.next;
-        }
-
-        head = head.next;
-    }
-
-    curr1.next = dummy2.next;
-    curr2.next = null;
-    return dummy1.next;
+    return results;
 };
