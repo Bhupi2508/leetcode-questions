@@ -1,60 +1,33 @@
-// 133. Clone Graph
-// Medium 25% locked:false
+// 136. Single Number
+// Easy 54% locked:false
 
-// Clone an undirected graph. Each node in the graph contains a label and a list
-// of its neighbors.
+// Given an array of integers, every element appears twice except for one. Find
+// that single one.
 
-// OJ's undirected graph serialization:
-
-// Nodes are labeled uniquely.
-// We use # as a separator for each node, and , as a separator for node label
-// and each neighbor of the node.
-
-// As an example, consider the serialized graph {0,1,2#1,2#2,2}.
-
-// The graph has a total of three nodes, and therefore contains three parts as
-// separated by #.
-
-//  1. First node is labeled as 0. Connect node 0 to both nodes 1 and 2.
-//  2. Second node is labeled as 1. Connect node 1 to node 2.
-//  3. Third node is labeled as 2. Connect node 2 to node 2 (itself), thus
-//     forming a self-cycle.
-
-// Visually, the graph looks like the following:
-
-//        1
-//       / \
-//      /   \
-//     0 --- 2
-//          / \
-//          \_/
-
+// Note: Your algorithm should have a linear runtime complexity. Could you
+// implement it without using extra memory?
 
 /**
- * Definition for undirected graph.
+ * @param {number[]} nums
+ * @return {number}
  */
-
-function UndirectedGraphNode(label) {
-  this.label = label
-  this.neighbors = []   // Array of UndirectedGraphNode
+const singleNumber = function(nums) {
+  let result = 0
+  for (let num of nums) result ^= num
+  return result
 }
 
-/**
- * @param {UndirectedGraphNode} graph
- * @return {UndirectedGraphNode}
- */
-const cloneGraph = function(graph) {
-  if (graph === null) return graph
-  const nodes = {}
-  const cloneNode = node => {
-    const clone = new UndirectedGraphNode(node.label)
-    nodes[clone.label] = clone
-    for (let n of node.nneighbors) {
-      clone.neighbors.push(
-        nodes[n.label] ? nodes[n.label] : cloneNode(n)
-      )
-    }
-    return clone
-  }
-  return cloneNode(graph)
-}
+;[
+  [1,1,2,3,3],                  // 2
+].forEach(nums => {
+  console.log(singleNumber(nums))
+})
+
+// Solution:
+// 利用以下异或运算原理：
+// a ^ a = 0
+// a ^ 0 = a
+// 以及异或运算的交换律：
+// a ^ b ^ a = a ^ a ^ b = 0 ^ b = b
+
+// Submission Result: Accepted
