@@ -1,62 +1,72 @@
-// 392. Is Subsequence
-// Easy   48%
+// 398. Random Pick Index
+// Medium   55%
 
 
-// Given a string s and a string t, check if s is subsequence of t.
-// A subsequence of a string is a new string which is formed from the original
-// string by deleting some (can be none) of the characters without disturbing the
-// relative positions of the remaining characters. (ie, "ace" is a subsequence of
-// "abcde" while "aec" is not).
-// Follow up:
-// If there are lots of incoming S, say S1, S2, ... , Sk where k >= 1B, and you
-// want to check one by one to see if T has its subsequence. In this scenario,
-// how would you change your code?
-// Credits:
-// Special thanks to @pbrother for adding this problem and creating all test
-// cases.
-
-// Example 1:
-// Input: s = "abc", t = "ahbgdc"
-// Output: true
-// Example 2:
-// Input: s = "axc", t = "ahbgdc"
-// Output: false
-
-// Constraints:
-//     0 <= s.length <= 100
-//     0 <= t.length <= 10^4
-//     Both strings consists only of lowercase characters.
+// Given an array of integers with possible duplicates, randomly output the index
+// of a given target number. You can assume that the given target number must
+// exist in the array.
+// Note:
+// The array size can be very large. Solution that uses too much extra space will
+// not pass the judge.
+// Example:
+// int[] nums = new int[] {1,2,3,3,3};
+// Solution solution = new Solution(nums);
+// // pick(3) should return either index 2, 3, or 4 randomly. Each index should
+// have equal probability of returning.
+// solution.pick(3);
+// // pick(1) should return 0. Since in the array only nums[0] is equal to 1.
+// solution.pick(1);
 
 
 /**
- * @param {string} s
- * @param {string} t
- * @return {boolean}
+ * @param {number[]} nums
  */
-const isSubsequence = function(s, t) {
-  let p = 0
-  for (let i = 0; i < t.length; i++) {
-    if (t[i] === s[p]) p++
+const Solution = function(nums) {
+  const hash = {}
+  for (let i = 0; i < nums.length; i++) {
+    const cur = hash[nums[i]]
+    if (Number.isInteger(cur)) hash[nums[i]] = [cur, i]
+    else if (Array.isArray(cur)) hash[nums[i]].push(i)
+    else hash[nums[i]] = i
   }
-  return p === s.length
-}
+  this.hash = hash
+};
+
+/**
+ * @param {number} target
+ * @return {number}
+ */
+Solution.prototype.pick = function(target) {
+  const cur = this.hash[target]
+  return Number.isInteger(cur)
+    ? cur
+    : cur[Math.floor(Math.random() * cur.length)]
+};
+
+/**
+ * Your Solution object will be instantiated and called as such:
+ * var obj = new Solution(nums)
+ * var param_1 = obj.pick(target)
+ */
 
 ;[
-  ['abc', 'ahbgdc'],
-  ['axc', 'ahbgdc'],
-  ['ace', 'abcde'],
-  ['aec', 'abcde'],
-].forEach(([s, t]) => {
-  console.log(isSubsequence(s, t))
+  [['Solution','pick'], [[[1,2,3,3,3]],[3]]],
+].forEach(([commands, data]) => {
+  let solution = null
+  for (let i = 0; i < commands.length; i++) {
+    switch (commands[i]) {
+      case 'Solution':
+        solution = new Solution(data[i][0])
+        break;
+      case 'pick':
+        console.log(solution.pick(data[i][0]))
+        break;
+    }
+  }
 })
 
 // Solution:
-// 1. 遍历一遍 t
-// 用 p 记录已遍历到的 s 中的字符，
-// 当 t[i] == s[p] 时，p++，即在 t 中找到 s[p] 了，继续遍历 t 看看是否能找到 s[p+1]
-// 最后判断是否 找到了 s 中所有的字符
-
-// 2. 二分查找
-// TODO: #392 看到有大佬使用了二分查找，时间复杂度更小
+// 将每个数下标保存在 hash 中
+// 当 pick 一个数时，通过该 hash 值随机返回一个下标即可。
 
 // Submission Result: Accepted
