@@ -1,38 +1,46 @@
-// 123. Best Time to Buy and Sell Stock III
-// Hard 29% locked:false
+// 125. Valid Palindrome
+// Easy 26% locked:false
 
-// Say you have an array for which the ith element is the price of a given stock
-// on day i.
+// Given a string, determine if it is a palindrome, considering only
+// alphanumeric characters and ignoring cases.
 
-// Design an algorithm to find the maximum profit. You may complete at most two
-// transactions.
+// For example,
+// "A man, a plan, a canal: Panama" is a palindrome.
+// "race a car" is not a palindrome.
 
-// Note: You may not engage in multiple transactions at the same time (ie, you
-// must sell the stock before you buy again).
+// Note:
+// Have you consider that the string might be empty? This is a good question to
+// ask during an interview.
+// For the purpose of this problem, we define empty string as valid palindrome.
 
 /**
- * @param {number[]} prices
- * @return {number}
+ * @param {string} s
+ * @return {boolean}
  */
-const maxProfit = function(prices) {
-  if (prices.length <= 1) return 0
-  let hold1 = -Infinity, hold2 = -Infinity,
-      release1 = 0, release2 = 0
-  for (let price of prices) {
-    release2 = Math.max(release2, hold2 + price)
-    hold2 = Math.max(hold2, release1 - price)
-    release1 = Math.max(release1, hold1 + price)
-    hold1 = Math.max(hold1, -price)
+const isPalindrome = function(s) {
+  const inner = (n, a, b) => a <= n && n <= b
+  const code = c => {
+    const n = c.charCodeAt()
+    if (inner(n - 48, 0, 9)) return n - 48
+    if (inner(n - 65, 0, 25)) return n - 65 + 10
+    if (inner(n - 97, 0, 25)) return n - 97 + 10
+    return -1
   }
-  return release2
+  const isAN = c => inner(code(c), 0, 35)
+
+  let i = 0, j = s.length - 1
+  while (i < j) {
+    if (!isAN(s[i])) i++
+    else if (!isAN(s[j])) j--
+    else {
+      if (code(s[i]) !== code(s[j])) return false
+      i++
+      j--
+    }
+  }
+
+  return true
 }
 
-;[
-  [1,2,4,2,5,7,2,4,9,0],
-].forEach(prices => {
-  console.log(maxProfit(prices))
-})
-
-
-// 尝试：
-// 找出每一个连续递增的段，在从中找出提升最大的两个。
+//console.log(isPalindrome('A man, a plan, a canal: Panama'))
+console.log(isPalindrome('race a car'))
