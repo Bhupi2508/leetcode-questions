@@ -1,56 +1,64 @@
-// 674. Longest Continuous Increasing Subsequence
-// Easy 42% locked:false
+// 677. Map Sum Pairs
+// Medium   52%
 
 
-// Given an unsorted array of integers, find the length of longest continuous
-// increasing subsequence.
+// Implement a MapSum class with insert, and sum methods.
+
+// For the method insert, you'll be given a pair of (string, integer). The string
+// represents the key and the integer represents the value. If the key already
+// existed, then the original key-value pair will be overridden to the new one.
+
+// For the method sum, you'll be given a string representing the prefix, and you
+// need to return the sum of all the pairs' value whose key starts with the
+// prefix.
 
 // Example 1:
 
-// Input: [1,3,5,4,7]
-// Output: 3
-// Explanation: The longest continuous increasing subsequence is [1,3,5], its
-// length is 3.
-// Even though [1,3,5,7] is also an increasing subsequence, it's not a continuous
-// one where 5 and 7 are separated by 4.
-
-// Example 2:
-
-// Input: [2,2,2,2,2]
-// Output: 1
-// Explanation: The longest continuous increasing subsequence is [2], its length
-// is 1.
-
-// Note:
-// Length of the array will not exceed 10,000.
+// Input: insert("apple", 3), Output: Null
+// Input: sum("ap"), Output: 3
+// Input: insert("app", 2), Output: Null
+// Input: sum("ap"), Output: 5
 
 
 /**
- * @param {number[]} nums
+ * Initialize your data structure here.
+ */
+const MapSum = function() {
+  this.map = {}
+}
+
+/**
+ * @param {string} key
+ * @param {number} val
+ * @return {void}
+ */
+MapSum.prototype.insert = function(key, val) {
+  this.map[key] = val
+}
+
+/**
+ * @param {string} prefix
  * @return {number}
  */
-const findLengthOfLCIS = function(nums) {
-  const length = nums.length
-  let result = 0, continuous = 0
-  for (let i = 0; i < length; i++) {
-    continuous = nums[i] > (nums[i - 1] || 0) ? continuous + 1 : 1
-    if (continuous > result) result = continuous
+MapSum.prototype.sum = function(prefix) {
+  let result = 0
+  for (let key in this.map) {
+    if (key.indexOf(prefix) === 0) result += this.map[key]
   }
-
   return result
 }
 
-console.log(findLengthOfLCIS([1, 3, 5, 4, 7]))
-console.log(findLengthOfLCIS([2, 2, 2, 2, 2]))
-console.log(findLengthOfLCIS([1, 3, 5, 4, 2, 3, 4, 5]))
-console.log(findLengthOfLCIS([]))
-console.log(findLengthOfLCIS([0]))
-console.log(findLengthOfLCIS([-6]))
-console.log(findLengthOfLCIS([1, 2, 5, 8, 0]))
+/**
+ * Your MapSum object will be instantiated and called as such:
+ * var obj = Object.create(MapSum).createNew()
+ * obj.insert(key,val)
+ * var param_2 = obj.sum(prefix)
+ */
+
 
 // Solution:
-// 寻找最长的连续增量的长度
-// 记录两个变量，一个是最长长度，第二个是目前连续增量的长度，分别初始化为 0 。
-// 遍历一遍数组，每当下一位大于上一位，则增加当前长度，否则将初始化为 1 。
+// 一个哈希表和一个子字符串查找函数解决。
+
+// TODO: #677 官方解法中有性能更高的算法，以后在研究;p
 
 // Submission Result: Accepted
