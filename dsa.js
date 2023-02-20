@@ -1,59 +1,55 @@
-// 784. Letter Case Permutation
-// Easy   62%
+// 788. Rotated Digits
+// Easy   57%
 
 
-// Given a string S, we can transform every letter individually to be lowercase
-// or uppercase to create another string.  Return a list of all possible strings
-// we could create.
-// Examples:
-// Input: S = "a1b2"
-// Output: ["a1b2", "a1B2", "A1b2", "A1B2"]
-// Input: S = "3z4"
-// Output: ["3z4", "3Z4"]
-// Input: S = "12345"
-// Output: ["12345"]
+// X is a good number if after rotating each digit individually by 180 degrees,
+// we get a valid number that is different from X.  Each digit must be rotated -
+// we cannot choose to leave it alone.
+// A number is valid if each digit remains a digit after rotation. 0, 1, and 8
+// rotate to themselves; 2 and 5 rotate to each other (on this case they are
+// rotated in a different direction, in other words 2 or 5 gets mirrored); 6 and
+// 9 rotate to each other, and the rest of the numbers do not rotate to any other
+// number and become invalid.
+// Now given a positive number N, how many numbers X from 1 to N are good?
+// Example:
+// Input: 10
+// Output: 4
+// Explanation:
+// There are four good numbers in the range [1, 10] : 2, 5, 6, 9.
+// Note that 1 and 10 are not good numbers, since they remain unchanged after
+// rotating.
 // Note:
-//     S will be a string with length between 1 and 12.
-//     S will consist only of letters or digits.
+//     N  will be in range [1, 10000].
 
 
 /**
- * @param {string} S
- * @return {string[]}
+ * @param {number} N
+ * @return {number}
  */
-const letterCasePermutation = function(S) {
-  const res = [], n = S.length
-  S = S.split('')
-  function rec(i) {
-    while ('0' <= S[i] && S[i] <= '9') i++
-    if (i >= n) {
-      res.push(S.join(''))
-      return
+const rotatedDigits = function(N) {
+  let res = 0
+  for (let i = 1; i <= N; i++) {
+    let n = i, p = false, q = true
+    while (n > 0 && q) {
+      const j = n % 10
+      if (j === 2 || j === 5 || j === 6 || j === 9) p = true
+      if (j === 3 || j === 4 || j === 7) q = false
+      n = Math.floor(n / 10)
     }
-    S[i] = S[i].toLowerCase()
-    rec(i + 1)
-    S[i] = S[i].toUpperCase()
-    rec(i + 1)
+    if (p && q) res++
   }
-  rec(0)
   return res
 }
 
 ;[
-  'a1b2',
-  '3z4',
-  '12345',
-  'abc',
-].forEach((S) => {
-  console.log(letterCasePermutation(S))
+  10, // 4
+  20, // 9
+].forEach((N) => {
+  console.log(rotatedDigits(N))
 })
 
 // Solution:
-// 使用递归的方法（DFS)
-// 遇到一个字符，就先将其转换成小写/大写，然后遍历下一个字符
-
-// 循环的方法
-// 遇到一个字符，将 res 中的每个字符串分为两个，两个字符串只是当前字符不同。
-// JS 中改变字符串中的某个字符不是很方便，作罢。
+// 当出现数字 3，4，7 时，一定不是
+// 至少包含（2，5，6，9）中的一个
 
 // Submission Result: Accepted
