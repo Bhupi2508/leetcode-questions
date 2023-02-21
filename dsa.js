@@ -1,67 +1,56 @@
-// 1342. Number of Steps to Reduce a Number to Zero
-// Easy   87%
+// 1346. Check If N and Its Double Exist
+// Easy   39%
 
 
-// Given a non-negative integer num, return the number of steps to reduce it to
-// zero. If the current number is even, you have to divide it by 2, otherwise,
-// you have to subtract 1 from it.
+// Given an array arr of integers, check if there exists two integers N and M
+// such that N is the double of M ( i.e. N = 2 * M).
+// More formally check if there exists two indices i and j such that :
+//     i != j
+//     0 <= i, j < arr.length
+//     arr[i] == 2 * arr[j]
 
 // Example 1:
-// Input: num = 14
-// Output: 6
-// Explanation:
-// Step 1) 14 is even; divide by 2 and obtain 7.
-// Step 2) 7 is odd; subtract 1 and obtain 6.
-// Step 3) 6 is even; divide by 2 and obtain 3.
-// Step 4) 3 is odd; subtract 1 and obtain 2.
-// Step 5) 2 is even; divide by 2 and obtain 1.
-// Step 6) 1 is odd; subtract 1 and obtain 0.
+// Input: arr = [10,2,5,3]
+// Output: true
+// Explanation: N = 10 is the double of M = 5,that is, 10 = 2 * 5.
 // Example 2:
-// Input: num = 8
-// Output: 4
-// Explanation:
-// Step 1) 8 is even; divide by 2 and obtain 4.
-// Step 2) 4 is even; divide by 2 and obtain 2.
-// Step 3) 2 is even; divide by 2 and obtain 1.
-// Step 4) 1 is odd; subtract 1 and obtain 0.
+// Input: arr = [7,1,14,11]
+// Output: true
+// Explanation: N = 14 is the double of M = 7,that is, 14 = 2 * 7.
 // Example 3:
-// Input: num = 123
-// Output: 12
+// Input: arr = [3,1,7,11]
+// Output: false
+// Explanation: In this case does not exist N and M, such that N = 2 * M.
 
 // Constraints:
-//     0 <= num <= 10^6
+//     2 <= arr.length <= 500
+//     -10^3 <= arr[i] <= 10^3
 
 
 /**
- * @param {number} num
- * @return {number}
+ * @param {number[]} arr
+ * @return {boolean}
  */
-const numberOfSteps  = function(num) {
-  if (num === 0) return 0
-  let res = -1
-  while (num > 0) {
-    res += num % 2 ? 2 : 1
-    num >>>= 1
+const checkIfExist = function(arr) {
+  const hashSet = new Set()
+  for (let n of arr) {
+    if (hashSet.has(n)) return true
+    hashSet.add(n * 2)
+    if (n % 2 === 0) hashSet.add(n >>> 1)
   }
-  return res
+  return false
 }
 
 ;[
-  0,
-  14,
-  8,
-  123,
-  100000,
-].forEach((num) => {
-  console.log(numberOfSteps(num))
+  [10,2,5,3],
+  [7,1,14,11],
+  [3,1,7,11],
+].forEach((arr) => {
+  console.log(checkIfExist(arr))
 })
 
 // Solution:
-// 1. 直接计算
-
-// 2. 使用二进制计算，
-// 按照题意可以转换为：
-// - 数的二进制最后一位为 0 时，右移一位，计一次操作
-// - 数的二进制最后一位为 1 时，右移一位，计两次操作（先减1，在除2）
+// 遍历数组的过程中，使用 Set 记录每个数的双倍和偶数的一半，
+// 并且查看 当前数 是否包含在 Set 中，在则直接返回 true，否则继续。
 
 // Submission Result: Accepted
