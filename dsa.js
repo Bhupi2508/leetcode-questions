@@ -1,71 +1,70 @@
-// 1042. Flower Planting With No Adjacent
-// Easy   48%
+// 1046. Last Stone Weight
+// Easy   63%
 
 
-// You have N gardens, labelled 1 to N.  In each garden, you want to plant one of
-// 4 types of flowers.
-// paths[i] = [x, y] describes the existence of a bidirectional path from garden
-// x to garden y.
-// Also, there is no garden that has more than 3 paths coming into or leaving it.
-// Your task is to choose a flower type for each garden such that, for any two
-// gardens connected by a path, they have different types of flowers.
-// Return any such a choice as an array answer, where answer[i] is the type of
-// flower planted in the (i+1)-th garden.  The flower types are denoted 1, 2, 3,
-// or 4.  It is guaranteed an answer exists.
+// We have a collection of rocks, each rock has a positive integer weight.
+// Each turn, we choose the two heaviest rocks and smash them together.  Suppose
+// the stones have weights x and y with x <= y.  The result of this smash is:
+//     If x == y, both stones are totally destroyed;
+//     If x != y, the stone of weight x is totally destroyed, and the stone of
+// weight y has new weight y-x.
+// At the end, there is at most 1 stone left.  Return the weight of this stone
+// (or 0 if there are no stones left.)
 
 // Example 1:
-// Input: N = 3, paths = [[1,2],[2,3],[3,1]]
-// Output: [1,2,3]
-// Example 2:
-// Input: N = 4, paths = [[1,2],[3,4]]
-// Output: [1,2,1,2]
-// Example 3:
-// Input: N = 4, paths = [[1,2],[2,3],[3,4],[4,1],[1,3],[2,4]]
-// Output: [1,2,3,4]
+// Input: [2,7,4,1,8,1]
+// Output: 1
+// Explanation:
+// We combine 7 and 8 to get 1 so the array converts to [2,4,1,1,1] then,
+// we combine 2 and 4 to get 2 so the array converts to [2,1,1,1] then,
+// we combine 2 and 1 to get 1 so the array converts to [1,1,1] then,
+// we combine 1 and 1 to get 0 so the array converts to [1] then that's the value
+// of last stone.
 
 // Note:
-//     1 <= N <= 10000
-//     0 <= paths.size <= 20000
-//     No garden has 4 or more paths coming into or leaving it.
-//     It is guaranteed an answer exists.
+//     1 <= stones.length <= 30
+//     1 <= stones[i] <= 1000
 
 
 /**
- * @param {number} N
- * @param {number[][]} paths
- * @return {number[]}
+ * @param {number[]} stones
+ * @return {number}
  */
-const gardenNoAdj = function(N, paths) {
-  const graph = []
-  for (let i = 0; i < N; i++) graph[i] = []
-  for (let path of paths) {
-    graph[path[0] - 1].push(path[1] - 1)
-    graph[path[1] - 1].push(path[0] - 1)
+const lastStoneWeight = function(stones) {
+  for (let i = 1; i < stones.length; i++) {
+    let y = 0, x = 1
+    if (stones[y] < stones[x]) [y, x] = [x, y]
+    for (let j = 2; j < stones.length; j++) {
+      if (stones[j] > stones[y]) [y, x] = [j, y]
+      else if (stones[j] > stones[x]) x = j
+    }
+
+    stones[y] = stones[y] - stones[x]
+    stones[x] = 0
+    i += stones[y] == 0 ? 1 : 0
   }
 
-  const result = Array(N).fill(0)
-  for (let i = 0; i < N; i++) {
-    const adjFlowers = Array(5).fill(0)
-    for (let adj of graph[i]) {
-      adjFlowers[result[adj]] = 1
-    }
-    for (let j = 4; j > 0; j--) {
-      if (!adjFlowers[j]) result[i] =  j
-    }
+  for (let i = 0; i < stones.length; i++) {
+    if (stones[i] !== 0) return stones[i]
   }
-  return result
+  return 0
 }
 
 ;[
-  [3, [[1,2],[2,3],[3,1]]],                   // [1,2,3]
-  [4, [[1,2],[3,4]]],                         // [1,2,1,2]
-  [4, [[1,2],[2,3],[3,4],[4,1],[1,3],[2,4]]], // [1,2,3,4]
-].forEach(([N, paths]) => {
-  console.log(gardenNoAdj(N, paths))
+  [2,7,4,1,8,1],  // 1
+  [1,1],          // 0
+  [1],            // 1
+  [1,6],          // 5
+  [10,4,2,10],    // 2
+  [10,5,10],      // 5
+].forEach((stones) => {
+  console.log(lastStoneWeight(stones))
 })
 
 // Solution:
-// 首先将连线转化成图结构,
-// 按顺序访问每个点，找出该点的相邻点中没有填过的最小数，填入即可。
+// 执行 n 次，每次遍历一遍数组，找出最大的两个数
+// 两数进行相减的结果替换数1，并将数2设置为 0
+// 最后遍历一遍找出不为0的数
+// TO(n*n)-SO(1)
 
 // Submission Result: Accepted
