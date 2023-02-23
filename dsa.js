@@ -1,48 +1,57 @@
-// 83. Remove Duplicates from Sorted List
-// Easy   39%
+// 84. Largest Rectangle in Histogram
+// Hard 27% locked:false
 
-// Given a sorted linked list, delete all duplicates such that each element
-// appear only once.
+// Given n non-negative integers representing the histogram's bar heights where
+// the width of each bar is 1, find the area of largest rectangle in the
+// histogram.
+
+
+// Above is a histogram where width of each bar is 1, given heights =
+// [2,1,5,6,2,3].
+
+
+// The largest rectangle is shown in the shaded area, which has area = 10 unit.
 
 // For example,
-// Given 1->1->2, return 1->2.
-// Given 1->1->2->3->3, return 1->2->3.
+// Given heights = [2,1,5,6,2,3],
+// return 10.
 
 /**
- * Definition for singly-linked list.
- * function ListNode(val) {
- *     this.val = val;
- *     this.next = null;
- * }
+ * @param {number[]} heights
+ * @return {number}
  */
-
-/**
- * @param {ListNode} head
- * @return {ListNode}
- */
-const deleteDuplicates = function(head) {
-  let p = head
-  while (p && p.next) {
-    if (p.val === p.next.val) p.next = p.next.next
-    else p = p.next
+const largestRectangleArea = function(heights) {
+  heights.push(0)
+  const n = heights.length, stack = []
+  let res = 0
+  for (let i = 0; i < n; i++) {
+    while (stack.length > 0 && heights[stack[stack.length - 1]] >= heights[i]) {
+      const h = heights[stack.pop()]
+      const sidx = stack.length > 0 ? stack[stack.length - 1] : -1
+      res = Math.max(h * (i - sidx - 1), res)
+      console.log(i, res);
+    }
+    stack.push(i)
   }
 
-  return head
+  return res
 }
 
-const ListNode = require('../structs/ListNode')
-;[
-  [1, 1, 2],
-  [1, 1, 2, 3, 3],
-  [],
-  [3, 3, 4, 4],
-].forEach((array) => {
-  console.log((deleteDuplicates(ListNode.from(array)) || '').toString())
-})
+console.log(largestRectangleArea([2, 1, 5, 6, 2, 3]))
 
+const exceededTime = function(heights) {
+  const n = heights.length
+  const largest = (i, j) => {
+    if (i > j) return 0
+    let min = i
+    for (let k = i; k <= j; k++) {
+      if (heights[k] < heights[min]) min = k
+    }
+    return Math.max(
+      heights[min] * (j - i + 1),
+      Math.max(largest(i, min - 1), largest(min + 1, j))
+    )
+  }
 
-// Solution:
-// 若下一个指针的值与当前指针的值相同，则将下一个指针删除。
-// 否则，移动指针。
-
-// Submission Result: Accepted
+  return largest(0, n - 1)
+}
