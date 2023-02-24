@@ -1,36 +1,32 @@
 /**
- * Definition for singly-linked list.
- * function ListNode(val) {
- *     this.val = val;
- *     this.next = null;
- * }
+ * @param {string} s
+ * @return {string[]}
  */
-/**
- * @param {ListNode} head
- * @param {number} m
- * @param {number} n
- * @return {ListNode}
- */
-var reverseBetween = function(head, m, n) {
-    var dummyHead = new ListNode(null);
-    dummyHead.next = head;
-    var pre = dummyHead;
+var restoreIpAddresses = function(s) {
+    var strLength = s.length;
+    var result = [];
 
-    for (var i = 1 ; i < m; i++) {
-        pre = pre.next;
+    for (var i = 1; i < 4 && i < strLength - 2; i++) {
+        for (var j = i + 1; j < 4 + i && j < strLength - 1; j++) {
+            for (var k = j + 1; k < 4 + j && k < strLength; k++) {
+                var str1 = s.substring(0, i);
+                var str2 = s.substring(i, j);
+                var str3 = s.substring(j, k);
+                var str4 = s.substring(k, strLength);
+                if (isValid(str1) && isValid(str2) && isValid(str3) && isValid(str4)) {
+                    result.push(str1 + "." + str2 + "."+ str3 + "."+ str4);
+                }
+            }
+        }
     }
 
-    var curr = pre.next;
-    var newHead = pre;
-    for (var i = 0; i <= n - m; i++) {
-        var currNext = curr.next;
-        curr.next = pre;
-        pre = curr;
-        curr = currNext;
-    }
-    // reset the head and tail pointers
-    newHead.next.next = curr;
-    newHead.next = pre;
+    return result;
+};
 
-    return dummyHead.next;
+var isValid = function(str) {
+    if ((str[0] === '0' && str.length > 1) || str.length > 3 || parseInt(str) > 255 || str.length === 0) {
+        return false;
+    }
+
+    return true;
 };
