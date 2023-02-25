@@ -1,66 +1,86 @@
-// 747. Largest Number At Least Twice of Others
-// Easy   41%
+// 748. Shortest Completing Word
+// Easy   56%
 
 
-// In a given integer array nums, there is always exactly one largest element.
-// Find whether the largest element in the array is at least twice as much as
-// every other number in the array.
-// If it is, return the index of the largest element, otherwise return -1.
+
+// Find the minimum length word from a given dictionary words, which has all the
+// letters from the string licensePlate.  Such a word is said to complete the
+// given string licensePlate
+// Here, for letters we ignore case.  For example, "P" on the licensePlate still
+// matches "p" on the word.
+// It is guaranteed an answer exists.  If there are multiple answers, return the
+// one that occurs first in the array.
+// The license plate might have the same letter occurring multiple times.  For
+// example, given a licensePlate of "PP", the word "pair" does not complete the
+// licensePlate, but the word "supper" does.
+
 // Example 1:
-// Input: nums = [3, 6, 1, 0]
-// Output: 1
-// Explanation: 6 is the largest integer, and for every other number in the array
-// x,
-// 6 is more than twice as big as x.  The index of value 6 is 1, so we return 1.
+// Input: licensePlate = "1s3 PSt", words = ["step", "steps", "stripe",
+// "stepple"]
+// Output: "steps"
+// Explanation: The smallest length word that contains the letters "S", "P", "S",
+// and "T".
+// Note that the answer is not "step", because the letter "s" must occur in the
+// word twice.
+// Also note that we ignored case for the purposes of comparing whether a letter
+// exists in the word.
 
 // Example 2:
-// Input: nums = [1, 2, 3, 4]
-// Output: -1
-// Explanation: 4 isn't at least as big as twice the value of 3, so we return -1.
+// Input: licensePlate = "1s3 456", words = ["looks", "pest", "stew", "show"]
+// Output: "pest"
+// Explanation: There are 3 smallest length words that contains the letters "s".
+// We return the one that occurred first.
 
 // Note:
-//     nums will have a length in the range [1, 50].
-//     Every nums[i] will be an integer in the range [0, 99].
-
+// licensePlate will be a string with length in range [1, 7].
+// licensePlate will contain digits, spaces, or letters (uppercase or lowercase).
+// words will have a length in the range [10, 1000].
+// Every words[i] will consist of lowercase letters, and have length in range [1,
+// 15].
 
 
 /**
- * @param {number[]} nums
- * @return {number}
+ * @param {string} licensePlate
+ * @param {string[]} words
+ * @return {string}
  */
-const dominantIndex = function(nums) {
-  let res = -1, max = 0
-  for (let i = 0; i < nums.length; i++) {
-    if (nums[i] > max) {
-      res = nums[i] >= max * 2 ? i : -1
-      max = nums[i]
-    } else {
-      if (max < nums[i] * 2) res = -1
+const shortestCompletingWord = function(licensePlate, words) {
+  const hash = {}
+  for (let c of licensePlate) {
+    if (('a' <= c && c <= 'z') || ('A' <= c && c <= 'Z')) {
+      const l = c.toLowerCase()
+      hash[l] = (hash[l] || 0) + 1
     }
+  }
+  let res = '0'.repeat(16), wHash, isIncluded
+  for (let word of words) {
+    wHash = {}, isIncluded = true
+    for (let c of word) wHash[c] = (wHash[c] || 0) + 1
+    for (let key in hash) {
+      if (hash[key] > (wHash[key] || 0)) {
+        isIncluded = false
+        break
+      }
+    }
+    if (isIncluded && word.length < res.length) res = word
   }
   return res
 }
 
 ;[
-  [0,0,0,1], // 3
-  [3,6,1,0], // 1
-  [1,2,3,4], // -1
-  [6,3,1,0], // 0
-  [0,1,3,6], // 3
-].forEach((nums) => {
-  console.log(dominantIndex(nums))
+  // ['1s3 PSt', ['step','steps','stripe','stepple']],
+  // ['1s3 456', ["looks", "pest", "stew", "show"]],
+  [
+    "Ah71752",
+    ["suggest","letter","of","husband","easy","education","drug","prevent","writer","old"],
+  ], // 'husband'
+].forEach(([licensePlate, words]) => {
+  console.log(shortestCompletingWord(licensePlate, words))
 })
 
 // Solution:
-
-// 想法
-// 遍历数组，记录最大值和第二大值，最后比较 最大值是否大于或等于第二大值的2倍。
-
-// 想法2
-// 只记录一个最大值 max
-// 1. A[i] > max * 2，则设置 res，并替换 max
-// 2. A[i] > max && A[i] < max * 2，则 res = -1，并替换 max
-// 3. A[i] <= max && A[i] > max / 2，则 res = -1
-// 4. A[i] < max / 2，跳过
+// 先数字符串中每个字母（都转换成小写）的个数，记录在 hash 中，
+// 遍历词组，数词中各个字母的个数，并与 hash 中的字符比较，必须每个字符的个数都要大于或等于
+// hash 中的，若都大于，则与 res 比较长度，取短的。
 
 // Submission Result: Accepted
