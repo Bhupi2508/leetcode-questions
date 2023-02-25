@@ -1,31 +1,32 @@
-// 39. Combination Sum
-// Medium   39%
+// 40. Combination Sum II
+// Medium   34%
 
-// Given a set of candidate numbers (C) (without duplicates) and a target number
-// (T), find all unique combinations in C where the candidate numbers sums to T.
+// Given a collection of candidate numbers (C) and a target number (T), find all
+// unique combinations in C where the candidate numbers sums to T.
 
-// The same repeated number may be chosen from C unlimited number of times.
+// Each number in C may only be used once in the combination.
 
 // Note:
 
 // All numbers (including target) will be positive integers.
 //   The solution set must not contain duplicate combinations.
 
-// For example, given candidate set [2, 3, 6, 7] and target 7,
+// For example, given candidate set [10, 1, 2, 7, 6, 1, 5] and target 8,
 // A solution set is:
 
 // [
-//   [7],
-//   [2, 2, 3]
+//   [1, 7],
+//   [1, 2, 5],
+//   [2, 6],
+//   [1, 1, 6]
 // ]
-
 
 /**
  * @param {number[]} candidates
  * @param {number} target
  * @return {number[][]}
  */
-const combinationSum = function(candidates, target) {
+const combinationSum2 = function(candidates, target) {
   candidates.sort((a, b) => b - a)
   const result = []
   function iter(i, target, array) {
@@ -34,8 +35,9 @@ const combinationSum = function(candidates, target) {
       if (c > target) break
       if (c === target) result.push([...array, c])
       array.push(c)
-      iter(i, target - c, array)
+      iter(i - 1, target - c, array)
       array.pop()
+      while (i >= 0 && c === candidates[i - 1]) i--
     }
   }
 
@@ -44,13 +46,14 @@ const combinationSum = function(candidates, target) {
 }
 
 ;[
-  [[2, 3, 6, 7], 7],            // [[7], [2,2,3]]
+  [[10, 1, 2, 7, 6, 1, 5], 8],
 ].forEach(args => {
-  console.log(combinationSum(...args))
+  console.log(combinationSum2(...args))
 })
 
 // Solution:
-// 因为每个数都能重复使用，因此使用类似深度遍历。
-// 为了方便遍历，先排序数组。
+// 有重复数字，但每个出现在数组中的数字只能使用一次。
+// 使用类似深度遍历的方法。
+// 不过每次回溯到原来的地方时，都跳过重复数字（数组已排序）。
 
 // Submission Result: Accepted
