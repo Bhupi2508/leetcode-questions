@@ -1,64 +1,70 @@
-// 1385. Find the Distance Value Between Two Arrays
-// Easy   68%
+// 1389. Create Target Array in the Given Order
+// Easy   83%
 
 
-// Given two integer arrays arr1 and arr2, and the integer d, return the distance
-// value between the two arrays.
-// The distance value is defined as the number of elements arr1[i] such that
-// there is not any element arr2[j] where |arr1[i]-arr2[j]| <= d.
+// Given two arrays of integers nums and index. Your task is to create target
+// array under the following rules:
+//     Initially target array is empty.
+//     From left to right read nums[i] and index[i], insert at index index[i] the
+// value nums[i] in target array.
+//     Repeat the previous step until there are no elements to read in nums and
+// index.
+// Return the target array.
+// It is guaranteed that the insertion operations will be valid.
 
 // Example 1:
-// Input: arr1 = [4,5,8], arr2 = [10,9,1,8], d = 2
-// Output: 2
+// Input: nums = [0,1,2,3,4], index = [0,1,2,2,1]
+// Output: [0,4,1,3,2]
 // Explanation:
-// For arr1[0]=4 we have:
-// |4-10|=6 > d=2
-// |4-9|=5 > d=2
-// |4-1|=3 > d=2
-// |4-8|=4 > d=2
-// For arr1[1]=5 we have:
-// |5-10|=5 > d=2
-// |5-9|=4 > d=2
-// |5-1|=4 > d=2
-// |5-8|=3 > d=2
-// For arr1[2]=8 we have:
-// |8-10|=2 <= d=2
-// |8-9|=1 <= d=2
-// |8-1|=7 > d=2
-// |8-8|=0 <= d=2
+// nums       index     target
+// 0            0        [0]
+// 1            1        [0,1]
+// 2            2        [0,1,2]
+// 3            2        [0,1,3,2]
+// 4            1        [0,4,1,3,2]
 // Example 2:
-// Input: arr1 = [1,4,2,3], arr2 = [-4,-3,6,10,20,30], d = 3
-// Output: 2
+// Input: nums = [1,2,3,4,0], index = [0,1,2,3,0]
+// Output: [0,1,2,3,4]
+// Explanation:
+// nums       index     target
+// 1            0        [1]
+// 2            1        [1,2]
+// 3            2        [1,2,3]
+// 4            3        [1,2,3,4]
+// 0            0        [0,1,2,3,4]
 // Example 3:
-// Input: arr1 = [2,1,100,3], arr2 = [-5,-2,10,-3,7], d = 6
-// Output: 1
+// Input: nums = [1], index = [0]
+// Output: [1]
 
 // Constraints:
-//     1 <= arr1.length, arr2.length <= 500
-//     -10^3 <= arr1[i], arr2[j] <= 10^3
-//     0 <= d <= 100
+//     1 <= nums.length, index.length <= 100
+//     nums.length == index.length
+//     0 <= nums[i] <= 100
+//     0 <= index[i] <= i
 
 
 /**
- * @param {number[]} arr1
- * @param {number[]} arr2
- * @param {number} d
- * @return {number}
+ * @param {number[]} nums
+ * @param {number[]} index
+ * @return {number[]}
  */
-const findTheDistanceValue = function(arr1, arr2, d) {
-  return arr1.reduce((res, v1) => res + (arr2.every(v2 => Math.abs(v1 - v2) > d ? 1 : 0)), 0)
+const createTargetArray = function(nums, index) {
+  const res = []
+  for (let i = 0; i < nums.length; i++) {
+    res.splice(index[i], 0, nums[i])
+  }
+  return res
 }
 
 ;[
-  [[4,5,8], [10,9,1,8], 2],
-  [[1,4,2,3], [-4,-3,6,10,20,30], 3],
-  [[2,1,100,3], [-5,-2,10,-3,7], 6],
-].forEach(([arr1, arr2, d]) => {
-  console.log(findTheDistanceValue(arr1, arr2, d))
+  [[0,1,2,3,4], [0,1,2,2,1]],
+  [[1,2,3,4,0], [0,1,2,3,0]],
+  [[1], [0]],
+].forEach(([nums, index]) => {
+  console.log(createTargetArray(nums, index))
 })
 
 // Solution:
-// 题意：返回符合要求的 arr1[i] 的个数。
-// 两层遍历，用 every 函数检查符合的 arr1[i]，用 reduce 函数统计个数。
+// 使用 splice 函数
 
 // Submission Result: Accepted
