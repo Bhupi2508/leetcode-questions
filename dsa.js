@@ -1,56 +1,66 @@
-// 1010. Pairs of Songs With Total Durations Divisible by 60
-// Easy   47%
+// 1013. Partition Array Into Three Parts With Equal Sum
+// Easy   57%
 
 
-// In a list of songs, the i-th song has a duration of time[i] seconds.
-// Return the number of pairs of songs for which their total duration in seconds
-// is divisible by 60.  Formally, we want the number of indices i < j with
-// (time[i] + time[j]) % 60 == 0.
+// Given an array A of integers, return true if and only if we can partition the
+// array into three non-empty parts with equal sums.
+// Formally, we can partition the array if we can find indexes i+1 < j with (A[0]
+// + A[1] + ... + A[i] == A[i+1] + A[i+2] + ... + A[j-1] == A[j] + A[j-1] + ... +
+// A[A.length - 1])
 
 // Example 1:
-// Input: [30,20,150,100,40]
-// Output: 3
-// Explanation: Three pairs have a total duration divisible by 60:
-// (time[0] = 30, time[2] = 150): total duration 180
-// (time[1] = 20, time[3] = 100): total duration 120
-// (time[1] = 20, time[4] = 40): total duration 60
+// Input: A = [0,2,1,-6,6,-7,9,1,2,0,1]
+// Output: true
+// Explanation: 0 + 2 + 1 = -6 + 6 - 7 + 9 + 1 = 2 + 0 + 1
 // Example 2:
-// Input: [60,60,60]
-// Output: 3
-// Explanation: All three pairs have a total duration of 120, which is divisible
-// by 60.
+// Input: A = [0,2,1,-6,6,7,9,-1,2,0,1]
+// Output: false
+// Example 3:
+// Input: A = [3,3,6,5,-2,2,5,1,-9,4]
+// Output: true
+// Explanation: 3 + 3 = 6 = 5 - 2 + 2 + 5 + 1 - 9 + 4
 
-// Note:
-//     1 <= time.length <= 60000
-//     1 <= time[i] <= 500
+// Constraints:
+//     3 <= A.length <= 50000
+//     -10^4 <= A[i] <= 10^4
 
 
 /**
- * @param {number[]} time
- * @return {number}
+ * @param {number[]} A
+ * @return {boolean}
  */
-const numPairsDivisibleBy60 = function(time) {
-  let result = 0
-  const hash = {}
-  for (let t of time) {
-    result += hash[(600 - t) % 60] || 0
-    hash[t % 60] = (hash[t % 60] || 0) + 1
+const canThreePartsEqualSum = function(A) {
+  let sum = 0
+  for (let a of A) sum += a
+  if (sum % 3 !== 0) return false
+
+  let part = 0, partSum = sum / 3
+  for (let i = 0; i < A.length; i++) {
+    partSum -= A[i]
+    if (partSum === 0) {
+      partSum = sum / 3
+      part++
+    }
   }
-  return result
+  return part > 2
 }
 
 ;[
-  [30,20,150,100,40],  // 3
-  [60,60,60],          // 3
-].forEach((time) => {
-  console.log(numPairsDivisibleBy60(time))
+  [0,2,1,-6,6,-7,9,1,2,0,1],     // true
+  [0,2,1,-6,6,7,9,-1,2,0,1],     // false
+  [3,3,6,5,-2,2,5,1,-9,4],       // true
+  [10,-10,10,-10,10,-10,10,-10], // true
+].forEach((A) => {
+  console.log(canThreePartsEqualSum(A))
 })
 
 // Solution:
-// 两层for循环，直接计算 time[i] + time[j]
-// TO(n*n)-SO(1)
-
-// 同 1.two-sum.js 中的思想，使用 hash 保存互补数
-// TO(n)-SO(n)
+// 因为要分为相等的3个部分，
+// 所以所有数的和 sum 必须为3的倍数。
+// 若 sum % 3 不为 0，则返回 false
+// 遍历一遍数组
+// 若前n个数的和为 sum / 3，这 n 个数就为一个部分
+// 然后找下一个部分
+// 只要找到两个部分即可，因为剩余的就是最后一个部分
 
 // Submission Result: Accepted
