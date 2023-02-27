@@ -1,23 +1,24 @@
 /**
- * The idea is from https://leetcode.com/discuss/41527/simple-and-fast-c-c-with-explanation
- * @param {number[]} height
- * @return {number}
+ * @param {TreeNode} root
+ * @param {number} sum
+ * @return {number[][]}
  */
-var maxArea = function(height) {
-    var start = 0;
-    var end = height.length - 1;
-    var area = 0;
+var pathSum = function(root, sum) {
+  var result = [];
+  var results = [];
+  pathSumHelper(root, sum, result, results);
+  return results;
+};
 
-    while (start < end) {
-        var minHeight = Math.min(height[start], height[end]);
-        area = Math.max(area, minHeight * (end - start));
-        while (start < end && height[start] <= minHeight) {
-            start++;
-        }
-        while (start < end && height[end] <= minHeight) {
-            end--;
-        }
-    }
-
-    return area;
+var pathSumHelper = function(root, sum, result, results) {
+  if (!root) {
+      return;
+  }
+  result.push(root.val);
+  if (!root.left && !root.right && sum === root.val) {
+      results.push(result.slice());
+  }
+  pathSumHelper(root.left, sum - root.val, result, results);
+  pathSumHelper(root.right, sum - root.val, result, results);
+  result.pop();
 };
