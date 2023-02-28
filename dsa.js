@@ -1,20 +1,16 @@
-// 94. Binary Tree Inorder Traversal
-// Medium   47%
+// 95. Unique Binary Search Trees II
+// Medium 31% locked:false
 
-// Given a binary tree, return the inorder traversal of its nodes' values.
+// Given an integer n, generate all structurally unique BST's (binary search trees) that store values 1...n.
 
-// For example:
-// Given binary tree [1,null,2,3],
+// For example,
+// Given n = 3, your program should return all 5 unique BST's shown below.
 
-//    1
-//     \
-//      2
-//     /
-//    3
-
-// return [1,3,2].
-
-// Note: Recursive solution is trivial, could you do it iteratively?
+// 1         3     3      2      1
+//  \       /     /      / \      \
+//   3     2     1      1   3      2
+//  /     /       \                 \
+// 2     1         2                 3
 
 
 /**
@@ -26,31 +22,31 @@
  */
 
 /**
- * @param {TreeNode} root
- * @return {number[]}
+ * @param {number} n
+ * @return {TreeNode[]}
  */
-const inorderTraversal = function(root) {
-  const res = []
-  function iter(node) {
-    if (node != null) {
-      iter(node.left)
-      res.push(node.val)
-      iter(node.right)
+const generateTrees = function(n) {
+  if (n <= 0) return []
+  const iter = (p, q) => {
+    if (p > q) return [null]
+    if (p === q) return [new TreeNode(p)]
+
+    const trees = []
+    for (let k = 0; k <= q - p; k++) {
+      const left = iter(p, p + k - 1),
+            right = iter(p + k + 1, q)
+      for (let l of left) {
+        for (let r of right) {
+          const root = new TreeNode(p + k)
+          root.left = l
+          root.right = r
+          trees.push(root)
+        }
+      }
     }
+
+    return trees
   }
-  iter(root)
-  return res
+  return iter(1, n)
 }
-
-const TreeNode = require('../structs/TreeNode')
-;[
-  [1, null, 2, 3],
-].forEach((array) => {
-  console.log(inorderTraversal(TreeNode.from(array)))
-})
-
-// Solution:
-// 中序遍历。
-// 在递归函数的过程中，先递归左子树，再记录节点，最后再递归右子树。
-
-// Submission Result: Accepted
+console.log(generateTrees(4))
