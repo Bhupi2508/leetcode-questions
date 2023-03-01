@@ -1,87 +1,76 @@
-// 806. Number of Lines To Write String
-// Easy   64%
+// 811. Subdomain Visit Count
+// Easy   68%
 
 
-// We are to write the letters of a given string S, from left to right into
-// lines. Each line has maximum width 100 units, and if writing a letter would
-// cause the width of the line to exceed 100 units, it is written on the next
-// line. We are given an array widths, an array where widths[0] is the width of
-// 'a', widths[1] is the width of 'b', ..., and widths[25] is the width of 'z'.
-// Now answer two questions: how many lines have at least one character from S,
-// and what is the width used by the last such line? Return your answer as an
-// integer list of length 2.
-
-// Example :
+// A website domain like "discuss.leetcode.com" consists of various subdomains.
+// At the top level, we have "com", at the next level, we have "leetcode.com",
+// and at the lowest level, "discuss.leetcode.com". When we visit a domain like
+// "discuss.leetcode.com", we will also visit the parent domains "leetcode.com"
+// and "com" implicitly.
+// Now, call a "count-paired domain" to be a count (representing the number of
+// visits this domain received), followed by a space, followed by the address. An
+// example of a count-paired domain might be "9001 discuss.leetcode.com".
+// We are given a list cpdomains of count-paired domains. We would like a list of
+// count-paired domains, (in the same format as the input, and in any order),
+// that explicitly counts the number of visits to each subdomain.
+// Example 1:
 // Input:
-// widths =
-// [10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10]
-// S = "abcdefghijklmnopqrstuvwxyz"
-// Output: [3, 60]
+// ["9001 discuss.leetcode.com"]
+// Output:
+// ["9001 discuss.leetcode.com", "9001 leetcode.com", "9001 com"]
 // Explanation:
-// All letters have the same length of 10. To write all 26 letters,
-// we need two full lines and one line with 60 units.
-// Example :
+// We only have one website domain: "discuss.leetcode.com". As discussed above,
+// the subdomain "leetcode.com" and "com" will also be visited. So they will all
+// be visited 9001 times.
+// Example 2:
 // Input:
-// widths =
-// [4,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10]
-// S = "bbbcccdddaaa"
-// Output: [2, 4]
+// ["900 google.mail.com", "50 yahoo.com", "1 intel.mail.com", "5 wiki.org"]
+// Output:
+// ["901 mail.com","50 yahoo.com","900 google.mail.com","5 wiki.org","5 org","1
+// intel.mail.com","951 com"]
 // Explanation:
-// All letters except 'a' have the same length of 10, and
-// "bbbcccdddaa" will cover 9 * 10 + 2 * 4 = 98 units.
-// For the last 'a', it is written on the second line because
-// there is only 2 units left in the first line.
-// So the answer is 2 lines, plus 4 units in the second line.
-
-// Note:
-//     The length of S will be in the range [1, 1000].
-//     S will only contain lowercase letters.
-//     widths is an array of length 26.
-//     widths[i] will be in the range of [2, 10].
+// We will visit "google.mail.com" 900 times, "yahoo.com" 50 times,
+// "intel.mail.com" once and "wiki.org" 5 times. For the subdomains, we will
+// visit "mail.com" 900 + 1 = 901 times, "com" 900 + 50 + 1 = 951 times, and
+// "org" 5 times.
+// Notes:
+//     The length of cpdomains will not exceed 100.
+//     The length of each domain name will not exceed 100.
+//     Each address will have either 1 or 2 "." characters.
+//     The input count in any count-paired domain will not exceed 10000.
+//     The answer output can be returned in any order.
 
 
 /**
- * @param {number[]} widths
- * @param {string} S
- * @return {number[]}
+ * @param {string[]} cpdomains
+ * @return {string[]}
  */
-const numberOfLines = function(widths, S) {
-  if (S.length === 0) return [0, 0]
-  let count = 0, last = 0
-  for (let i = 0; i < S.length;) {
-    const n = widths[S.charCodeAt(i) - 97]
-    if (last + n < 100) {
-      i++
-      last += n
-    } else {
-      i += (last + n === 100) ? 1 : 0
-      last = 0
-      count++
+const subdomainVisits = function(cpdomains) {
+  const hash = {}
+  for (let cp of cpdomains) {
+    let [n, domain] = cp.split(' ')
+    n = parseInt(n)
+    hash[domain] = (hash[domain] || 0) + n
+    for (let i = 0; i < domain.length; i++) {
+      if (domain[i] === '.') {
+        const d = domain.substring(i + 1)
+        hash[d] = (hash[d] || 0) + n
+      }
     }
   }
-  return last ? [count + 1, last] : [count, 100]
+  const res = []
+  for (let key in hash) res.push(hash[key] + ' ' + key)
+  return res
 }
 
-const twentySix10 = [10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10]
 ;[
-  [ twentySix10, 'abcdefghijklmnopqrstuvwxyz' ],
-  [
-    [4,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10],
-    "bbbcccdddaaa",
-  ],
-  [ twentySix10, 'abcdefghij' ],
-  [ twentySix10, 'abcdefghijklmnopqrst' ],
-  [ twentySix10, 'ab' ],
-  [ twentySix10, '' ],
-].forEach(([widths, S]) => {
-  console.log(numberOfLines(widths, S))
+  ['9001 discuss.leetcode.com'],
+  ["900 google.mail.com", "50 yahoo.com", "1 intel.mail.com", "5 wiki.org"],
+].forEach((cpdomains) => {
+  console.log(subdomainVisits(cpdomains))
 })
 
 // Solution:
-// 遍历字符串的每个字符，并计算该字符的宽度
-// 用 last 记录当前行的已有的字符的全部宽度，
-// 若加上当前字符不超过100，则添加到 last 中，并遍历下一个字符
-// 若刚好等于100，则将 last=0，记录行数，并遍历下一个字符
-// 若超过100，则将 last=0，记录行数，再遍历一次当前字符
+// 分词再使用 hashMap 来记录次数
 
 // Submission Result: Accepted
