@@ -1,112 +1,81 @@
-// 400. Nth Digit
-// Easy   30%
+// 401. Binary Watch
+// Easy   44%
 
 
-// Find the nth digit of the infinite integer sequence 1, 2, 3, 4, 5, 6, 7, 8, 9,
-// 10, 11, ...
+// A binary watch has 4 LEDs on the top which represent the hourset (0-11), and the
+// 6 LEDs on the bottom represent the minuteset (0-59).
+
+// Each LED represents a zero or one, with the least significant bit on the
+// right.
+
+// For example, the above binary watch reads "3:25".
+
+// Given a non-negative integer n which represents the number of LEDs that are
+// currently on, return all possible times the watch could represent.
+
+// Example:
+
+// Input: n = 1
+// Return: ["1:00", "2:00", "4:00", "8:00", "0:01", "0:02", "0:04", "0:08",
+// "0:16", "0:32"]
 
 // Note:
-// n is positive and will fit within the range of a 32-bit signed integer (n <
-// 2^31).
 
-// Example 1:
-
-// Input:
-// 3
-
-// Output:
-// 3
-
-// Example 2:
-
-// Input:
-// 11
-
-// Output:
-// 0
-
-// Explanation:
-// The 11th digit of the sequence 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, ... is a 0,
-// which is part of the number 10.
+// The order of output does not matter.
+// The hour must not contain a leading zero, for example "01:00" is not valid, it
+// should be "1:00".
+// The minute must be consist of two digits and may contain a leading zero, for
+// example "10:2" is not valid, it should be "10:02".
 
 
 /**
- * @param {number} n
- * @return {number}
+ * @param {number} num
+ * @return {string[]}
  */
-const findNthDigit = function(n) {
-  if (n === 0) return 0
+const readBinaryWatch = function(num) {
+  if (num < 0 || num > 10) return []
 
-  // i digits group height
-  const height = i => 9 * Math.pow(10, i) * (i + 1)
-  // in which digits group
-  let i = -1, border = 1
-  while (n >= border) border += height(++i)
+  function iter(num, layer, count=0, array=[]) {
+    if (layer >= 0) {
+      if (num === 0) {
+        array.push(count)
+      } else {
+        array = iter(num, layer - 1, count, array)
+        array = iter(num - 1, layer - 1, count + (1 << (layer - 1)), array)
+      }
+    }
+    return array
+  }
 
-  // nth-digit's layer is start at
-  const base = Math.pow(10, i)
-
-  // digit offset at base
-  const offset = n - border + height(i)
-
-  // nth digit is in this number
-  const num = base + Math.trunc(offset / (i + 1))
-
-  // the right-to-left position of nth digit in the number
-  const pos = i ? i - offset % (i + 1) : 0
-  return Math.trunc(num / Math.pow(10, pos)) % 10
+  const result = [], n = Math.min(num, 4)
+  for (let i = 0; i <= n; i++) {
+    const hours = iter(i, 4), minutes = iter(num - i, 6)
+    console.log(hours, minutes);
+    for (let hour of hours) {
+      if (hour < 12) {
+        for (let minute of minutes) {
+          if (minute < 60) {
+            result.push(hour + ':' + (minute < 10 ? '0' + minute : minute))
+          }
+        }
+      }
+    }
+  }
+  return result
 }
 
 ;[
-  0,                            // 0
-  3,                            // 3
-
-  10,                           // 1
-  11,                           // 0
-
-  12,                           // 1
-  13,                           // 1
-
-  14,                           // 1
-  15,                           // 2
-
-  18,                           // 1
-  19,                           // 4
-
-  1000,                         // 3
-].forEach(n => {
-  console.log(findNthDigit(n))
+  1,
+].forEach(num => {
+  console.log(readBinaryWatch(num))
 })
 
 // Solution:
+// 用一个函数来计算 n 盏灯能组成什么数字。
+// 该函数用类似抉择数一样的结构来生成可能组成的数。
 
-// 以下以 n = 1000 为例：
-
-// 1. 将数字按其位数分层，如 1，6在一位数层，26，36在二位数层。
-//    并计算第 i 层的高度为 i 位数的数量，如：
-//      第零层为 1，
-//      第一层为 9，
-//      第二层为 180，
-//      第 i 层为 （9 x 10^i x i)。
-
-// 2. 判断第 n 个一位数数字在哪一层。
-//    边界 border 小于 n, 就不断累加层次高度。
-//    (1 + 9 + 180 = 190) < 1000 < (2890 = 1 + 9 + 180 + 2700)
-//    因此第1000个在 第 3 层中。
-
-// 3. 计算所在层次的位数，从该位数的最小值开始，并数偏移量。
-//    第3层都是3位数的数字，因此从100开始，偏移量为 1000 - 190 = 810
-
-// 4. 计算第 n 个位于那个数字内部。
-//    从100开始数，第810个，都是3位数，所以是 100 + 810 / 3 = 370
-//    第1000个 在 370 中。
-
-// 5. 计算在数字中的第几位。
-//    810 % 3 = 0
-
-// 6. 得出结果。
-//    3 7 0
-//    ^
-//    即 第1000个 是 3。
+// 先分配小时和分钟各占的灯数。
+// 分别用占用的灯数来生成数组。
+// 两个数组中的数两两组合。
 
 // Submission Result: Accepted
