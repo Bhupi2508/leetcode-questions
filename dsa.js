@@ -1,55 +1,63 @@
-// 6. ZigZag Conversion
-// Medium  26%
+// 7. Reverse Integer
+// Easy  24%
 
-// The string "PAYPALISHIRING" is written in a zigzag pattern on a given number
-// of rows like this: (you may want to display this pattern in a fixed font for
-// better legibility)
+// Reverse digits of an integer.
 
-// P   A   H   N
-// A P L S I I G
-// Y   I   R
+// Example1: x = 123, return 321
+// Example2: x = -123, return -321
 
-// And then read line by line: "PAHNAPLSIIGYIR"
+// click to show spoilers.
+//   Have you thought about this?
 
-// Write the code that will take a string and make this conversion given a
-// number of rows:
+// Here are some good questions to ask before coding. Bonus points for you if
+// you have already thought through this!
 
-// string convert(string text, int nRows);
+// If the integer's last digit is 0, what should the output be? ie, cases such
+// as 10, 100.
 
-// convert("PAYPALISHIRING", 3) should return "PAHNAPLSIIGYIR".
+// Did you notice that the reversed integer might overflow? Assume the input is
+// a 32-bit integer, then the reverse of 1000000003 overflows. How should you
+// handle such cases?
+
+// For the purpose of this problem, assume that your function returns 0 when the
+// reversed integer overflows.
+
+// Note: The input is assumed to be a 32-bit signed integer. Your function
+// should return 0 when the reversed integer overflows.
 
 /**
- * @param {string} s
- * @param {number} numRows
- * @return {string}
+ * @param {number} x
+ * @return {number}
  */
-const convert = function(s, numRows) {
-  if (numRows <= 1) return s
 
-  const rows = Array(numRows).fill('')
-  let pos = 0, direct = true
-  for (let i = 0, n = s.length; i < n; i++) {
-    if (pos === 0) direct = true
-    if (pos === numRows - 1) direct = false
+const reverse = function(x) {
+  const isOverflow = x => x > 0x7fffffff || -x > 0x7fffffff
+  if (isOverflow(x)) return 0
 
-    rows[pos] += s[i]
-    pos += direct ? 1 : -1
+  let y = Math.abs(x), result = 0
+  while (y !== 0) {
+    result = result * 10 + y % 10
+    y = Math.floor(y / 10)
   }
 
-  return rows.join('')
+  result *= x < 0 ? -1 : 1
+  return isOverflow(result) ? 0 : result
 }
 
 ;[
-  ['PAYPALISHIRING', 3],        // 'PAHNAPLSIIGYIR'
-  ['AB', 1],                    // 'AB'
-  ['ABCDEFGHIJKLMN', 4],        // 'AGMBFHLNCEIKDJ'
-].forEach(args => {
-  console.log(convert(...args))
+  123,                          // 321
+  -123,                         // -321
+  -2147483648,                  // 0
+  1534236469,                   // 0
+].forEach(x => {
+  console.log(reverse(x))
 })
 
+
 // Solution:
-// 每行用一个数组保存。
-// 每行利用“电梯”的升降的方法来添加字符。
-// 用一个变量来保存的升降的方向。
+// 因为假设数字是 32 位有符号整数，而答案可能会超出该范围，所以输入和输出都要检
+// 查一遍是否溢出。
+// 构造导致数，每次取得原数的最后一位作为新数的最后一位就好了。
+// 像两个栈传递元素一样，只是用的是取模运算和乘除法运算来避免额外空间。
 
 // Submission Result: Accepted
