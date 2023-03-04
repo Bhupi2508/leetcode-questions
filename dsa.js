@@ -1,47 +1,55 @@
-// 41. First Missing Positive
-// Hard   25%
+// 42. Trapping Rain Water
+// Hard   37%
 
-// Given an unsorted integer array, find the first missing positive integer.
+// Given n non-negative integers representing an elevation map where the width
+// of each bar is 1, compute how much water it is able to trap after raining.
 
 // For example,
-// Given [1,2,0] return 3,
-// and [3,4,-1,1] return 2.
+// Given [0,1,0,2,1,0,1,3,2,1,2,1], return 6.
 
-// Your algorithm should run in O(n) time and uses constant space.
+
+// The above elevation map is represented by array [0,1,0,2,1,0,1,3,2,1,2,1].
+// In this case, 6 units of rain water (blue section) are being trapped. Thanks
+// Marcos for contributing this image!
 
 
 /**
- * @param {number[]} nums
+ * @param {number[]} height
  * @return {number}
  */
-const firstMissingPositive = function(nums) {
-  const n = nums.length
-
-  for (let i = 0; i < n; i++) {
-    while (nums[i] > 0 && nums[i] <= n && nums[nums[i] - 1] !== nums[i]) {
-      const t = nums[i] - 1
-      ;[nums[i], nums[t]] = [nums[t], nums[i]]
+const trap = function(height) {
+  const n = height.length
+  let result = 0, i = 0, j = n - 1, min = 0
+  while (i < j) {
+    if (height[i] <= min) {
+      result += min - height[i]
+      i++
+    } else if (height[j] <= min) {
+      result += min - height[j]
+      j--
+    } else {
+      min = Math.min(height[i], height[j])
     }
   }
-
-  for (let i = 0; i < n; i++) {
-    if (nums[i] !== i + 1) return i + 1
-  }
-
-  return n + 1
+  return result
 }
 
 ;[
-  [1,2,0],                      // 3
-  [3,4,-1,1],                   // 2
-  [2, 5, 4, -1, 2, 1, 6, 3],    // 7
-].forEach(nums => {
-  console.log(firstMissingPositive(nums))
+  [0,1,0,2,1,0,1,3,2,1,2,1],
+  [1,2],
+  [4,2,3],
+  [6,4,2,0,3,2,0,3,1,4,5,3,2,7,5,3,0,1,2,1,3,4,6,8,1,3],
+].forEach(height => {
+  console.log(trap(height))
 })
 
 // Solution:
-// 不断交换元素的位置。
-// 若某个数应在的位置没有被相同的数先占领，则将该数放置在该在的位置。
-// 否则先跳过该数所在的位置，看下一个位置的数。
+// 从两边开始，向中间遍历。
+// 记录一个变量，其值为当前遍历过得数中较高的可作为容器边界的两个数中较小的一个。
+// 因为容器是以小的一边的边界来计算容量的。
+
+// 在遍历过程中
+// 小于小边界的将会计为容量，
+// 大于小边界，则将改变较小边界。
 
 // Submission Result: Accepted
