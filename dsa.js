@@ -1,51 +1,60 @@
-// 905. Sort Array By Parity
-// Easy   74%
+// 908. Smallest Range I
+// Easy   65%
 
 
-// Given an array A of non-negative integers, return an array consisting of all
-// the even elements of A, followed by all the odd elements of A.
-// You may return any answer array that satisfies this condition.
+// Given an array A of integers, for each integer A[i] we may choose any x with
+// -K <= x <= K, and add x to A[i].
+// After this process, we have some array B.
+// Return the smallest possible difference between the maximum value of B and the
+// minimum value of B.
 
 // Example 1:
-// Input: [3,1,2,4]
-// Output: [2,4,3,1]
-// The outputs [4,2,3,1], [2,4,1,3], and [4,2,1,3] would also be accepted.
+// Input: A = [1], K = 0
+// Output: 0
+// Explanation: B = [1]
+// Example 2:
+// Input: A = [0,10], K = 2
+// Output: 6
+// Explanation: B = [2,8]
+// Example 3:
+// Input: A = [1,3,6], K = 3
+// Output: 0
+// Explanation: B = [3,3,3] or B = [4,4,4]
 
 // Note:
-//     1 <= A.length <= 5000
-//     0 <= A[i] <= 5000
+//     1 <= A.length <= 10000
+//     0 <= A[i] <= 10000
+//     0 <= K <= 10000
 
 
 /**
  * @param {number[]} A
- * @return {number[]}
+ * @param {number} K
+ * @return {number}
  */
-const sortArrayByParity = function(A) {
-  for (let i = 0, j = 0; j < A.length; j++) {
-    if (A[j] % 2 === 0) {
-      const t = A[i]
-      A[i++] = A[j]
-      A[j] = t
-    }
+const smallestRangeI = function(A, K) {
+  let p = 0, q = 10000
+  for (let a of A) {
+    p = Math.max(p, a - K)
+    q = Math.min(q, a + K)
   }
-  return A
+  return Math.max(p - q, 0)
 }
 
 ;[
-  [3,1,2,4],
-  [1,2,3,4,5,6,7],
-].forEach((A) => {
-  console.log(sortArrayByParity(A))
+  [[1], 0], // 0
+  [[0,10], 2], // 6
+  [[1,3,6], 3], // 0
+  [[3,1,6], 3], // 0
+  [[0,100,300,400], 7], //
+].forEach(([A, K]) => {
+  console.log(smallestRangeI(A, K))
 })
 
 // Solution:
-// 从数组两边开始遍历
-// i 从头开始， j 从尾开始
-// i 遇到偶数则跳过，j 遇到奇数则跳过
-// 否则将 A[i] 与 A[j] 交换
+// 找出 a - K 中的最大值 p，和 a + K 中的最小值 q ，取 max(p - q, 0)
 
-// 更简洁的方法
-// i 记录偶数部分的尾部
-// j 遍历数组，找到偶数后，交换 A[i] 与 A[j]（将偶数添加到偶数部分尾部）
+// 更好的方法
+// 找到 A 中的最大值mx和最小值mn，取 max(mx - mn - 2 * K, 0)
 
 // Submission Result: Accepted
