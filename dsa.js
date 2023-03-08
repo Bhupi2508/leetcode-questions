@@ -1,53 +1,54 @@
-// 406. Queue Reconstruction by Height
-// Medium   55%
+// 409. Longest Palindrome
+// Easy   45%
 
 
-// Suppose you have a random list of people standing in a queue. Each person is
-// described by a pair of integers (h, k), where h is the height of the person
-// and k is the number of people in front of this person who have a height
-// greater than or equal to h. Write an algorithm to reconstruct the queue.
+// Given a string which consists of lowercase or uppercase letters, find the
+// length of the longest palindromes that can be built with those letters.
+
+// This is case sensitive, for example "Aa" is not considered a palindrome here.
 
 // Note:
-// The number of people is less than 1,100.
+// Assume the length of given string will not exceed 1,010.
 
-// Example
+// Example:
 
 // Input:
-// [[7,0], [4,4], [7,1], [5,0], [6,1], [5,2]]
+// "abccccdd"
 
 // Output:
-// [[5,0], [7,0], [5,2], [6,1], [4,4], [7,1]]
+// 7
+
+// Explanation:
+// One longest palindrome that can be built is "dccaccd", whose length is 7.
 
 
 /**
- * @param {number[][]} people
- * @return {number[][]}
+ * @param {string} s
+ * @return {number}
  */
-const reconstructQueue = function(people) {
-  people.sort((a, b) => a[0] === b[0] ? a[1] - b[1] : b[0] - a[0])
-  const queue = []
-  for (let p of people) queue.splice(p[1], 0, p)
-  return queue
+const longestPalindrome = function(s) {
+  const n = s.length, hash = {}
+  for (let i = 0; i < n; i++) hash[s[i]] = hash[s[i]] ? 0 : 1
+
+  let count = 0
+  for (let c in hash) count += hash[c] ? 1 : 0
+  return n - (count ? count - 1 : 0)
 }
 
 ;[
-  [[7,0], [4,4], [7,1], [5,0], [6,1], [5,2]],
-].forEach(people => {
-  console.log(reconstructQueue(people))
+  'abccccdd',                   // 7
+  'bb',                         // 2
+].forEach(s => {
+  console.log(longestPalindrome(s))
 })
 
 // Solution:
-// 1. 排序
-// 按h降序排序，若h相同则k升序排序
-// 如 [[7,0], [4,4], [7,1], [5,0], [6,1], [5,2]] 排序后为
-//    [[7,0], [7,1], [6,1], [5,0], [5,2], [4,4], ]
+// 用哈希表来保存每个字符在字符串中出现的次数的奇偶性。
+// 出现为偶数次的字符一定能用来组成回文字符。
+// 而出现为奇数次的字符中，有一个不能出现在回文字符中（除了选中的作为中间的那一个）
 
-// 2. 初始化一个新数组，将排序后的数组从第一个开始插入到新数组中。
-// 插入的位置为每个元素的第二个值。
-// 若新数组中该位置已存在有元素，则占用该位置，原来的元素及之后的全部元素向后移
-// 动一位。
+// 计算奇数次的字符个数，如果为 0, 那说明字符串中的每个字符都选中，
+// 否则只选择其中一个，其他删除各一个。
 
-// 排好序后的数组中，每个元素的h都高于或等于其后的元素，且k小于h相同时的元素。
-// h越大就越先被插入到新数组中，也就越是会被k相同而h小的元素占用。
 
 // Submission Result: Accepted
