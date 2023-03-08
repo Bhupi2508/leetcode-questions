@@ -1,21 +1,22 @@
-// 104. Maximum Depth of Binary Tree
-// Easy   53%
+// 105. Construct Binary Tree from Preorder and Inorder Traversal
+// Medium   32%
 
-// Given a binary tree, find its maximum depth.
+// Given preorder and inorder traversal of a tree, construct the binary tree.
 
-// The maximum depth is the number of nodes along the longest path from the root
-// node down to the farthest leaf node.
+// Note: You may assume that duplicates do not exist in the tree.
 
-// For example:
-// Given binary tree [3,9,20,null,null,15,7],
+// For example, given
+
+// preorder = [3,9,20,15,7]
+// inorder = [9,3,15,20,7]
+
+// Return the following binary tree:
 
 //    3
 //   / \
 //  9  20
 //    /  \
 //   15   7
-
-// return its depth = 3.
 
 
 /**
@@ -27,23 +28,34 @@
  */
 
 /**
- * @param {TreeNode} root
- * @return {number}
+ * @param {number[]} preorder
+ * @param {number[]} inorder
+ * @return {TreeNode}
  */
-const maxDepth = function(root) {
-  return root == null ? 0 : 1 + Math.max(maxDepth(root.left), maxDepth(root.right))
+const buildTree = function(preorder, inorder) {
+  const n = preorder.length
+  if (n <= 0) return null
+
+  const root = new TreeNode(preorder[0])
+  const i = inorder.indexOf(preorder[0])
+  root.left = buildTree(preorder.slice(1, i + 1), inorder.slice(0, i))
+  root.right = buildTree(preorder.slice(i + 1, n), inorder.slice(i + 1, n))
+  return root
 }
 
-const TreeNode = require('../structs/TreeNode')
 ;[
-  [3,9,20,null,null,15,7], // 3
-].forEach(array => {
-  console.log(maxDepth(TreeNode.from(array)))
+  [[3,9,20,15,7], [9,3,15,20,7]],
+  [[1, 2], [1, 2]],
+].forEach(args => {
+  console.log(buildTree(...args))
 })
 
-
 // Solution:
-// 递归返回左子树和右子树中最大深度，加上该节点（即1）。
-// 若节点为null，则返回 0。
+// 前序遍历的顺序是，根节点-左子树-右子树
+// 中序遍历的顺序是，左子树-根节点-右子树
+
+// 1. 前序数组的第一个节点作为根节点；
+// 2. 找出根节点在中序数组中的位置，由此计算出左子树和右子树的长度；
+// 3. 分割出前序和中序数组中的左右子树，并分别递归生成左右子树。
 
 // Submission Result: Accepted
