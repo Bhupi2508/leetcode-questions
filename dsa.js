@@ -1,57 +1,69 @@
-// 205. Isomorphic Strings
-// Easy   34%
+// 206. Reverse Linked List
+// Easy   45%
 
 
-// Given two strings s and t, determine if they are isomorphic.
+// Reverse a singly linked list.
 
-// Two strings are isomorphic if the characters in s can be replaced to get t.
+// click to show more hints.
 
-// All occurrences of a character must be replaced with another character while
-// preserving the order of characters. No two characters may map to the same
-// character but a character may map to itself.
-
-// For example,
-// Given "egg", "add", return true.
-
-// Given "foo", "bar", return false.
-
-// Given "paper", "title", return true.
-
-// Note:
-// You may assume both s and t have the same length.
-
+// Hint:
+// A linked list can be reversed either iteratively or recursively. Could you
+// implement both?
 
 /**
- * @param {string} s
- * @param {string} t
- * @return {boolean}
+ * Definition for singly-linked list.
+ * function ListNode(val) {
+ *     this.val = val;
+ *     this.next = null;
+ * }
  */
-const isIsomorphic = function(s, t) {
-  const hash = {}
-  for (let i = 0, n = s.length; i < n; i++) {
-    if (hash[s[i]] == null && hash['-' + t[i]] == null) {
-      hash[s[i]] = t[i]
-      hash['-' + t[i]] = s[i]
+
+/**
+ * @param {ListNode} head
+ * @return {ListNode}
+ */
+const reverseList = function(head) {
+  function iter(head) {
+    const prev = new ListNode()
+    let node = prev
+    while (head) {
+      const tmp = head.next
+      head.next = node.next
+      node.next = head
+      head = tmp
     }
-    if (hash[s[i]] !== t[i] || hash['-' + t[i]] !== s[i]) return false
+    return prev.next
   }
-  return true
+  function recu(head) {
+    const prev = new ListNode()
+    let node = prev
+    function body(head) {
+      if (head) {
+        body(head.next)
+        head.next = null
+        node.next = head
+        node = node.next
+      }
+    }
+    body(head)
+    return prev.next
+  }
+  //return iter(head)
+  return recu(head)
 }
 
+const ListNode = require('../structs/ListNode')
 ;[
-  ['egg', 'add'],               // true
-  ['foo', 'bar'],               // false
-  ['paper', 'title'],           // true
-  ['egga', 'adda'],             // false
-  ['aa', 'ab'],                 // false
-  ['ab', 'aa'],                 // false
-  ['a', 'a'],                   // true
-].forEach(args => {
-  console.log(isIsomorphic(...args))
+  [0,1,2,3,4,5,6],
+].forEach((array) => {
+  console.log((reverseList(ListNode.from(array)) || '').toString())
 })
 
 // Solution:
-// 利用哈希保存一个双射表。
-// 因为只使用一个表来保存，因此一个直接以键值对出现，另一个的键名需要改变一下。
+// 迭代：
+// 头插法：每遍历一个节点，都插入到新链表的头部。
+
+// 递归：
+// 先递归到最后一个节点，从最后一个节点开始插入新的链表的尾部。
 
 // Submission Result: Accepted
