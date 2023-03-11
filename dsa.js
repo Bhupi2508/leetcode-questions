@@ -1,57 +1,89 @@
-// 852. Peak Index in a Mountain Array
-// Easy   69%
+// 859. Buddy Strings
+// Easy   28%
 
 
-// Let's call an array A a mountain if the following properties hold:
-//  - A.length >= 3
-//  - There exists some 0 < i < A.length - 1 such that
-//    A[0] < A[1] < ... A[i-1] < A[i] > A[i+1] > ... > A[A.length - 1]
-
-// Given an array that is definitely a mountain, return any i such that
-//    A[0] < A[1] < ... A[i-1] < A[i] > A[i+1] > ... > A[A.length - 1].
+// Given two strings A and B of lowercase letters, return true if and only if we
+// can swap two letters in A so that the result equals B.
 
 // Example 1:
-// Input: [0,1,0]
-// Output: 1
-
+// Input: A = "ab", B = "ba"
+// Output: true
 // Example 2:
-// Input: [0,2,1,0]
-// Output: 1
+// Input: A = "ab", B = "ab"
+// Output: false
+// Example 3:
+// Input: A = "aa", B = "aa"
+// Output: true
+// Example 4:
+// Input: A = "aaaaaaabc", B = "aaaaaaacb"
+// Output: true
+// Example 5:
+// Input: A = "", B = "aa"
+// Output: false
 
 // Note:
-//     3 <= A.length <= 10000
-//     0 <= A[i] <= 10^6
-//     A is a mountain, as defined above.
+//     0 <= A.length <= 20000
+//     0 <= B.length <= 20000
+//     A and B consist only of lowercase letters.
 
 
 /**
- * @param {number[]} A
- * @return {number}
+ * @param {string} A
+ * @param {string} B
+ * @return {boolean}
  */
-const peakIndexInMountainArray = function(A) {
-  function recursive(i, j) {
-    const mid = (i + j) >> 1
-    if (A[mid - 1] < A[mid] && A[mid] > A[mid + 1]) {
-      return mid
-    } else if (A[mid] < A[mid + 1]) {
-      return recursive(mid + 1, j)
-    } else {
-      return recursive(i, mid - 1)
+const buddyStrings = function(A, B) {
+  if (A.length !== B.length) return false
+  let a = '', b = '', count = {}, swap = 0
+  for (let i = 0; i < A.length; i++) {
+    count[A[i]] = (count[A[i]] || 0) + 1
+    if (A[i] !== B[i]) {
+      if (swap === 0) {
+        a = A[i]
+        b = B[i]
+        swap++
+      } else if (swap === 1) {
+        if (a !== B[i] || b !== A[i]) return false
+        swap++
+      } else return false
     }
   }
-  return recursive(1, A.length - 1)
+  for (let key in count) if (count[key] > 1) return true
+  return swap === 2
+}
+
+const better = function(A, B) {
+  if (A.length !== B.length) return false
+  if (A === B && (new Set(A)).size < A.length) return true
+  const dif = []
+  for (let i = 0; i < A.length; i++) {
+    if (A[i] !== B[i]) dif.push(i)
+  }
+  return dif.length === 2 && A[dif[0]] === B[dif[1]] && A[dif[1]] === B[dif[0]]
 }
 
 ;[
-  [0, 1, 0], // 1
-  [0, 2, 1, 0], // 1
-  [0,1,2,3,4,5,6,7,4,3,2], // 7
-  [0,10,9,8,7,6,5,4,3,2,1,0], // 1
-].forEach((A) => {
-  console.log(peakIndexInMountainArray(A))
+  ['ab', 'ba'], // true
+  ['ab', 'ab'], // false
+  ['aa', 'aa'], // true
+  ['aaaaaaabc', 'aaaaaaacb'], // true
+  ['', 'aa'], // false
+  ['abab', 'abab'], // true
+  ['acbb', 'abcc'], // false
+].forEach(([A, B]) => {
+  console.log(buddyStrings(A, B))
+  // console.log(better(A, B))
 })
 
 // Solution:
-// 二分查找法。
+// 记录字符 `a` 和 `b`，记录交换的次数 `swap`，并记录每个字符出现的次数。
+// a 和 b 用于记录交换的字符
+// swap 不能大于2，否则返回 false
+// 记录字符次数，是为了在两个字符串相同时，看看有没有可交换的两个相同的字符。
+
+// 更好的方法
+// 当字符串相同时，用 Set 来判断，是否有重复字符
+// 遍历字符串时，使用数组记录要交换的字符的下标
+// 最后判断数组的长度是否等于2，并判断交换后是否相同。
 
 // Submission Result: Accepted
