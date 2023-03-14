@@ -1,71 +1,41 @@
-// 459. Repeated Substring Pattern
-// Easy   38%
+// 461. Hamming Distance
+// Easy 69% locked:false
 
-// Given a non-empty string check if it can be constructed by taking a substring
-// of it and appending multiple copies of the substring together. You may assume
-// the given string consists of lowercase English letters only and its length
-// will not exceed 10000.
+// The Hamming distance between two integers is the number of positions at which
+// the corresponding bits are different.
 
-// Example 1:
+// Given two integers x and y, calculate the Hamming distance.
 
-// Input: "abab"
+// Note:
+// 0 ≤ x, y < 2^31.
 
-// Output: True
+// Example:
 
-// Explanation: It's the substring "ab" twice.
+// Input: x = 1, y = 4
 
-// Example 2:
+// Output: 2
 
-// Input: "aba"
+// Explanation:
+// 1   (0 0 0 1)
+// 4   (0 1 0 0)
+//        ?   ?
 
-// Output: False
-
-// Example 3:
-
-// Input: "abcabcabcabc"
-
-// Output: True
-
-// Explanation: It's the substring "abc" four times. (And the substring "abcabc"
-// twice.)
-
+// The above arrows point to positions where the corresponding bits are
+// different.
 
 /**
- * @param {string} s
- * @return {boolean}
+ * @param {number} x
+ * @param {number} y
+ * @return {number}
  */
-const repeatedSubstringPattern = function(s) {
-  const n = s.length
-  for (let i = 2; i <= n; i++) {
-    if (!(n % i)) {
-      let p = -1, q = n / i - 1
-      while (q < n && s[++p] === s[++q]);
-      if (q >= n) return true
-    }
+const hammingDistance = function(x, y) {
+  let res = 0
+  while (x > 0 || y > 0) {
+    if (x % 2 !== y % 2) res++
+    x = x >> 1
+    y = y >> 1
   }
-  return false
-
-  // // more easy solution
-  // return (s + s).slice(1, s.length * 2 - 1).includes(s)
+  return res
 }
 
-;[
-  'abab',                       // true
-  'aba',                        // false
-  'abcabcabcabc',               // true
-  'abac',                       // false
-  'ababab',                     // true
-].forEach(s => {
-  console.log(repeatedSubstringPattern(s))
-})
-
-// Solution:
-
-// 因为要重复两次及以上，所以从重复的次数开始入手。
-// 从重复 2 次开始检查，不断递增，直到重复 n 次。
-// 如果重复次数不能整除字符串长度，则跳过。
-// 在能整除的次数中，从 p = [0, n / i]，检查
-// s[p]是否与 s[p + n / i]相同，如果全部都同，说明是重复子字符串组成。
-
-
-// Submission Result: Accepted
+console.log(hammingDistance(1, 2))
