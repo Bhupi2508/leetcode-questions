@@ -1,79 +1,58 @@
-// 160. Intersection of Two Linked Lists
-// Easy   30%
+// 162. Find Peak Element
+// Medium   37%
 
 
-// Write a program to find the node at which the intersection of two singly
-// linked lists begins.
+// A peak element is an element that is greater than its neighbors.
 
-// For example, the following two linked lists:
+// Given an input array where num[i] ≠ num[i+1], find a peak element and return
+// its index.
 
-// A:          a1 → a2
-//                    ↘
-//                      c1 → c2 → c3
-//                    ↗
-// B:     b1 → b2 → b3
+// The array may contain multiple peaks, in that case return the index to any one
+// of the peaks is fine.
 
-// begin to intersect at node c1.
+// You may imagine that num[-1] = num[n] = -∞.
 
-// Notes:
+// For example, in array [1, 2, 3, 1], 3 is a peak element and your function
+// should return the index number 2.
 
-// If the two linked lists have no intersection at all, return null.
-// The linked lists must retain their original structure after the function
-// returns.
-// You may assume there are no cycles anywhere in the entire linked structure.
-// Your code should preferably run in O(n) time and use only O(1) memory.
+// click to show spoilers.
 
-// Credits:Special thanks to @stellari for adding this problem and creating all
-// test cases.
+// Note:
+// Your solution should be in logarithmic complexity.
+
+// Credits:Special thanks to @ts for adding this problem and creating all test
+// cases.
 
 
 /**
- * Definition for singly-linked list.
- * function ListNode(val) {
- *     this.val = val;
- *     this.next = null;
- * }
+ * @param {number[]} nums
+ * @return {number}
  */
-
-/**
- * @param {ListNode} headA
- * @param {ListNode} headB
- * @return {ListNode}
- */
-const getIntersectionNode = function(headA, headB) {
-  const hash = {}
-  while (headA) {
-    hash[headA.val] = 1
-    headA = headA.next
+const findPeakElement = function(nums) {
+  const n = nums.length
+  let i = 0, j = n - 1
+  while (i < j) {
+    const mid = (i + j) >> 1
+    if (nums[mid] < nums[mid + 1]) i = mid + 1
+    else j = mid
   }
-  while (headB) {
-    if (hash[headB.val]) hash[headB.val] = 2
-    headB = headB.next
-  }
-
-  const head = new ListNode()
-  let node = head
-  for (let key in hash) {
-    if (hash[key] === 2) {
-      node.next = new ListNode(key)
-      node = node.next
-    }
-  }
-
-  return head.next
+  return i
 }
 
-const ListNode = require('../structs/ListNode')
 ;[
-  [[3,4,1,2,5], [2,4,3]],       // [2,4,3]
-].forEach(([A, B]) => {
-  const headA = ListNode.from(A),
-        headB = ListNode.from(B)
-  console.log((getIntersectionNode(headA, headB) || '').toString())
+  [1,2,3,1],                    // 2
+  [1,2,3,4,5,6,7,8,9,0],        // 8
+  [5,4,3,2,1],                  // 0
+  [1,2,3,4,5,6],                // 5
+].forEach(nums => {
+  console.log(findPeakElement(nums))
 })
 
 // Solution:
-// 用哈希来算交集。
-// TODO: #160 重做，题目理解错了
+// 二分查找。
+// 若中位数小于其后一位，说明后面有更大的数，
+// 且有 nums[-1] = nums[n] = -Infinity 做保障，
+// i = mid + 1，继续
+// 否则 j = mid，继续
 
 // Submission Result: Accepted
