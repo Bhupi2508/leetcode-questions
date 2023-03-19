@@ -1,54 +1,28 @@
 /**
- * @param {number[][]} matrix
- * @param {number} target
- * @return {boolean}
+ * Key: move all 2s to the end, and move all 0s to the beginning.
+ * Use two pointers to track start and end respectively.
+ * Move 2s first.
+ *
+ * @param {number[]} nums
+ * @return {void} Do not return anything, modify nums in-place instead.
  */
-var searchMatrix = function(matrix, target) {
-    var low = 0;
-    var rows = matrix.length;
-    var cols = matrix[0].length;
-    var high = rows * cols - 1;
-
-    while (low <= high) {
-        var mid = low + Math.floor((high - low) / 2);
-        var midNumber = findElementByIndex(matrix, mid, rows, cols);
-        if (target < midNumber) high = mid - 1;
-        else if (target > midNumber) low = mid + 1;
-        else return true;
-    }
-
-    return false;
-};
-
-var findElementByIndex = function(matrix, index, m, n) {
-    var row = Math.floor(index / n);
-    var col = index - n * row;
-    return matrix[row][col];
-};
-
-// second try
-var searchMatrix = function(matrix, target) {
-    var low = 0;
-    var rows = matrix.length;
-    var cols = matrix[0].length;
-    var high = rows * cols - 1;
-    while (low <= high) {
-        var mid = low + Math.floor((high - low) / 2);
-        var midElement = findElementByIndex(matrix, mid, cols);
-        if (midElement === target) {
-            return true;
-        } else if (midElement > target) {
-            high = mid - 1;
-        } else {
-            low = mid + 1;
+var sortColors = function(nums) {
+    var start = 0;
+    var end = nums.length - 1;
+    for (var i = 0; i <= end; i++) {
+        while (nums[i] === 2 && i < end) {
+            swap(nums, i, end);
+            end--;
+        }
+        while (nums[i] === 0 && i > start) {
+            swap(nums, i, start);
+            start++;
         }
     }
-    return false;
 };
 
-// only need n (columns).
-var findElementByIndex = function(matrix, index, n) {
-    var row = Math.floor(index / n);
-    var col = Math.floor(index % n);
-    return matrix[row][col];
+var swap = function(nums, i, j) {
+    var tmp = nums[i];
+    nums[i] = nums[j];
+    nums[j] = tmp;
 };
