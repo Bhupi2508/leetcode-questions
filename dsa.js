@@ -1,77 +1,51 @@
-// 897. Increasing Order Search Tree
-// Easy   68%
+// 905. Sort Array By Parity
+// Easy   74%
 
 
-// Given a binary search tree, rearrange the tree in in-order so that the
-// leftmost node in the tree is now the root of the tree, and every node has no
-// left child and only 1 right child.
+// Given an array A of non-negative integers, return an array consisting of all
+// the even elements of A, followed by all the odd elements of A.
+// You may return any answer array that satisfies this condition.
+
 // Example 1:
-// Input: [5,3,6,2,4,null,8,1,null,null,null,7,9]
-//        5
-//       / \
-//     3    6
-//    / \    \
-//   2   4    8
-//  /        / \
-// 1        7   9
-// Output: [1,null,2,null,3,null,4,null,5,null,6,null,7,null,8,null,9]
-//  1
-//   \
-//    2
-//     \
-//      3
-//       \
-//        4
-//         \
-//          5
-//           \
-//            6
-//             \
-//              7
-//               \
-//                8
-//                 \
-//                  9
+// Input: [3,1,2,4]
+// Output: [2,4,3,1]
+// The outputs [4,2,3,1], [2,4,1,3], and [4,2,1,3] would also be accepted.
 
-// Constraints:
-//     The number of nodes in the given tree will be between 1 and 100.
-//     Each node will have a unique integer value from 0 to 1000.
+// Note:
+//     1 <= A.length <= 5000
+//     0 <= A[i] <= 5000
 
 
 /**
- * Definition for a binary tree node.
- * function TreeNode(val) {
- * this.val = val;
- *     this.left = this.right = null;
- * }
+ * @param {number[]} A
+ * @return {number[]}
  */
-/**
- * @param {TreeNode} root
- * @return {TreeNode}
- */
-const increasingBST = function(root) {
-  if (!root) return null
-  let old = root
-  if (old.left) {
-    let rightmost = root = increasingBST(old.left)
-    while (rightmost.right) rightmost = rightmost.right
-    rightmost.right = old
+const sortArrayByParity = function(A) {
+  for (let i = 0, j = 0; j < A.length; j++) {
+    if (A[j] % 2 === 0) {
+      const t = A[i]
+      A[i++] = A[j]
+      A[j] = t
+    }
   }
-  old.left = null
-  old.right = increasingBST(old.right)
-  return root
+  return A
 }
 
-const TreeNode = require('../structs/TreeNode')
 ;[
-  [5,3,6,2,4,null,8,1,null,null,null,7,9],
-].forEach((array) => {
-  console.log(increasingBST(TreeNode.from(array)))
+  [3,1,2,4],
+  [1,2,3,4,5,6,7],
+].forEach((A) => {
+  console.log(sortArrayByParity(A))
 })
 
 // Solution:
-// 深度遍历，并递归地将其转变后的左子树返回
-// 将当前节点插入到左子树的最右子节点的右节点上
-// 在递归其右子树。
+// 从数组两边开始遍历
+// i 从头开始， j 从尾开始
+// i 遇到偶数则跳过，j 遇到奇数则跳过
+// 否则将 A[i] 与 A[j] 交换
+
+// 更简洁的方法
+// i 记录偶数部分的尾部
+// j 遍历数组，找到偶数后，交换 A[i] 与 A[j]（将偶数添加到偶数部分尾部）
 
 // Submission Result: Accepted
