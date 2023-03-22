@@ -1,54 +1,47 @@
-// 49. Group Anagrams
-// Medium   35%
+// 50. Pow(x, n)
+// Medium   26%
 
-// Given an array of strings, group anagrams together.
+// Implement pow(x, n).
 
-// For example, given: ["eat", "tea", "tan", "ate", "nat", "bat"],
-// Return:
+// Example 1:
 
-// [
-//   ["ate", "eat","tea"],
-//   ["nat","tan"],
-//   ["bat"]
-// ]
+// Input: 2.00000, 10
+// Output: 1024.00000
 
-// Note: All inputs will be in lower-case.
+// Example 2:
+
+// Input: 2.10000, 3
+// Output: 9.26100
+
 
 /**
- * @param {string[]} strs
- * @return {string[][]}
+ * @param {number} x
+ * @param {number} n
+ * @return {number}
  */
-const groupAnagrams = function(strs) {
-  if (strs === null || strs.length === 0) return []
-
-  const hash = {}
-  for (let s of strs) {
-    const key = Array(26).fill(0)
-    for (let c of s) key[c.charCodeAt() - 97]++
-
-    if (hash[key] === void 0) hash[key] = []
-    hash[key].push(s)
+const myPow = function(x, n) {
+  if (n === 0) return 1
+  if (n < 0) {
+    x = 1 / x
+    n = -n
   }
-
-  const result = []
-  for (let key in hash) result.push(hash[key])
-  return result
+  return n % 2 ? myPow(x * x, Math.trunc(n / 2)) * x : myPow(x * x, n / 2)
 }
 
-
 ;[
-  ['eat', 'tea', 'tan', 'ate', 'nat', 'bat', 'boo','bob'],
-].forEach(strs => {
-  console.log(groupAnagrams(strs))
+  [2.00000, 10],
+  [2.10000, 3],
+  [34.00515, -3],
+].forEach(args => {
+  console.log(myPow(...args), Math.pow(...args))
 })
 
 // Solution:
-// 使用哈希表来保存每个组应该含有的字符串。
-// 分组时，查看每个字符串中的含有的字符及其次数，以此分辨字符串应在哪个组。
-
-// 查看字符串中含有的字符及其次数的方法
-// 1. 排序字符后，组成的字符串
-// 2. 使用固定长度数组（26，表示26个字母），每个位置的值表示一个字符出现的次数。
-
+// 使用递归求解。
+// 不过要注意一下几点：
+// 1. 幂数为奇数时，该如何递归；
+// 2. 幂数为负数时，该如何递归；
+// 3. 终止情况。
+// 4. 是否考虑幂数为分数的情况。
 
 // Submission Result: Accepted
