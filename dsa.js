@@ -1,102 +1,65 @@
-// 143. Reorder List
-// Medium   36%
+// 147. Insertion Sort List
+// Medium   40%
 
 
-// Given a singly linked list L: L0->L1->...->Ln-1->Ln,
-// reorder it to: L0->Ln->L1->Ln-1->L2->Ln-2->...
-// You may not modify the values in the list's nodes, only nodes itself may be
-// changed.
+// Sort a linked list using insertion sort.
+// A graphical example of insertion sort. The partial sorted list (black)
+// initially contains only the first element in the list.
+// With each iteration one element (red) is removed from the input data and
+// inserted in-place into the sorted list
+
+// Algorithm of Insertion Sort:
+//     Insertion sort iterates, consuming one input element each repetition, and
+// growing a sorted output list.
+//     At each iteration, insertion sort removes one element from the input data,
+// finds the location it belongs within the sorted list, and inserts it there.
+//     It repeats until no input elements remain.
 // Example 1:
-// Given 1->2->3->4, reorder it to 1->4->2->3.
+// Input: 4->2->1->3
+// Output: 1->2->3->4
 // Example 2:
-// Given 1->2->3->4->5, reorder it to 1->5->2->4->3.
+// Input: -1->5->3->4->0
+// Output: -1->0->3->4->5
 
 
 /**
  * Definition for singly-linked list.
- * function ListNode(val, next) {
- * this.val = (val===undefined ? 0 : val)
- *     this.next = (next===undefined ? null : next)
+ * function ListNode(val) {
+ * this.val = val;
+ *     this.next = null;
  * }
  */
+const ListNode = require('../structs/ListNode')
+
 /**
  * @param {ListNode} head
- * @return {void} Do not return anything, modify head in-place instead.
+ * @return {ListNode}
  */
-const reorderList = function(head) {
-  if (!head) return null
-  let fast = slow = head
-  while (fast && fast.next) {
-    slow = slow.next
-    fast = fast.next.next
+const insertionSortList = function(head) {
+  const helper = new ListNode(0)
+  let node, temp
+  while (head) {
+    node = helper
+    while (node.next && head.val > node.next.val) node = node.next
+    temp = head
+    head = head.next
+    temp.next = node.next
+    node.next = temp
   }
-  let node = slow.next
-  const stack = []
-  while (node) {
-    stack.push(node)
-    node = node.next
-  }
-  slow.next = null
-  node = head
-  while (stack.length > 0) {
-    const insert = stack.pop()
-    insert.next = node.next
-    node.next = insert
-    node = node.next.next
-  }
+  return helper.next
 }
 
-const better = function(head) {
-  if (!head || !head.next) return
-
-  let slow = fast = head
-  while (fast.next && fast.next.next) {
-    slow = slow.next
-    fast = fast.next.next
-  }
-
-  const preMid = slow
-  let preCur = slow.next
-  while (preCur.next) {
-    const cur = preCur.next
-    preCur.next = cur.next
-    cur.next = preMid.next
-    preMid.next = cur
-  }
-
-  let p1 = head
-  let p2 = preMid.next
-  while (p1 !== preMid) {
-    preMid.next = p2.next
-    p2.next = p1.next
-    p1.next = p2
-    p1 = p2.next
-    p2 = preMid.next
-  }
-}
-
-const ListNode = require('../structs/ListNode')
 ;[
-  [1,2,3,4],
-  [1,2,3,4,5],
-  [1],
-  [1,2],
-  [1,2,3],
-  [],
+  [4,2,1,3],
+  [4,2,6,1,3,7,5],
+  [-1,5,3,4,0],
 ].forEach((array) => {
-  const list = ListNode.from(array)
-  // reorderList(list)
-  better(list)
-  if (list) console.log(list.toString())
-  else console.log('null')
+  console.log((insertionSortList(ListNode.from(array)) || 'null').toString())
 })
 
 // Solution:
-// 找到后半部分，依次入栈，再出栈插入合适的位置。
-
-// 更好的方法
-// 1. 找到后半部分
-// 2. 将后半部分翻转
-// 3. 将后半部分插入到前半部。
+// 使用一个新的链表来记录排序后的链表，使用空节点作为头部以便更改第一个节点时丢失头部。
+// 遍历输入的链表，
+// 每遍历一个节点，都将当前节点插入到新链表的适合的位置上（从前往后找位置）。
 
 // Submission Result: Accepted
