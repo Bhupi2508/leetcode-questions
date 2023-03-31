@@ -1,51 +1,71 @@
-// 657. Judge Route Circle
-// Easy 68% locked:false
+// 661. Image Smoother
+// Easy 45% locked:false
 
 
-// Initially, there is a Robot at position (0, 0). Given a sequence of its moves,
-// judge if this robot makes a circle, which means it moves back to the original
-// place.
-
-// The move sequence is represented by a string. And each move is represent by a
-// character. The valid robot moves are R (Right), L (Left), U (Up) and D (down).
-// The output should be true or false representing whether the robot makes a
-// circle.
+// Given a 2D integer matrix M representing the gray scale of an image, you need
+// to design a smoother to make the gray scale of each cell becomes the average
+// gray scale (rounding down) of all the 8 surrounding cells and itself.  If a
+// cell has less than 8 surrounding cells, then use as many as you can.
 
 // Example 1:
-  
-// Input: "UD"
-// Output: true
 
-// Example 2:
+// Input:
+// [[1,1,1],
+//  [1,0,1],
+//  [1,1,1]]
+// Output:
+// [[0, 0, 0],
+//  [0, 0, 0],
+//  [0, 0, 0]]
+// Explanation:
+// For the point (0,0), (0,2), (2,0), (2,2): floor(3/4) = floor(0.75) = 0
+// For the point (0,1), (1,0), (1,2), (2,1): floor(5/6) = floor(0.83333333) = 0
+// For the point (1,1): floor(8/9) = floor(0.88888889) = 0
 
-// Input: "LL"
-// Output: false
+// Note:
+
+// The value in the given matrix is in the range of [0, 255].
+// The length and width of the given matrix are in the range of [1, 150].
 
 
 /**
- * @param {string} moves
- * @return {boolean}
+ * @param {number[][]} M
+ * @return {number[][]}
  */
-const judgeCircle = function(moves) {
-  let h = 0, v = 0
-  for (let i = 0, len = moves.length; i < len; i++) {
-    const move = moves[i]
-    if (move === 'U') v--
-    if (move === 'D') v++
-    if (move === 'R') h--
-    if (move === 'L') h++
+const imageSmoother = function(M) {
+  if (M.length === 0 || M[0].length === 0) return [[]]
+
+  function smoother(a, b) {
+    let sum = 0, count = 0
+    for (let i = a - 1; i <= a + 1; i++) {
+      for (let j = b - 1; j <= b + 1; j++) {
+        if (M[i] && M[i][j] != void 0) {
+          sum += M[i][j]
+          count++
+        }
+      }
+    }
+    return Math.floor(sum / count)
   }
-  return h === 0 && v === 0
+
+  const r = M.length, c = M[0].length, result = Array(r)
+  for (let i = 0; i < r; i++) {
+    result[i] = []
+    for (let j = 0; j < c; j++) {
+      result[i][j] = smoother(i, j)
+    }
+  }
+
+  return result
 }
 
 ;[
-  'UD',                         // true
-  'LL',                         // false
-].forEach((moves) => {
-  console.log(judgeCircle(moves))
+  [[1,1,1],[1,0,1],[1,1,1]]
+].forEach((m) => {
+  console.log(imageSmoother(m))
 })
 
 // Solution:
-// 如果在数量上 U === D && R === L 则是在转圈，否则不是。
+// 似乎没有什么技巧。
 
 // Submission Result: Accepted
