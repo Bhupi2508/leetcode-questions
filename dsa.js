@@ -1,74 +1,77 @@
-// 896. Monotonic Array
-// Easy   57%
+// 897. Increasing Order Search Tree
+// Easy   68%
 
 
-// An array is monotonic if it is either monotone increasing or monotone
-// decreasing.
-// An array A is monotone increasing if for all i <= j, A[i] <= A[j].  An array A
-// is monotone decreasing if for all i <= j, A[i] >= A[j].
-// Return true if and only if the given array A is monotonic.
-
+// Given a binary search tree, rearrange the tree in in-order so that the
+// leftmost node in the tree is now the root of the tree, and every node has no
+// left child and only 1 right child.
 // Example 1:
-// Input: [1,2,2,3]
-// Output: true
-// Example 2:
-// Input: [6,5,4,4]
-// Output: true
-// Example 3:
-// Input: [1,3,2]
-// Output: false
-// Example 4:
-// Input: [1,2,4,5]
-// Output: true
-// Example 5:
-// Input: [1,1,1]
-// Output: true
+// Input: [5,3,6,2,4,null,8,1,null,null,null,7,9]
+//        5
+//       / \
+//     3    6
+//    / \    \
+//   2   4    8
+//  /        / \
+// 1        7   9
+// Output: [1,null,2,null,3,null,4,null,5,null,6,null,7,null,8,null,9]
+//  1
+//   \
+//    2
+//     \
+//      3
+//       \
+//        4
+//         \
+//          5
+//           \
+//            6
+//             \
+//              7
+//               \
+//                8
+//                 \
+//                  9
 
-// Note:
-//     1 <= A.length <= 50000
-//     -100000 <= A[i] <= 100000
+// Constraints:
+//     The number of nodes in the given tree will be between 1 and 100.
+//     Each node will have a unique integer value from 0 to 1000.
 
 
 /**
- * @param {number[]} A
- * @return {boolean}
+ * Definition for a binary tree node.
+ * function TreeNode(val) {
+ * this.val = val;
+ *     this.left = this.right = null;
+ * }
  */
-const isMonotonic = function(A) {
-  const l = A.length
-  if (l === 1) return true
-  const fn = A[0] > A[l - 1] ? ((a, b) => a - b >= 0) : ((a, b) => b - a >= 0)
-  for (let i = 1; i < l; i++) {
-    if (!fn(A[i - 1], A[i])) return false
+/**
+ * @param {TreeNode} root
+ * @return {TreeNode}
+ */
+const increasingBST = function(root) {
+  if (!root) return null
+  let old = root
+  if (old.left) {
+    let rightmost = root = increasingBST(old.left)
+    while (rightmost.right) rightmost = rightmost.right
+    rightmost.right = old
   }
-  return true
+  old.left = null
+  old.right = increasingBST(old.right)
+  return root
 }
 
-const batter = function(A) {
-  let inc = true, dec = true, l = A.length
-  for (let i = 1; i < l; i++) {
-    if (A[i - 1] > A[i]) inc = false
-    if (A[i - 1] < A[i]) dec = false
-  }
-  return inc || dec
-}
-
+const TreeNode = require('../structs/TreeNode')
 ;[
-  [1,2,2,3], // true
-  [6,5,4,4], // true
-  [1,3,2],   // false
-  [1,2,4,5], // true
-  [1,1,1],   // true
-].forEach((A) => {
-  console.log(isMonotonic(A))
-  console.log(batter(A))
+  [5,3,6,2,4,null,8,1,null,null,null,7,9],
+].forEach((array) => {
+  console.log(increasingBST(TreeNode.from(array)))
 })
 
 // Solution:
-// 根据首尾数的大小关系来确定比较函数fn
-// 若全部通过则返回 true 否则 false
-
-// 更好的方法
-// 遍历数组的时候，使用 inc 和 dec 记录数组是否为非递减和非递增的
-// 若两个都不是，则返回false
+// 深度遍历，并递归地将其转变后的左子树返回
+// 将当前节点插入到左子树的最右子节点的右节点上
+// 在递归其右子树。
 
 // Submission Result: Accepted
