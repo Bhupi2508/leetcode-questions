@@ -1,76 +1,53 @@
-// 811. Subdomain Visit Count
-// Easy   68%
+// 812. Largest Triangle Area
+// Easy   58%
 
 
-// A website domain like "discuss.leetcode.com" consists of various subdomains.
-// At the top level, we have "com", at the next level, we have "leetcode.com",
-// and at the lowest level, "discuss.leetcode.com". When we visit a domain like
-// "discuss.leetcode.com", we will also visit the parent domains "leetcode.com"
-// and "com" implicitly.
-// Now, call a "count-paired domain" to be a count (representing the number of
-// visits this domain received), followed by a space, followed by the address. An
-// example of a count-paired domain might be "9001 discuss.leetcode.com".
-// We are given a list cpdomains of count-paired domains. We would like a list of
-// count-paired domains, (in the same format as the input, and in any order),
-// that explicitly counts the number of visits to each subdomain.
-// Example 1:
-// Input:
-// ["9001 discuss.leetcode.com"]
-// Output:
-// ["9001 discuss.leetcode.com", "9001 leetcode.com", "9001 com"]
+// You have a list of points in the plane. Return the area of the largest
+// triangle that can be formed by any 3 of the points.
+// Example:
+// Input: points = [[0,0],[0,1],[1,0],[0,2],[2,0]]
+// Output: 2
 // Explanation:
-// We only have one website domain: "discuss.leetcode.com". As discussed above,
-// the subdomain "leetcode.com" and "com" will also be visited. So they will all
-// be visited 9001 times.
-// Example 2:
-// Input:
-// ["900 google.mail.com", "50 yahoo.com", "1 intel.mail.com", "5 wiki.org"]
-// Output:
-// ["901 mail.com","50 yahoo.com","900 google.mail.com","5 wiki.org","5 org","1
-// intel.mail.com","951 com"]
-// Explanation:
-// We will visit "google.mail.com" 900 times, "yahoo.com" 50 times,
-// "intel.mail.com" once and "wiki.org" 5 times. For the subdomains, we will
-// visit "mail.com" 900 + 1 = 901 times, "com" 900 + 50 + 1 = 951 times, and
-// "org" 5 times.
+// The five points are show in the figure below. The red triangle is the largest.
+//
+//    ^
+//    |
+//    x
+//    |\
+//    x \
+//    |  \
+//    x-x-x----->
+//
 // Notes:
-//     The length of cpdomains will not exceed 100.
-//     The length of each domain name will not exceed 100.
-//     Each address will have either 1 or 2 "." characters.
-//     The input count in any count-paired domain will not exceed 10000.
-//     The answer output can be returned in any order.
+//     3 <= points.length <= 50.
+//     No points will be duplicated.
+//      -50 <= points[i][j] <= 50.
+//     Answers within 10^-6 of the true value will be accepted as correct.
 
 
 /**
- * @param {string[]} cpdomains
- * @return {string[]}
+ * @param {number[][]} points
+ * @return {number}
  */
-const subdomainVisits = function(cpdomains) {
-  const hash = {}
-  for (let cp of cpdomains) {
-    let [n, domain] = cp.split(' ')
-    n = parseInt(n)
-    hash[domain] = (hash[domain] || 0) + n
-    for (let i = 0; i < domain.length; i++) {
-      if (domain[i] === '.') {
-        const d = domain.substring(i + 1)
-        hash[d] = (hash[d] || 0) + n
+const largestTriangleArea = function(points) {
+  const n = points.length
+  for (let i = 0; i < n; i++) {
+    for (let j = i + 1; j < n; j++) {
+      for (let k = j + 1; k < n; k++) {
+
       }
     }
   }
-  const res = []
-  for (let key in hash) res.push(hash[key] + ' ' + key)
-  return res
 }
 
 ;[
-  ['9001 discuss.leetcode.com'],
-  ["900 google.mail.com", "50 yahoo.com", "1 intel.mail.com", "5 wiki.org"],
-].forEach((cpdomains) => {
-  console.log(subdomainVisits(cpdomains))
+  [[0,0],[0,1],[1,0],[0,2],[2,0]],
+].forEach(() => {
+
 })
 
 // Solution:
-// 分词再使用 hashMap 来记录次数
 
-// Submission Result: Accepted
+// TODO #812 计算三个点形成的三角形的面积
+
+// Submission Result: Accept
