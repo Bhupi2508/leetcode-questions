@@ -1,11 +1,19 @@
-// 56. Merge Intervals
-// Medium   30%
+// 57. Insert Interval
+// Hard   28%
 
-// Given a collection of intervals, merge all overlapping intervals.
+// Given a set of non-overlapping intervals, insert a new interval into the
+// intervals (merge if necessary).
 
-// For example,
-// Given [1,3],[2,6],[8,10],[15,18],
-// return [1,6],[8,10],[15,18].
+// You may assume that the intervals were initially sorted according to their
+// start times.
+
+// Example 1: Given intervals [1,3],[6,9], insert and merge [2,5] in as
+// [1,5],[6,9].
+
+// Example 2: Given [1,2],[3,5],[6,7],[8,10],[12,16], insert and merge [4,9] in
+// as [1,2],[3,10],[12,16].
+
+// This is because the new interval [4,9] overlaps with [3,5],[6,7],[8,10].
 
 /**
  * Definition for an interval.
@@ -16,74 +24,49 @@ function Interval(start, end) {
   this.end = end
 }
 
-
 function createIntervals(array) {
   return array.map(v => new Interval(v[0], v[1]))
 }
 
 /**
  * @param {Interval[]} intervals
+ * @param {Interval} newInterval
  * @return {Interval[]}
  */
-const merge = function(intervals) {
-  intervals.sort((a, b) => a.start - b.start)
-  const result = []
-  let last = -1
-  for (let interval of intervals) {
-    if (last < 0 || result[last].end < interval.start) {
-      result.push(interval)
-      last++
-    } else {
-      result[last].end = Math.max(result[last].end, interval.end)
-    }
-  }
-  return result
-}
+const insert = function(intervals, newInterval) {
+  const result = [], n = intervals.length
+  let i = 0
+  while (i < n && intervals[i].end < newInterval.start) result.push(intervals[i++])
 
-const mergeWithHash = function(intervals) {
-  const hash = {}
-  for (let interval of intervals) {
-    hash[interval.start] = (hash[interval.start] || 0) + 1
-    hash[interval.end] = (hash[interval.end] || 0) - 1
+  while (i < n && intervals[i].start <= newInterval.end) {
+    newInterval = new Interval(
+      Math.min(newInterval.start, intervals[i].start),
+      Math.max(newInterval.end, intervals[i].end)
+    )
+    i++
   }
+  result.push(newInterval)
 
-  const result = []
-  let start = 0, count = 0
-  for (let time in hash) {
-    if (count === 0) start = time - 0
-    count += hash[time] - 0
-    if (count === 0) result.push(new Interval(start, time - 0))
-  }
+  while (i < n) result.push(intervals[i++])
   return result
 }
 
 ;[
-  [[1,3],[2,6],[8,10],[15,18]],
-  [[2,3],[4,5],[6,7],[8,9],[1,10]],
-  [[2,3],[2,2],[3,3],[1,3],[5,7],[2,2],[4,6]],
-  [[1,3],[5,7],[4,6]],
-].forEach(pairs => {
-  console.log(merge(createIntervals(pairs)))
-  console.log(mergeWithHash(createIntervals(pairs)))
+  [[[1, 3], [6, 9]], [2, 5]],
+  [[[1, 2], [3, 5], [6, 7], [8, 10], [12, 16]], [4, 9]],
+  [[[1, 5]], [0, 3]],
+  [[[1, 5], [6, 8]], [0, 9]],
+  [[], [1, 5]],
+  [[[1, 5]], [6, 8]],
+  [[[1, 5]], [0, 1]],
+].forEach(([pairs, aPair]) => {
+  console.log(insert(createIntervals(pairs), new Interval(...aPair)))
 })
 
 // Solution:
-// 方法一：
-// 使用哈希表，保存每个时间段的两个边界点数。
-// 若为开始边界，则该边界的哈希值初始化为1，若再次出现为开始边界，则加1。
-// 若为结束边界，则初始化为-1，若再次出现为结束边界，则减1。
-
-// 按边界值的从小到大的顺序，遍历哈希表。
-// 记录一个值，其为遍历过的哈希值的总和。
-// 该值初始化为0，同时记录新的开始边界。
-// 当该值再次为0时，使用新的开始边界和当前数，构造一个新的间隔，并在下一个数更新开始边界。
-
-// 方法二：
-// 使用排序。
-// 按开始边界的值升序排序数组。
-// 先将第一个间隔加入答案中。
-// 之后每次检查答案数组中的最后一个间隔的结束边界是否小于当前间隔的开始边界，
-// 若小于，则将该间隔添加到答案数组的末尾。
-// 若大于或等于，则比较两个间隔的结束边界，取较大的作为答案最后一个间隔的结束边界。
+// 直接向前的方式。
+// 先将不会重叠间隔添加到答案中。
+// 再不断将会重叠合并成新的间隔，作为参数间隔的值。
+// 最后再将不会重叠的剩下的间隔添加到答案中。
 
 // Submission Result: Accepted
