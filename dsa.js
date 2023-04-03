@@ -1,46 +1,48 @@
-// 263. Ugly Number
-// Easy   39%
+// 268. Missing Number
+// Easy   44%
 
 
-// Write a program to check whether a given number is an ugly number.
+// Given an array containing n distinct numbers taken from 0, 1, 2, ..., n, find
+// the one that is missing from the array.
 
-// Ugly numbers are positive numbers whose prime factors only include 2, 3, 5.
-// For example, 6, 8 are ugly while 14 is not ugly since it includes another
-// prime factor 7.
+// For example,
+// Given nums = [0, 1, 3] return 2.
 
-// Note that 1 is typically treated as an ugly number.
+// Note:
+// Your algorithm should run in linear runtime complexity. Could you implement it
+// using only constant extra space complexity?
 
 // Credits:Special thanks to @jianchao.li.fighter for adding this problem and
 // creating all test cases.
 
 
 /**
- * @param {number} num
- * @return {boolean}
+ * @param {number[]} nums
+ * @return {number}
  */
-const isUgly = function(num) {
-  if (num <= 0) return false
-  while (!(num % 2)) num /= 2
-  while (!(num % 3)) num /= 3
-  while (!(num % 5)) num /= 5
-  return num === 1
+const missingNumber = function(nums) {
+  const n = nums.length
+  for (let i = 0; i < n;) {
+    const num = nums[i]
+    if (num < i) {
+      [nums[i], nums[num]] = [nums[num], num]
+    } else {
+      i++
+    }
+  }
+  for (let i = 0; i < n; i++) {
+    if (nums[i] !== i) return i
+  }
+  return n
 }
 
 ;[
-  6,                            // true
-  8,                            // true
-  14,                           // false
-  1,                            // true
-  -6,                           // false
-  0,                            // false
-].forEach(num => {
-  console.log(isUgly(num))
+  [0,1,3],                      // 2
+].forEach(nums => {
+  console.log(missingNumber(nums))
 })
 
 // Solution:
-// 若能一直除 2，就一直除
-// 再若能一直除 3，就一直除
-// 再若能一直除 5，就一直除
-// 最后如果结果为 1 ，则返回 true，否则 false。
+// 若位置i的元素小于i时，为该元素找到其应该位于的位置。
 
 // Submission Result: Accepted
