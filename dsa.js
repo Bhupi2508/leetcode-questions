@@ -1,53 +1,60 @@
-// 1137. N-th Tribonacci Number
-// Easy   57%
+// 1154. Day of the Year
+// Easy   49%
 
 
-// The Tribonacci sequence Tn is defined as follows:
-// T0 = 0, T1 = 1, T2 = 1, and Tn+3 = Tn + Tn+1 + Tn+2 for n >= 0.
-// Given n, return the value of Tn.
+// Given a string date representing a Gregorian calendar date formatted as
+// YYYY-MM-DD, return the day number of the year.
 
 // Example 1:
-// Input: n = 4
-// Output: 4
-// Explanation:
-// T_3 = 0 + 1 + 1 = 2
-// T_4 = 1 + 1 + 2 = 4
+// Input: date = "2019-01-09"
+// Output: 9
+// Explanation: Given date is the 9th day of the year in 2019.
 // Example 2:
-// Input: n = 25
-// Output: 1389537
+// Input: date = "2019-02-10"
+// Output: 41
+// Example 3:
+// Input: date = "2003-03-01"
+// Output: 60
+// Example 4:
+// Input: date = "2004-03-01"
+// Output: 61
 
 // Constraints:
-//     0 <= n <= 37
-//     The answer is guaranteed to fit within a 32-bit integer, ie. answer <=
-// 2^31 - 1.
+//     date.length == 10
+//     date[4] == date[7] == '-', and all other date[i]'s are digits
+//     date represents a calendar date between Jan 1st, 1900 and Dec 31, 2019.
 
 
 /**
- * @param {number} n
+ * @param {string} date
  * @return {number}
  */
-const tribonacci = function(n) {
-  if (n === 0) return 0
-  if (n === 1 || n === 2) return 1
-  let a = 0, b = 1, c = 1
-  for (let i = 0; i <= n - 3; i++) {
-    let d = a + b + c
-    a = b
-    b = c
-    c = d
-  }
-  return c
+const dayOfYear = function(date) {
+  let [y, m, res] = date.split('-').map(a => Number.parseInt(a))
+  const md = [
+    31,
+    y % 4 == 0 && (y % 100 != 0 || y % 400 == 0) ? 29 : 28,
+    31,30,31,30,31,31,30,31,30,31
+  ]
+  while (--m > 0) res += md[m - 1]
+  return res
 }
-
 ;[
-  4,  // 4
-  25, // 1389537
-].forEach((n) => {
-  console.log(tribonacci(n))
+  '2019-01-09', // 9
+  '2019-02-10', // 41
+  '2003-03-01', // 60
+  '2004-03-01', // 61
+  '2020-12-31', // 366
+  "1900-03-25", // 84
+].forEach((date) => {
+  console.log(dayOfYear(date))
 })
 
 // Solution:
-// 使用递归的话，会导致同一个 Tn 被计算多次，不仅重复计算，而且增加了函数堆栈
-// 使用 3 个变量来保存计算过程的结果就行了
+// !!注意 2月的天数
+// 闰年的定义
+// 1. 能被 400 整除
+// 2. 能被 4 整除同时不能被 100 整除
+
 
 // Submission Result: Accepted
