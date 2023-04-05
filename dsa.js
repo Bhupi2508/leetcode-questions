@@ -1,48 +1,53 @@
-// 58. Length of Last Word
-// Easy   31%
+// 59. Spiral Matrix II
+// Medium   40%
 
-// Given a string s consists of upper/lower-case alphabets and empty space
-// characters ' ', return the length of last word in the string.
-
-// If the last word does not exist, return 0.
-
-// Note: A word is defined as a character sequence consists of non-space
-// characters only.
+// Given an integer n, generate a square matrix filled with elements from 1 to
+// n2 in spiral order.
 
 // For example,
-// Given s = "Hello World",
-// return 5.
+// Given n = 3,
+// You should return the following matrix:
+
+// [
+//   [ 1, 2, 3 ],
+//   [ 8, 9, 4 ],
+//   [ 7, 6, 5 ]
+// ]
 
 /**
- * @param {string} s
- * @return {number}
+ * @param {number} n
+ * @return {number[][]}
  */
-const lengthOfLastWord = function(s) {
-  let result = 0
-  for (let i = s.length - 1; i >= 0; i--){
-    if (s[i] !== ' ') result++
-    else if (result !== 0) return result
+const generateMatrix = function(n) {
+  if (n <= 0) return []
+
+  const m = Array(n)
+  for (let i = 0; i < n; i++) m[i] = Array(n)
+
+  let a = 0, b = n - 1, c = 0, d = n -1, i = 1
+  while (i <= n * n) {
+    for (let j = a; j <= b; j++) m[c][j] = i++
+    c++
+    for (let j = c; j <= d; j++) m[j][b] = i++
+    b--
+    for (let j = b; j >= a; j--) m[d][j] = i++
+    d--
+    for (let j = d; j >= c; j--) m[j][a] = i++
+    a++
   }
-  return result
+
+  return m
 }
 
 ;[
-  '',                           // 0
-  'a',                          // 1
-  'abas',                       // 4
-  'adf af',                     // 2
-  'a as asdf adfas',            // 5
-  'a  ',                        // 1
-  'abc ab ',                    // 2
-  ' assf asdf   asf   ',        // 3
-].forEach(s => {
-  console.log(lengthOfLastWord(s))
+  2,
+  3,
+].forEach(n => {
+  console.log(generateMatrix(n))
 })
 
 // Solution:
-// 从后向前读，
-// 若不为空格，则加一，
-// 若为空格，且结果不为0，则返回结果，
-// 否则继续。（去掉后缀空格）
+// 先构造一个n*n的矩阵
+// 从外层顺时针不断向内层填数，一行行或一列列地填。
 
 // Submission Result: Accepted
