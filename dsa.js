@@ -1,50 +1,63 @@
-// 1374. Generate a String With Characters That Have Odd Counts
-// Easy   76%
+// 1380. Lucky Numbers in a Matrix
+// Easy   72%
 
 
-// Given an integer n, return a string with n characters such that each character
-// in such string occurs an odd number of times.
-// The returned string must contain only lowercase English letters. If there are
-// multiples valid strings, return any of them.
+// Given a m * n matrix of distinct numbers, return all lucky numbers in the
+// matrix in any order.
+// A lucky number is an element of the matrix such that it is the minimum element
+// in its row and maximum in its column.
 
 // Example 1:
-// Input: n = 4
-// Output: "pppz"
-// Explanation: "pppz" is a valid string since the character 'p' occurs three
-// times and the character 'z' occurs once. Note that there are many other valid
-// strings such as "ohhh" and "love".
+// Input: matrix = [[3,7,8],[9,11,13],[15,16,17]]
+// Output: [15]
+// Explanation: 15 is the only lucky number since it is the minimum in its row
+// and the maximum in its column
 // Example 2:
-// Input: n = 2
-// Output: "xy"
-// Explanation: "xy" is a valid string since the characters 'x' and 'y' occur
-// once. Note that there are many other valid strings such as "ag" and "ur".
+// Input: matrix = [[1,10,4,2],[9,3,8,7],[15,16,17,12]]
+// Output: [12]
+// Explanation: 12 is the only lucky number since it is the minimum in its row
+// and the maximum in its column.
 // Example 3:
-// Input: n = 7
-// Output: "holasss"
+// Input: matrix = [[7,8],[1,2]]
+// Output: [7]
 
 // Constraints:
-//     1 <= n <= 500
+//     m == mat.length
+//     n == mat[i].length
+//     1 <= n, m <= 50
+//     1 <= matrix[i][j] <= 10^5.
+//     All elements in the matrix are distinct.
 
 
 /**
- * @param {number} n
- * @return {string}
+ * @param {number[][]} matrix
+ * @return {number[]}
  */
-const generateTheString = function(n) {
-  return  'a'.repeat(n  - 1) + (n % 2 ? 'a' : 'b')
+const luckyNumbers  = function(matrix) {
+  const res = [], n = matrix.length, m = matrix[0].length
+  for (let i = 0; i < n; i++) {
+    let col = 0
+    for (let j = 0; j < m; j++) {
+      if (matrix[i][j] < matrix[i][col]) col = j
+    }
+    let isMax = true
+    for (let k = 0; k < n; k++) {
+      if (matrix[k][col] > matrix[i][col]) isMax = false
+    }
+    if (isMax) res.push(matrix[i][col])
+  }
+  return res
 }
 
 ;[
-  4,
-  2,
-  7,
-].forEach((n) => {
-  console.log(generateTheString(n))
+  [[3,7,8],[9,11,13],[15,16,17]],
+  [[1,10,4,2],[9,3,8,7],[15,16,17,12]],
+  [[7,8],[1,2]],
+].forEach((matrix) => {
+  console.log(luckyNumbers(matrix))
 })
 
 // Solution:
-// 应为每个字符的个数都是奇数,
-// 所以当 n 为偶数时，生成 n-1 个 'a'，1 个 'b' 即可,
-// 当 n 为奇数时，生成 n 个 'a'.
+// 先找到每行中的最小值，再看看是否为其所在列的最大值
 
 // Submission Result: Accepted
