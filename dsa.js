@@ -1,8 +1,13 @@
-// 23. Merge k Sorted Lists
-// Hard   27%
+// 24. Swap Nodes in Pairs
+// Medium   38%
 
-// Merge k sorted linked lists and return it as one sorted list. Analyze and
-// describe its complexity.
+// Given a linked list, swap every two adjacent nodes and return its head.
+
+// For example,
+// Given 1->2->3->4, you should return the list as 2->1->4->3.
+
+// Your algorithm should use only constant space. You may not modify the values
+// in the list, only nodes itself can be changed.
 
 /**
  * Definition for singly-linked list.
@@ -12,41 +17,32 @@
  * }
  */
 
+
 /**
- * @param {ListNode[]} lists
+ * @param {ListNode} head
  * @return {ListNode}
  */
-const mergeKLists = function(lists) {
-  if (lists == null || lists.length === 0) return null
-
-  const mergeTwoLists = (l1, l2) => {
-    if (l1 == null) return l2
-    if (l2 == null) return l1
-
-    if (l1.val > l2.val) {
-      l2.next = mergeTwoLists(l1, l2.next)
-      return l2
-    } else{
-      l1.next = mergeTwoLists(l1.next, l2)
-      return l1
-    }
-  }
-
-  while(lists.length > 1) lists.push(mergeTwoLists(lists.shift(), lists.shift()))
-  return lists.shift()
+const swapPairs = function(head) {
+  if (!head || !head.next) return head
+  const second = head.next
+  head.next = swapPairs(second.next)
+  second.next = head
+  return second
 }
 
 const ListNode = require('../structs/ListNode')
 ;[
-  [[1, 3], [0, 1], []],
-].forEach((lists) => {
-  lists = lists.map(l => ListNode.from(l))
-  console.log((mergeKLists(lists) || '').toString())
+  [1, 2],                       // [2, 1]
+  [1],                          // [1]
+  [1, 2, 3, 4],                 // [2, 1, 4, 3]
+].forEach((array) => {
+  console.log((swapPairs(ListNode.from(array)) || '').toString())
 })
 
 // Solution:
-// 分治思想，在两个链表结合的时候，使用21-merge-two-sorted-lists.js中的方法。
-// 这里使用队列来实现分治。
-// 队列中的前两个链表结合成一个，并插入到队列末尾。
+// 使用递归迭代，每两个节点交换一次。
+// 保存第二个节点。
+// 将第一个节点的下一个节点置为第二个节点之后的链表交换后返回的值。
+// 再将第二个节点的下一个节点置为第一个节点，并将第二个节点作为头节点返回。
 
 // Submission Result: Accepted
