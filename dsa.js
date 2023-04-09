@@ -1,54 +1,49 @@
-// 350. Intersection of Two Arrays II
-// Easy   44%
+// 367. Valid Perfect Square
+// Easy   38%
 
 
-// Given two arrays, write a function to compute their intersection.
+// Given a positive integer num, write a function which returns True if num is a
+// perfect square else False.
 
-// Example:
-// Given nums1 = [1, 2, 2, 1], nums2 = [2, 2], return [2, 2].
+// Note: Do not use any built-in library function such as sqrt.
 
-// Note:
+// Example 1:
 
-// Each element in the result should appear as many times as it shows in both
-// arrays.
-// The result can be in any order.
+// Input: 16
+// Returns: True
 
-// Follow up:
+// Example 2:
 
-// What if the given array is already sorted? How would you optimize your
-// algorithm?
-// What if nums1's size is small compared to nums2's size? Which algorithm is
-// better?
-// What if elements of nums2 are stored on disk, and the memory is limited such
-// that you cannot load all elements into the memory at once?
+// Input: 14
+// Returns: False
+
+// Credits:Special thanks to @elmirap for adding this problem and creating all
+// test cases.
 
 
 /**
- * @param {number[]} nums1
- * @param {number[]} nums2
- * @return {number[]}
+ * @param {number} num
+ * @return {boolean}
  */
-const intersect = function(nums1, nums2) {
-  const result = [], hash = {}
-  for (let n of nums1) hash[n] = (hash[n] || 0) + 1
-  for (let n of nums2) {
-    if (hash[n]) {
-      result.push(n)
-      hash[n]--
-    }
-  }
-  return result
+const isPerfectSquare = function(num) {
+  let t = num
+  while (Math.abs(t - num / t) > 1) t = (t + num / t) / 2
+  return Math.pow(t >> 0, 2) === num
 }
 
 ;[
-  [[1,2,2,1],[2,2]],            // [2,2]
-].forEach(args => {
-  console.log(intersect(...args))
+  16,                           // true
+  14,                           // false
+].forEach(num => {
+  console.log(isPerfectSquare(num))
 })
 
 // Solution:
-// 一个哈希记录在第一个数组中出现的数及个数。
-// 在第二个数组中的每个数，只要其出现在哈希中且其值不为0，则选择该数。
+// 既然不能用内置函数，那就自己实现一个。
+// 使用牛顿迭代法来求平方根值，当迭代值与前一个的差小于 1 时截至。
+// 再取该的整数部分的平方，看是否等于 num。
 
+// 为什么到第一次小于 1 就截至了呢？
+// 因为这时整数部分已经确定了，而我们只需要整数部分。
 
 // Submission Result: Accepted
