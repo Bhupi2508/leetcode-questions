@@ -1,30 +1,21 @@
 /**
- * Dynamic programming: S[i][j] = min(S[i - 1][j], S[i][j - 1]) + grid[i][j]
- * Iniatially, S[i][j] is the sum of first row and first column elments.
- * Be careful, how JavaScript handles two demensional array, otherwise, you can get
- * 'undefined' error.
- * 
- * @param {number[][]} grid
+ * @param {number} x
  * @return {number}
  */
-var minPathSum = function(grid) {
-    var m = grid.length;
-    var n = grid[0].length;
-    var sum = [];
-    sum[0] = [grid[0][0]];
-    for (var i = 1; i < m; i++) {
-        sum[i] = [sum[i - 1][0] + grid[i][0]];
-    }
-
-    for (var j = 1; j < n; j++) {
-        sum[0][j] = sum[0][j - 1] + grid[0][j];
-    }
-
-    for (var i = 1; i < m; i++) {
-        for (var j = 1; j < n; j++) {
-            sum[i][j] = Math.min(sum[i - 1][j], sum[i][j - 1]) + grid[i][j];
+var mySqrt = function(x) {
+        if (x === 0) return x;
+        var left = 0;
+        var right = x;
+        var mid = Math.floor(x / 2);
+        while (left <= right) {
+            var divideX = Math.floor(x / mid);
+            // instead of using mid * mid > x, use x / mid incase overflow happens
+            if (mid > divideX) {
+                right = mid - 1;
+            } else {
+                left = mid + 1;
+            }
+            mid = left + Math.floor((right - left) / 2);
         }
-    }
-
-    return sum[m - 1][n - 1];
+        return mid;
 };
