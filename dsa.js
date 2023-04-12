@@ -1,41 +1,47 @@
 /**
- * Definition for singly-linked list.
- * function ListNode(val) {
+ * Definition for a binary tree node.
+ * function TreeNode(val) {
  *     this.val = val;
- *     this.next = null;
+ *     this.left = this.right = null;
  * }
  */
 /**
- * solution: reverse the second half of the list, then merge first half and reversed second half.
- * @param {ListNode} head
- * @return {void} Do not return anything, modify head in-place instead.
+ * key: rightNodes is the stack to track right nodes.
+ * @param {TreeNode} root
+ * @return {number[]}
  */
-var reorderList = function(head) {
-    if (!head || !head.next) return;
-    var fast = head;
-    var slow = head;
-    while (fast.next && fast.next.next) {
-        slow = slow.next;
-        fast = fast.next.next;
+var preorderTraversal = function(root) {
+    var rightNodes = [];
+    var order = [];
+    while (root || rightNodes.length > 0) {
+        if (root) {
+            order.push(root.val);
+            if (root.right) rightNodes.push(root.right);
+            root = root.left;
+        } else {
+          root = rightNodes.pop();
+        }
+    }
+    return order;
+};
+
+// this is a more straightforward method, but slower than first one.
+// stack tracks the node visit order
+var preorderTraversal = function(root) {
+    if (!root) return [];
+    var result = [];
+    var stack = [root];
+
+    while (stack.length > 0) {
+        var node = stack.pop();
+        result.push(node.val);
+        if (node.right) {
+            stack.push(node.right);
+        }
+        if (node.left) {
+            stack.push(node.left);
+        }
     }
 
-    // reverse the second half of the list
-    var middleHead = slow;
-    var middleHeadPrev = null;
-    while (middleHead) {
-        var headNext = middleHead.next;
-        middleHead.next = middleHeadPrev;
-        middleHeadPrev = middleHead;
-        middleHead = headNext;
-    }
-    // then merge first half and reversed second half.
-    slow = head;
-    while (slow) {
-        var slowNext = slow.next;
-        slow.next = middleHeadPrev;
-        var headPrevNext = middleHeadPrev.next;
-        middleHeadPrev.next = slowNext;
-        slow = slowNext;
-        middleHeadPrev = headPrevNext;
-    }
+    return result;
 };
