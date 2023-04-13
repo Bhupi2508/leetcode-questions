@@ -1,26 +1,22 @@
 /**
- * Key same solution as subsets, skip the duplicated nodes
- * @see line 23
+ * solution: dp[i] = dp[i - 1] if s[i - 1] is valid (!= 0)
+ * or dp[i] = dp[i-2] if s[i-1] is not valid, however s.substring(i-2, i) is valid ( >=10 && <=26)
+ * or dp[i] = dp[i-1] + dp[i-2] is both s.substring(i-2, i), s.substring(i-1, i) are valid
  *
- * @param {number[]} nums
- * @return {number[][]}
+ * @param {string} s
+ * @return {number}
  */
-var subsetsWithDup = function(nums) {
-    nums.sort(function(a, b) {
-        return a - b;
-    });
-    var result = [];
-    var results = [result];
-    helper(nums, 0, result, results);
-    return results;
-};
+var numDecodings = function(s) {
+    if (s.length === 0) return 0;
+    var dp = [1];
+    s[0] === '0' ? dp[1] = 0 : dp[1] = 1;
 
-var helper = function(nums, start, result, results) {
-    for (var i = start; i < nums.length; i++) {
-        result.push(nums[i]);
-        results.push(result.slice());
-        helper(nums, i + 1, result, results);
-        result.pop(nums[i]);
-        while (nums[i] === nums[i + 1]) i++;
+    for (var i = 2; i <= s.length; i++) {
+        var prevTwo = parseInt(s.substring(i - 2, i));
+        dp[i] = 0;
+        if (s[i - 1] !== '0') dp[i] = dp[i - 1];
+        if (prevTwo >= 10 && prevTwo <= 26 ) dp[i] += dp[i - 2];
     }
+
+    return dp[s.length];
 };
