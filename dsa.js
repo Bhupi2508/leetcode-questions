@@ -1,30 +1,10 @@
-// 98. Validate Binary Search Tree
-// Medium 23% locked:false
+// 100. Same Tree
+// Easy   46%
 
-// Given a binary tree, determine if it is a valid binary search tree (BST).
+// Given two abinary trees, write a function to check if they are equal or not.
 
-// Assume a BST is defined as follows:
-
-// The left subtree of a node contains only nodes with keys less than the node's
-//   - key. The right subtree of a node contains only nodes with keys greater
-//   - than the node's key. Both the left and right subtrees must also be binary
-//   - search trees.
-
-// Example 1:
-
-//   2
-//  / \
-// 1   3
-
-// Binary tree [2,1,3], return true.
-
-// Example 2:
-
-//   1
-//  / \
-// 2   3
-
-// Binary tree [1,2,3], return false.
+// Two binary trees are considered equal if they are structurally identical and
+// the nodes have the same value.
 
 /**
  * Definition for a binary tree node.
@@ -34,29 +14,30 @@
  * }
  */
 
-function createTree(array) {
-  if (array === null || array === void 0) return null
-  const root = new TreeNode(array[0])
-  root.left = createTree(array[1])
-  root.right = createTree(array[2])
-  return root
-}
-
 /**
- * @param {TreeNode} root
+ * @param {TreeNode} p
+ * @param {TreeNode} q
  * @return {boolean}
  */
-const isValidBST = function(root) {
-  const isValid = (root, min, max) => {
-    if (root === null) return true
-    if (root.val <= min || root.val >= max) return false
-    return isValid(root.left, min, root.val) &&
-      isValid(root.right, root.val, max)
-  }
-  return isValid(root, -Infinity, Infinity)
+const isSameTree = function(p, q) {
+  if (p === q) return true
+  if (p == null || q == null || p.val !== q.val) return false
+  return isSameTree(p.left, q.left) && isSameTree(p.right, q.right)
 }
 
-const tree = createTree(
-  [1, [1], null]
-)
-console.log(isValidBST(tree))
+
+const TreeNode = require('../structs/TreeNode')
+;[
+  [[1, 2, 2, 3, 4, 3, 4], [1, 2, 2, 3, 4, 3, 4]], // true
+].forEach(([p, q]) => {
+  console.log(isSameTree(TreeNode.from(p), TreeNode.from(q)))
+})
+
+// Solution:
+// 递归遍历两棵树的相同位置的节点（包括空子节点，即 null）
+// 1. 如果两节点相同则返回 true，这种情况中只有一种可能，两节点同为 null,
+//    因为两个 js 对象的内容相同，指针不同，比较起来值是不同的。
+// 2. 如果两节点不同为 null, 只有一个为 null, 值必然不同。
+// 3. 两个值均不为 null, 且均不相同，值也不同。
+
+// Submission Result: Accepted
