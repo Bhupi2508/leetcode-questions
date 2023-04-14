@@ -1,79 +1,70 @@
-// 1089. Duplicate Zeros
-// Easy   59%
+// 1103. Distribute Candies to People
+// Easy   60%
 
 
-// Given a fixed length array arr of integers, duplicate each occurrence of zero,
-// shifting the remaining elements to the right.
-// Note that elements beyond the length of the original array are not written.
-// Do the above modifications to the input array in place, do not return anything
-// from your function.
+// We distribute some number of candies, to a row of n = num_people people in the
+// following way:
+// We then give 1 candy to the first person, 2 candies to the second person, and
+// so on until we give n candies to the last person.
+// Then, we go back to the start of the row, giving n + 1 candies to the first
+// person, n + 2 candies to the second person, and so on until we give 2 * n
+// candies to the last person.
+// This process repeats (with us giving one more candy each time, and moving to
+// the start of the row after we reach the end) until we run out of candies.  The
+// last person will receive all of our remaining candies (not necessarily one
+// more than the previous gift).
+// Return an array (of length num_people and sum candies) that represents the
+// final distribution of candies.
 
 // Example 1:
-// Input: [1,0,2,3,0,4,5,0]
-// Output: null
-// Explanation: After calling your function, the input array is modified to:
-// [1,0,0,2,3,0,0,4]
+// Input: candies = 7, num_people = 4
+// Output: [1,2,3,1]
+// Explanation:
+// On the first turn, ans[0] += 1, and the array is [1,0,0,0].
+// On the second turn, ans[1] += 2, and the array is [1,2,0,0].
+// On the third turn, ans[2] += 3, and the array is [1,2,3,0].
+// On the fourth turn, ans[3] += 1 (because there is only one candy left), and
+// the final array is [1,2,3,1].
 // Example 2:
-// Input: [1,2,3]
-// Output: null
-// Explanation: After calling your function, the input array is modified to:
-// [1,2,3]
+// Input: candies = 10, num_people = 3
+// Output: [5,2,3]
+// Explanation:
+// On the first turn, ans[0] += 1, and the array is [1,0,0].
+// On the second turn, ans[1] += 2, and the array is [1,2,0].
+// On the third turn, ans[2] += 3, and the array is [1,2,3].
+// On the fourth turn, ans[0] += 4, and the final array is [5,2,3].
 
-// Note:
-//     1 <= arr.length <= 10000
-//     0 <= arr[i] <= 9
+// Constraints:
+//     1 <= candies <= 10^9
+//     1 <= num_people <= 1000
 
 
 /**
- * @param {number[]} arr
- * @return {void} Do not return anything, modify arr in-place instead.
+ * @param {number} candies
+ * @param {number} num_people
+ * @return {number[]}
  */
-const duplicateZeros = function(arr) {
-  for (let i = 0; i < arr.length; i++) {
-    if (arr[i] === 0) {
-      arr.splice(i, 0, 0)
-      i++
-      arr.pop()
-    }
+const distributeCandies = function(candies, num_people) {
+  const ans = Array(num_people).fill(0)
+  let people = 0
+  for (let turn = 1; candies - turn > 0; turn++) {
+    ans[people] += turn
+    candies -= turn
+    people = (people + 1) % num_people
   }
-}
-
-const better = function(arr) {
-  let countZero = 0
-  for (let i = 0; i < arr.length; i++) {
-    if (arr[i] === 0) countZero++
-  }
-  
-  let len = arr.length + countZero
-  for (let i = arr.length - 1, j = len - 1; i < j; i--, j--) {
-    if (arr[i] != 0) {
-      if (j < arr.length) arr[j] = arr[i]
-    } else {
-      if (j < arr.length) arr[j] = arr[i]
-      j--
-      if (j < arr.length) arr[j] = arr[i]
-    }
-  }
+  ans[people] += candies
+  return ans
 }
 
 ;[
-  [1,0,2,3,0,4,5,0], // [1,0,0,2,3,0,0,4]
-  [1,2,3],           // [1,2,3]
-  [1,0,0,0,1,2,3,4], // [1,0,0,0,0,0,0,1]
-].forEach((arr) => {
-  // duplicateZeros(arr)
-  better(arr)
-  console.log(arr)
+  [7, 4],   // [1,2,3,1]
+  [10, 3],  // [5,2,3]
+  [11, 3],  // [5,3,3]
+].forEach(([candies, num_people]) => {
+  console.log(distributeCandies(candies, num_people))
 })
 
 // Solution:
-// 使用 js 的 splice 和 pop 函数，直接插入和直接删除最后一个项
-// 比较直接，但作为算法来说，不好计算时间和空间复杂度
-
-// 经过参考后，更好的方法
-// 先统计 0 的个数，
-// 之后从尾部开始移动数字，
-// 详细查看代码
-// TO(n)-SO(1)
+// 根据题意直接 循环遍历 每个人并分该轮数的糖数即可。
 
 // Submission Result: Accepted
