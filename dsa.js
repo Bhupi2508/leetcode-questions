@@ -1,18 +1,24 @@
 /**
- * @param {number[]} nums
- * @return {number[]}
+ * Key: Start from top right, if target is less than the element, move left (col--);
+ * if target is greater than the element, move down (row++);
+ * O(m+n);
+ *
+ * @param {number[][]} matrix
+ * @param {number} target
+ * @return {boolean}
  */
-var productExceptSelf = function(nums) {
-    var productsOnRight = [];
-    productsOnRight[nums.length - 1] = 1;
-    for (var i = nums.length - 2; i >= 0; i--) {
-        productsOnRight[i] = nums[i + 1] * productsOnRight[i + 1];
+var searchMatrix = function(matrix, target) {
+    var row = 0;
+    var col = matrix[0].length - 1;
+
+    while (row <= matrix.length - 1 && col >=0) {
+        if (target < matrix[row][col]) {
+            col--;
+        } else if (target > matrix[row][col]) {
+            row++;
+        } else {
+            return true;
+        }
     }
-    var productsOnLeft = 1;
-    var results = [];
-    for (var i = 0; i < nums.length; i++) {
-        results[i] = productsOnLeft * productsOnRight[i];
-        productsOnLeft *= nums[i];
-    }
-    return results;
+    return false;
 };
