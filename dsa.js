@@ -1,35 +1,81 @@
-// 557. Reverse Words in a String III
-// Easy   59%
+// 559. Maximum Depth of N-ary Tree
+// Easy   68%
 
 
-// Given a string, you need to reverse the order of characters in each word
-// within a sentence while still preserving whitespace and initial word order.
+// Given a n-ary tree, find its maximum depth.
+// The maximum depth is the number of nodes along the longest path from the root
+// node down to the farthest leaf node.
+// Nary-Tree input serialization is represented in their level order traversal,
+// each group of children is separated by the null value (See examples).
 
 // Example 1:
+//         1
+//     /   |    \
+//   3     2     4
+//  / \
+// 5   6
+// Input: root = [1,null,3,2,4,null,5,6]
+// Output: 3
 
-// Input: "Let's take LeetCode contest"
-// Output: "s'teL ekat edoCteeL tsetnoc"
+// Example 2:
+//                    1
+//      /        /            \      \
+//     2        3             4       5
+//            /   \           |      / \
+//           6     7          8     9   10
+//                 |          |     |
+//                 11         12    13
+//                 |
+//                 14
+//  [1]
+//  [2 3 4 5]
+//  [] [6 7]   [8]  [9 10]
+//     [] [11] [12] [13]
+//       [] [14]
+// Input: root =
+// [1,null,2,3,4,5,null,null,6,7,null,8,null,9,10,null,null,11,null,12,null,13,null,null,14]
+// Output: 5
 
-// Note:
-// In the string, each word is separated by single space and there will not be
-// any extra space in the string.
+// Constraints:
+//     The depth of the n-ary tree is less than or equal to 1000.
+//     The total number of nodes is between [0, 10^4].
 
 
 /**
- * @param {string} s
- * @return {string}
+ * // Definition for a Node.
+ * function Node(val,children) {
+ *    this.val = val;
+ *    this.children = children;
+ * };
  */
-const reverseWords = function(s) {
-  return s.split(' ').map(word => word.split('').reverse().join('')).join(' ')
+function Node(val, children) {
+  this.val = val
+  this.children = children
 }
 
+/**
+ * @param {Node} root
+ * @return {number}
+ */
+const maxDepth = function(root) {
+  if (root == null) return 0
+  if (root.children.length === 0) return 1
+  let max = 0
+  for (let child of root.children) {
+    max = Math.max(max, maxDepth(child))
+  }
+  return max + 1
+}
+
+// TODO: #559 实现多叉树的构造函数
 ;[
-  "Let's take LeetCode contest", // "s'teL ekat edoCteeL tsetnoc"
-].forEach(s => {
-  console.log(reverseWords(s))
+  [1,null,3,2,4,null,5,6],
+].forEach(() => {
+
 })
 
 // Solution:
-// 全靠 JavaScript 原生函数。
+// 递归方法。
+// 每个节点中，遍历所有子节点，取得子节点中的最大高度，加 1 返回。
 
 // Submission Result: Accepted
