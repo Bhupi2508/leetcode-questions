@@ -1,79 +1,62 @@
-// 1171. Remove Zero Sum Consecutive Nodes from Linked List
-// Medium   41%
+// 1175. Prime Arrangements
+// Easy   51%
 
 
-// Given the head of a linked list, we repeatedly delete consecutive sequences of
-// nodes that sum to 0 until there are no such sequences.
-// After doing so, return the head of the final linked list.  You may return any
-// such answer.
+// Return the number of permutations of 1 to n so that prime numbers are at prime
+// indices (1-indexed.)
+// (Recall that an integer is prime if and only if it is greater than 1, and
+// cannot be written as a product of two positive integers both smaller than it.)
+// Since the answer may be large, return the answer modulo 10^9 + 7.
 
-// (Note that in the examples below, all sequences are serializations of ListNode
-// objects.)
 // Example 1:
-// Input: head = [1,2,-3,3,1]
-// Output: [3,1]
-// Note: The answer [1,2,1] would also be accepted.
+// Input: n = 5
+// Output: 12
+// Explanation: For example [1,2,5,4,3] is a valid permutation, but [5,2,3,4,1]
+// is not because the prime number 5 is at index 1.
 // Example 2:
-// Input: head = [1,2,3,-3,4]
-// Output: [1,2,4]
-// Example 3:
-// Input: head = [1,2,3,-3,-2]
-// Output: [1]
+// Input: n = 100
+// Output: 682289015
 
 // Constraints:
-//     The given linked list will contain between 1 and 1000 nodes.
-//     Each node in the linked list has -1000 <= node.val <= 1000.
+//     1 <= n <= 100
 
 
 /**
- * Definition for singly-linked list.
- * function ListNode(val, next) {
- * this.val = (val===undefined ? 0 : val)
- *     this.next = (next===undefined ? null : next)
- * }
+ * @param {number} n
+ * @return {number}
  */
-const ListNode = require('../structs/ListNode')
-
-/**
- * @param {ListNode} head
- * @return {ListNode}
- */
-const removeZeroSumSublists = function(head) {
-  const h = new ListNode()
-  h.next = head
-  let subHead = h, sum = 0
-  while (subHead) {
-    sum = 0
-    let cur = subHead.next
-    while (cur) {
-      sum += cur.val
-      if (sum === 0) {
-        subHead.next = cur.next
-      }
-      cur = cur.next
+const numPrimeArrangements = function(n) {
+  const isPrime = Array(n + 1).fill(true)
+  isPrime[1] = false
+  let numPrime = 0
+  for (let i = 2; i <= n; i++) {
+    if (isPrime[i]) {
+      numPrime++
+      for (let j = 2; j * i <= n; j++) isPrime[j * i] = false
     }
-    subHead = subHead.next
   }
-
-  return h.next
+  let res = 1, MODULO = 1000000007
+  for (let i = 1; i <= numPrime; i++) res = (res * i) % MODULO
+  for (let i = 1; i <= n - numPrime; i++) res = (res * i) % MODULO
+  return res
 }
 
-
 ;[
-  [1,2,-3,3,1],  // 3->1
-  [1,2,-3,3,1,-1,2], // 3->2
-  [1,2,3,-3,4], // 1->2->4
-  [1,2,3,-3,-2], // 1
-  [-1,-2,3,4,1], // 4->1
-].forEach((array) => {
-  console.log(removeZeroSumSublists(ListNode.from(array)).toString())
+  5, // 12
+  10, // 17280
+  20, // 344376809
+  50, // 451768713
+  100, // 682289015
+].forEach((n) => {
+  console.log(numPrimeArrangements(n))
 })
 
 // Solution:
-// 寻找包含第一个节点的连续和为 0 的子序列，将其删除后在寻找第二个子序列，
-// 再从更新后的链表中寻找包含第二个节点的子序列，依次寻找完所有节点。
-// TO(n*n)
+// 先用数组标记 1 到 n 中每个数是否是素数，
+// 从 2 开始遍历，当遍历到 i 时，将所有的 i*k (k>1) 的数标记为非素数。
+// 统计素数的个数。
 
-// 使用其他数据结构，可以降低时间复杂度。
+// 所有素数进行全排列，所有非素数进行全排列，
+// 最后得到答案。
 
 // Submission Result: Accepted
