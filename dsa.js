@@ -1,28 +1,52 @@
 /**
- * Use the idea of House Robber I, find the maxAmount twice.
- * first to find the max amount from 0 to length - 2,
- * second to find the max amount from 1 to length - 1,
- * doing this because the last house and first house are connected, they can't both
- * be robbed. Finally find the max value from first and second.
+ * Key:
+ * Quick select algorithm, choose last element of the array as the pivot.
+ * Move all smaller elements than the pivot to the left of the pivot,
+ * move all bigger elements than the pivot to the right of the pivot,
+ * repeat this process until the pivot is K
+ * O(N)? worst O(N^2)
  *
  * @param {number[]} nums
+ * @param {number} k
  * @return {number}
  */
-var rob = function(nums) {
-    if (nums.length === 0) return 0;
-    if (nums.length === 1) return nums[0];
-    return Math.max(robSingle(nums, 0, nums.length - 2), robSingle(nums, 1, nums.length - 1));
+var findKthLargest = function(nums, k) {
+    k = nums.length - k;
+    var start = 0;
+    var end = nums.length - 1;
+    while (start <= end) {
+        var pivot = partition(nums, start, end);
+        if (k === pivot) {
+            return nums[pivot];
+        }
+        else if (k < pivot) {
+            end = pivot - 1;
+        } else {
+            start = pivot + 1;
+        }
+    }
 };
 
-var robSingle = function(nums, start, end) {
-    var toRob = 0;
-    var notRob = 0;
-
-    for (var i = start; i <= end; i++) {
-        var tmp = toRob;
-        toRob = notRob + nums[i];
-        notRob = Math.max(notRob, tmp);
+var partition = function(nums, start, end) {
+    var left = start;
+    var right = end;
+    var pivot = end;
+    while (true) {
+        while (left < right && nums[left] < nums[pivot]) {
+            left++;
+        }
+        while (left < right && nums[right] >= nums[pivot]) {
+            right--;
+        }
+        if (left === right) break;
+        swap(nums, left, right);
     }
+    swap(nums, right, end);
+    return right;
+};
 
-    return Math.max(toRob, notRob);
+var swap = function(nums, i, j) {
+    var tmp = nums[i];
+    nums[i] = nums[j];
+    nums[j] = tmp;
 };
