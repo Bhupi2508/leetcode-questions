@@ -1,60 +1,40 @@
-// 92. Reverse Linked List II
-// Medium 30% locked:false
+// 93. Restore IP Addresses
+// Medium 27% locked:false
 
-// Reverse a linked list from position m to n. Do it in-place and in one-pass.
+// Given a string containing only digits, restore it by returning all possible
+// valid IP address combinations.
 
 // For example:
-// Given 1->2->3->4->5->NULL, m = 2 and n = 4,
-
-// return 1->4->3->2->5->NULL.
-
-// Note:
-// Given m, n satisfy the following condition:
-// 1 <= m <= n <= length of list.
+//Given "25525511135",
+// return ["255.255.11.135", "255.255.111.35"]. (Order does not matter)
 
 /**
- * Definition for singly-linked list.
- * function ListNode(val) {
- *     this.val = val;
- *     this.next = null;
- * }
+ * @param {string} s
+ * @return {string[]}
  */
+const restoreIpAddresses = function(s) {
+  const n = s.length
+  if (n < 4 || n > 12) return []
 
-/**
- * @param {ListNode} head
- * @param {number} m
- * @param {number} n
- * @return {ListNode}
- */
-const reverseBetween = function(head, m, n) {
-  if (head == null || m >= n) return head
-
-  const start = new ListNode()
-  start.next = head
-
-  let a = start, count = n - m
-  while (--m > 0) a = a.next
-
-  let b = a.next
-  while (--count >= 0) {
-    const t = b.next
-    b.next = t.next
-    t.next = a.next
-    a.next = t
+  const res = []
+  const iter = (p, i) => {
+    const m = p.length
+    if (m === 4) res.push(p)
+    else {
+      let num = ''
+      for (let j = 0; j < 3 && i + j <= n; j++) {
+        num += s[i + j] ? s[i + j] : ''
+        if (n - (i + j) >= 4 - m &&
+            n - (i + j) <= (4 - m - 1) * 3 + 1 &&
+            num - '0' < 256) {
+          iter([...p, num], i + j + 1)
+        }
+        if (num === '0') break
+      }
+    }
   }
-
-  return start.next
+  iter([], 0)
+  return res.map(p => p.join('.'))
 }
 
-const ListNode = require('../structs/ListNode')
-;[
-  [[1, 2, 3, 4, 5], 2, 4],      // 1->4->3->2->5
-].forEach(([array, m, n]) => {
-  console.log((reverseBetween(ListNode.from(array), m, n) || '').toString())
-})
-
-// Solution:
-// 使用头插法将中间的节点倒置。
-// 主要指针的细节。
-
-// Submission Result: Accepted
+console.log(restoreIpAddresses('25525511135'))
