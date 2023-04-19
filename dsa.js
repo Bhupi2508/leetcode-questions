@@ -1,51 +1,66 @@
-// 1313. Decompress Run-Length Encoded List
-// Easy   85%
+// 1317. Convert Integer to the Sum of Two No-Zero Integers
+// Easy   59%
 
 
-// We are given a list nums of integers representing a list compressed with
-// run-length encoding.
-// Consider each adjacent pair of elements [a, b] = [nums[2*i], nums[2*i+1]]
-// (with i >= 0).  For each such pair, there are a elements with value b in the
-// decompressed list.
-// Return the decompressed list.
+// Given an integer n. No-Zero integer is a positive integer which doesn't
+// contain any 0 in its decimal representation.
+// Return a list of two integers [A, B] where:
+//     A and B are No-Zero integers.
+//     A + B = n
+// It's guarateed that there is at least one valid solution. If there are many
+// valid solutions you can return any of them.
 
 // Example 1:
-// Input: nums = [1,2,3,4]
-// Output: [2,4,4,4]
-// Explanation: The first pair [1,2] means we have freq = 1 and val = 2 so we
-// generate the array [2].
-// The second pair [3,4] means we have freq = 3 and val = 4 so we generate
-// [4,4,4].
-// At the end the concatenation [2] + [4,4,4,4] is [2,4,4,4].
+// Input: n = 2
+// Output: [1,1]
+// Explanation: A = 1, B = 1. A + B = n and both A and B don't contain any 0 in
+// their decimal representation.
+// Example 2:
+// Input: n = 11
+// Output: [2,9]
+// Example 3:
+// Input: n = 10000
+// Output: [1,9999]
+// Example 4:
+// Input: n = 69
+// Output: [1,68]
+// Example 5:
+// Input: n = 1010
+// Output: [11,999]
 
 // Constraints:
-//     2 <= nums.length <= 100
-//     nums.length % 2 == 0
-//     1 <= nums[i] <= 100
+//     2 <= n <= 10^4
 
 
 /**
- * @param {number[]} nums
+ * @param {number} n
  * @return {number[]}
  */
-const decompressRLElist = function(nums) {
-  const res = []
-  for (let i = 0; i < nums.length / 2; i++ ) {
-    for (let j = 0; j < nums[i * 2]; j++ ) {
-      res.push(nums[i * 2 + 1])
-    }
+const getNoZeroIntegers = function(n) {
+  function hasZero(a) {
+    if (a % 10 === 0) return true
+    if (a < 10) return false
+    return hasZero((a / 10) >>> 0)
   }
-  return res
+
+  for (let i = 1; i < n; i++) {
+    if (hasZero(i) || hasZero(n - i)) continue
+    else return [i, n - i]
+  }
 }
 
 ;[
-  [1,2,3,4],
-].forEach((nums) => {
-  console.log(decompressRLElist(nums))
+  2,        // [1, 1]
+  11,       // [2, 9]
+  10000,    // [1, 9999]
+  69,       // [1, 68]
+  1010,     // [11, 999]
+].forEach((n) => {
+  console.log(getNoZeroIntegers(n))
 })
 
 // Solution:
-// 每次遍历两个数，a, b
-// 再生成 a 次 b
+// 关键是如何判断一个数是否包含有零
+// 从 i = 1 开始判断，看 i 和 n - i 是否都为非含零的数，是则返回，否则继续。
 
 // Submission Result: Accepted
