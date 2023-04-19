@@ -1,50 +1,61 @@
-// 712. Minimum ASCII Delete Sum for Two Strings
-// Medium   51%
+// 713. Subarray Product Less Than K
+// Medium   39%
 
 
-// Given two strings s1, s2, find the lowest ASCII sum of deleted characters to
-// make two strings equal.
-
+// Your are given an array of positive integers nums.
+// Count and print the number of (contiguous) subarrays where the product of all
+// the elements in the subarray is less than k.
 // Example 1:
-
-// Input: s1 = "sea", s2 = "eat"
-// Output: 231
-// Explanation: Deleting "s" from "sea" adds the ASCII value of "s" (115) to the
-// sum.
-// Deleting "t" from "eat" adds 116 to the sum.
-// At the end, both strings are equal, and 115 + 116 = 231 is the minimum sum
-// possible to achieve this.
-
-// Example 2:
-
-// Input: s1 = "delete", s2 = "leet"
-// Output: 403
-// Explanation: Deleting "dee" from "delete" to turn the string into "let",
-// adds 100[d]+101[e]+101[e] to the sum.  Deleting "e" from "leet" adds 101[e] to
-// the sum.
-// At the end, both strings are equal to "let", and the answer is 100+101+101+101
-// = 403.
-// If instead we turned both strings into "lee" or "eet", we would get answers of
-// 433 or 417, which are higher.
-
+// Input: nums = [10, 5, 2, 6], k = 100
+// Output: 8
+// Explanation: The 8 subarrays that have product less than 100 are: [10], [5],
+// [2], [6], [10, 5], [5, 2], [2, 6], [5, 2, 6].
+// Note that [10, 5, 2] is not included as the product of 100 is not strictly
+// less than k.
 // Note:
-
-// 0 < s1.length, s2.length <= 1000.
-// All elements of each string will have an ASCII value in [97, 122].
+// 0 < nums.length <= 50000.
+// 0 < nums[i] < 1000.
+// 0 <= k < 10^6.
 
 
 /**
- * @param {string} s1
- * @param {string} s2
+ * @param {number[]} nums
+ * @param {number} k
  * @return {number}
  */
-const minimumDeleteSum = function(s1, s2) {
-  // 提示: 使用dp
+const numSubarrayProductLessThanK = function(nums, k) {
+  if (k === 0) return 0
+  let res = 0
+  const queue = []
+  let p = 1
+  for (let n of nums) {
+    p *= n
+    queue.push(n)
+    while (p >= k && queue.length > 0) {
+      const q = queue.shift()
+      p /= q
+    }
+    res += queue.length
+  }
+  return res
 }
 
 ;[
-  ['sea', 'eat'],               // 231
-  ['delete', 'leet'],           // 403
-].forEach(args => {
-  console.log(minimumDeleteSum(...args))
+  [[10,5,2,6], 100], // 8
+  [[10,5,100,2,6], 100], // 6
+  [[1,2,3], 0], // 0
+  [[1,1,1], 1], // 0
+].forEach(([nums, k]) => {
+  console.log(numSubarrayProductLessThanK(nums, k))
 })
+
+// Solution:
+// 使用一个队列 queue 保存子数组
+// 用变量 p 记录当前子数组的乘积
+
+// 遍历数组，每次都将当前数添加到 queue 中，若乘积大于或等于 k，则将 queue 中的第一个数移出
+// 直至 p 小于 k，再将当前 queue 的长度添加到 res 中（包含最后一个数的子数组的数量）
+
+// TODO #713 尝试不使用 queue
+
+// Submission Result: Accepted
