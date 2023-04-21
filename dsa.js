@@ -1,54 +1,79 @@
-// 1078. Occurrences After Bigram
-// Easy   64%
+// 1089. Duplicate Zeros
+// Easy   59%
 
 
-// Given words first and second, consider occurrences in some text of the form
-// "first second third", where second comes immediately after first, and third
-// comes immediately after second.
-// For each such occurrence, add "third" to the answer, and return the answer.
+// Given a fixed length array arr of integers, duplicate each occurrence of zero,
+// shifting the remaining elements to the right.
+// Note that elements beyond the length of the original array are not written.
+// Do the above modifications to the input array in place, do not return anything
+// from your function.
 
 // Example 1:
-// Input: text = "alice is a good girl she is a good student", first = "a",
-// second = "good"
-// Output: ["girl","student"]
+// Input: [1,0,2,3,0,4,5,0]
+// Output: null
+// Explanation: After calling your function, the input array is modified to:
+// [1,0,0,2,3,0,0,4]
 // Example 2:
-// Input: text = "we will we will rock you", first = "we", second = "will"
-// Output: ["we","rock"]
+// Input: [1,2,3]
+// Output: null
+// Explanation: After calling your function, the input array is modified to:
+// [1,2,3]
 
 // Note:
-//     1 <= text.length <= 1000
-//     text consists of space separated words, where each word consists of
-// lowercase English letters.
-//     1 <= first.length, second.length <= 10
-//     first and second consist of lowercase English letters.
+//     1 <= arr.length <= 10000
+//     0 <= arr[i] <= 9
 
 
 /**
- * @param {string} text
- * @param {string} first
- * @param {string} second
- * @return {string[]}
+ * @param {number[]} arr
+ * @return {void} Do not return anything, modify arr in-place instead.
  */
-const findOcurrences = function(text, first, second) {
-  const result = []
-  const words = text.split(' ')
-  for (let i = 0; i < words.length - 2; i++) {
-    if (words[i] === first && words[i + 1] === second) {
-      result.push(words[i + 2])
+const duplicateZeros = function(arr) {
+  for (let i = 0; i < arr.length; i++) {
+    if (arr[i] === 0) {
+      arr.splice(i, 0, 0)
+      i++
+      arr.pop()
     }
   }
-  return result
+}
+
+const better = function(arr) {
+  let countZero = 0
+  for (let i = 0; i < arr.length; i++) {
+    if (arr[i] === 0) countZero++
+  }
+  
+  let len = arr.length + countZero
+  for (let i = arr.length - 1, j = len - 1; i < j; i--, j--) {
+    if (arr[i] != 0) {
+      if (j < arr.length) arr[j] = arr[i]
+    } else {
+      if (j < arr.length) arr[j] = arr[i]
+      j--
+      if (j < arr.length) arr[j] = arr[i]
+    }
+  }
 }
 
 ;[
-  ['alice is a good girl she is a good student', 'a', 'good'],
-  ['we will we will rock you', 'we', 'will'],
-].forEach(([text, first, second]) => {
-  console.log(findOcurrences(text, first, second))
+  [1,0,2,3,0,4,5,0], // [1,0,0,2,3,0,0,4]
+  [1,2,3],           // [1,2,3]
+  [1,0,0,0,1,2,3,4], // [1,0,0,0,0,0,0,1]
+].forEach((arr) => {
+  // duplicateZeros(arr)
+  better(arr)
+  console.log(arr)
 })
 
 // Solution:
-// 使用 split 函数按空格拆分 text，
-// 再遍历匹配一遍，稍微注意边界问题即可。
+// 使用 js 的 splice 和 pop 函数，直接插入和直接删除最后一个项
+// 比较直接，但作为算法来说，不好计算时间和空间复杂度
+
+// 经过参考后，更好的方法
+// 先统计 0 的个数，
+// 之后从尾部开始移动数字，
+// 详细查看代码
+// TO(n)-SO(1)
 
 // Submission Result: Accepted
