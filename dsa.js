@@ -1,44 +1,66 @@
-// 119. Pascal's Triangle II
-// Easy   37%
+// 120. Triangle
+// Medium   34%
 
-// Given an index k, return the kth row of the Pascal's triangle.
+// Given a triangle, find the minimum path sum from top to bottom. Each step you
+// may move to adjacent numbers on the row below.
 
-// For example, given k = 3,
-// Return [1,3,3,1].
+// For example, given the following triangle
 
-// Note: Could you optimize your algorithm to use only O(k) extra space?
+// [
+//      [2],
+//     [3,4],
+//    [6,5,7],
+//   [4,1,8,3]
+// ]
+
+// The minimum path sum from top to bottom is 11 (i.e., 2 + 3 + 5 + 1 = 11).
+
+// Note: Bonus point if you are able to do this using only O(n) extra space,
+// where n is the total number of rows in the triangle.
 
 /**
- * @param {number} rowIndex
- * @return {number[]}
+ * @param {number[][]} triangle
+ * @return {number}
  */
-const getRow = function(rowIndex) {
-  if (rowIndex < 0) return []
-  const res = new Array(rowIndex + 1)
-  res[0] = 1
-  for (let i = 1; i <= rowIndex; i++) {
-    res[i] = 0
-    for (let j = i; j > 0; j--) {
-      res[j] += res[j - 1]
+const minimumTotal = function(triangle) {
+  const n = triangle.length
+  if (n === 0) return 0
+
+  const sum = Array(n)
+  sum[0] = triangle[0][0]
+  for (let i = 1; i < n; i++) {
+    sum[i] = triangle[i][i] + sum[i - 1]
+    for (let j = i - 1; j > 0; j--) {
+      sum[j] = triangle[i][j] + Math.min(sum[j], sum[j - 1])
     }
+    sum[0] += triangle[i][0]
   }
-  return res
+
+  return Math.min(...sum)
 }
 
 ;[
-  -1,
-  0,
-  1,
-  3,
-].forEach(rowIndex => {
-  console.log(getRow(rowIndex))
+  [
+    [2],
+    [3,4],
+    [6,5,7],
+    [4,1,8,3]
+  ]
+].forEach(triangle => {
+  console.log(minimumTotal(triangle))
 })
 
 // Solution:
-// 由于第 n 层的数组有 n + 1 个数，所以先分配该长度的数组。
-// 又由于每个数都是其左右上角的两个数的和，且格式化（左对齐）后，数i的值等于其上
-// 一层的数i加上数i-1的值，因此只需要在原数组基础上计算（保证 O(k) 的空间复杂度）
+// 使用一个数组记录从顶层到某层的中每个数的最小路径和。
 
-// 因为需要加上前一个数，所以从后向前遍历。
+// 在迭代中，上一层每个数的最小路径和已经确定，现在来计算到该层的每个数的最小路
+// 径和，由于只能从上一层的两个相邻数选择，因此选最小的一个相加即可（边缘数只有
+// 一个，直接加）
+
+// 如上例子，每遍历一层后的结果：
+// 1          [2]
+// 2        [5, 6]
+// 3     [11, 10, 13]
+// 4   [15, 11, 18, 16]
 
 // Submission Result: Accepted
