@@ -1,45 +1,64 @@
-// 283. Move Zeroes
-// Easy   50%
+// 290. Word Pattern
+// Easy   33%
 
 
-// Given an array nums, write a function to move all 0's to the end of it while
-// maintaining the relative order of the non-zero elements.
+// Given a pattern and a string str, find if str follows the same pattern.
 
-// For example, given nums  = [0, 1, 0, 3, 12], after calling your function, nums
-// should be [1, 3, 12, 0, 0].
+//  Here follow means a full match, such that there is a bijection between a
+// letter in pattern and a non-empty word in str.
 
-// Note:
+// Examples:
 
-// You must do this in-place without making a copy of the array.
-// Minimize the total number of operations.
+// pattern = "abba", str = "dog cat cat dog" should return true.
+// pattern = "abba", str = "dog cat cat fish" should return false.
+// pattern = "aaaa", str = "dog cat cat dog" should return false.
+// pattern = "abba", str = "dog dog dog dog" should return false.
 
-// Credits:Special thanks to @jianchao.li.fighter for adding this problem and
-// creating all test cases.
+// Notes:
+// You may assume pattern contains only lowercase letters, and str contains
+// lowercase letters separated by a single space.
+
+// Credits:Special thanks to @minglotus6 for adding this problem and creating all
+// test cases.
 
 
 /**
- * @param {number[]} nums
- * @return {void} Do not return anything, modify nums in-place instead.
+ * @param {string} pattern
+ * @param {string} str
+ * @return {boolean}
  */
-const moveZeroes = function(nums) {
-  for (let i = 1, n = nums.length; i < n; i++) {
-    let j = i
-    while (j > 0 && nums[j] && !nums[j - 1]) {
-      [nums[j], nums[j - 1]] = [nums[j - 1], nums[j]]
-      j--
+const wordPattern = function(pattern, str) {
+  str = str.split(' ')
+  const n = pattern.length, m = str.length
+  if (n !== m) return false
+
+  const hash = {}
+  for (let i = 0; i < n; i++) {
+    if (!hash[pattern[i]]) {
+      if (hash['A' + str[i]]) return false
+      hash[pattern[i]] = str[i]
+      hash['A' + str[i]] = [pattern[i]]
     }
+    if (hash[pattern[i]] !== str[i]) return false
   }
-  console.log(nums)
+  return true
 }
 
 ;[
-  [0, 1, 0, 3, 12],             // [1, 3, 12, 0, 0]
-].forEach(nums => {
-  moveZeroes(nums)
+  ['abba', 'dog cat cat dog'],  // true
+  ['abba', 'dog cat cat fish'], // false
+  ['aaaa', 'dog cat cat dog'],  // false
+  ['abba', 'dog dog dog dog'],  // false
+  ['abc', 'b c a'],             // true
+].forEach(args => {
+  console.log(wordPattern(...args))
 })
 
+
 // Solution:
-// 在遍历数组的过程中，遇到不为 0 的数时，检查其前一个数是否为 0，
-// 如果是，则不断交换，直到其前一个数不为 0
+// 先将 str 字符串变为字符串数组。
+// 在遍历 str 和 pattern 时，一边建立双射连接一边匹配。
+// 为了避免 pattern 的某个字符与 str 中的某个字符 相同，
+// 因此在建立 str 的映射时，让其加上一个不会出现的字符，以便区分。
 
 // Submission Result: Accepted
