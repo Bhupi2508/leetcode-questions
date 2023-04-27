@@ -1,81 +1,58 @@
-// 559. Maximum Depth of N-ary Tree
-// Easy   68%
+// 561. Array Partition I
+// Easy   66%
 
 
-// Given a n-ary tree, find its maximum depth.
-// The maximum depth is the number of nodes along the longest path from the root
-// node down to the farthest leaf node.
-// Nary-Tree input serialization is represented in their level order traversal,
-// each group of children is separated by the null value (See examples).
+// Given an array of 2n integers, your task is to group these integers into n
+// pairs of integer, say (a1, b1), (a2, b2), ..., (an, bn) which makes sum of
+// min(ai, bi) for all i from 1 to n as large as possible.
 
 // Example 1:
-//         1
-//     /   |    \
-//   3     2     4
-//  / \
-// 5   6
-// Input: root = [1,null,3,2,4,null,5,6]
-// Output: 3
 
-// Example 2:
-//                    1
-//      /        /            \      \
-//     2        3             4       5
-//            /   \           |      / \
-//           6     7          8     9   10
-//                 |          |     |
-//                 11         12    13
-//                 |
-//                 14
-//  [1]
-//  [2 3 4 5]
-//  [] [6 7]   [8]  [9 10]
-//     [] [11] [12] [13]
-//       [] [14]
-// Input: root =
-// [1,null,2,3,4,5,null,null,6,7,null,8,null,9,10,null,null,11,null,12,null,13,null,null,14]
-// Output: 5
+// Input: [1,4,3,2]
 
-// Constraints:
-//     The depth of the n-ary tree is less than or equal to 1000.
-//     The total number of nodes is between [0, 10^4].
+// Output: 4
+// Explanation: n is 2, and the maximum sum of pairs is 4 = min(1, 2) + min(3,
+// 4).
+
+// Note:
+
+// n is a positive integer, which is in the range of [1, 10000].
+// All the integers in the array will be in the range of [-10000, 10000].
 
 
 /**
- * // Definition for a Node.
- * function Node(val,children) {
- *    this.val = val;
- *    this.children = children;
- * };
- */
-function Node(val, children) {
-  this.val = val
-  this.children = children
-}
-
-/**
- * @param {Node} root
+ * @param {number[]} nums
  * @return {number}
  */
-const maxDepth = function(root) {
-  if (root == null) return 0
-  if (root.children.length === 0) return 1
-  let max = 0
-  for (let child of root.children) {
-    max = Math.max(max, maxDepth(child))
+const arrayPairSum = function(nums) {
+  const n = nums.length
+  nums.sort((a, b) => a - b)
+  let result = 0
+  for (let i = 0; i < n; i++) {
+    if (i % 2 === 0) result += nums[i]
   }
-  return max + 1
+  return result
 }
 
-// TODO: #559 实现多叉树的构造函数
 ;[
-  [1,null,3,2,4,null,5,6],
-].forEach(() => {
-
+  [1,4,3,2],                    // 4
+].forEach(nums => {
+  console.log(arrayPairSum(nums))
 })
 
 // Solution:
-// 递归方法。
-// 每个节点中，遍历所有子节点，取得子节点中的最大高度，加 1 返回。
+// 要分成两个元素一组，且选择组中较小的那个元素，并将每组选择的元素相加。
+// 还要保证在所有分组的可能性选择最大的那个。
+
+// 如何确保总和最大呢？
+// 首先数组里最大的数是不可能选的，因为这个数无论在那个组中都不会被选到。
+// 但是选择第二大的数是有可能的，只要它和最大的数在一个组。
+// 然后在剩余的元素中继续让最大的两个数在一组，这样总能选到第二大的数。
+// 这样就能确保总和是最大的。
+
+// 先将数组按递升顺序排序。
+// 如果只有两个元素，则是第一个元素，
+// 如果有四个元素，则只能选第一和第三，
+// 以此类推，选择奇数位元素。
 
 // Submission Result: Accepted
