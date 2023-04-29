@@ -1,51 +1,81 @@
-// 507. Perfect Number
-// Easy   33%
+// 508. Most Frequent Subtree Sum
+// Medium   52%
 
 
-// We define the Perfect Number is a positive integer that is equal to the sum of
-// all its positive divisors except itself.
+// Given the root of a tree, you are asked to find the most frequent subtree sum.
+// The subtree sum of a node is defined as the sum of all the node values formed
+// by the subtree rooted at that node (including the node itself). So what is the
+// most frequent subtree sum value? If there is a tie, return all the values with
+// the highest frequency in any order.
 
-// Now, given an integer n, write a function that returns true when it is a
-// perfect number and false when it is not.
+// Examples 1
+// Input:
 
-// Example:
+//   5
+//  /  \
+// 2   -3
 
-// Input: 28
-// Output: True
-// Explanation: 28 = 1 + 2 + 4 + 7 + 14
+// return [2, -3, 4], since all the values happen only once, return all of them
+// in any order.
+
+// Examples 2
+// Input:
+
+//   5
+//  /  \
+// 2   -5
+
+// return [2], since 2 happens twice, however -5 only occur once.
 
 // Note:
-// The input number n will not exceed 100,000,000. (1e8)
+// You may assume the sum of values in any subtree is in the range of 32-bit
+// signed integer.
 
 
 /**
- * @param {number} num
- * @return {boolean}
+ * Definition for a binary tree node.
+ * function TreeNode(val) {
+ *   this.val = val;
+ *   this.left = this.right = null;
+ * }
  */
-const checkPerfectNumber = function(num) {
-  let sum = 1
-  for (let i = 2, n = Math.sqrt(num); i < n; i++) {
-    if (num % i === 0) sum += i + (num / i)
+
+/**
+ * @param {TreeNode} root
+ * @return {number[]}
+ */
+const findFrequentTreeSum = function(root) {
+  const hash = {}
+  let freq = 0
+  function postorder(root) {
+    if (!root) return 0
+    const val = root.val + postorder(root.left) + postorder(root.right)
+    hash[val] = (hash[val] || 0) + 1
+    freq = Math.max(freq, hash[val])
+    return val
   }
-  return num !== 1 && sum === num
+
+  postorder(root)
+  const result = []
+  for (let key in hash) {
+    if (hash[key] === freq) result.push(parseInt(key))
+  }
+  return result
 }
 
+const TreeNode = require('../structs/TreeNode')
 ;[
-  28,                           // true
-  1,                            // false
-].forEach(num => {
-  console.log(checkPerfectNumber(num))
+  [5,2,-3],                      // [2,-3,4]
+  [5,2,-5],                      // [2]
+].forEach((array) => {
+  console.log(findFrequentTreeSum(TreeNode.from(array)))
 })
 
 // Solution:
-// 找出所有的因子。
-// 因为不能包含本身，且 1 是确定的。
-// 因此 i 从 2 开始找，一直到 sqrt(num)。
-// 如果除数能被 num 整除则是因子，除得的结果也是因子。
+// 使用后序遍历，因为需要计算子树和。
+// 使用一个哈希表遍历过程中的子树和及其出现次数。
+// 使用一个变量保存出现次数的最大值。
 
-// 为什么一直到 sqrt(num) 呢 ？
-// 假设有两个因子分别为 a，b，且 a * b = num
-// 每对因子中，假设 a <= b，那么 a * a <= a * b = num，
-// a <= sqrt(num)
+// 最后遍历哈希表找出出现次数等于最大值的数。
 
 // Submission Result: Accepted
