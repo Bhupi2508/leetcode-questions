@@ -1,76 +1,60 @@
-// 1441. Build an Array With Stack Operations
-// Easy   69%
+// 1446. Consecutive Characters
+// Easy   63%
 
 
-// Given an array target and an integer n. In each iteration, you will read a
-// number from  list = {1,2,3..., n}.
-// Build the target array using the following operations:
-//     Push: Read a new element from the beginning list, and push it in the
-// array.
-//     Pop: delete the last element of the array.
-//     If the target array is already built, stop reading more elements.
-// You are guaranteed that the target array is strictly increasing, only
-// containing numbers between 1 to n inclusive.
-// Return the operations to build the target array.
-// You are guaranteed that the answer is unique.
+// Given a string s, the power of the string is the maximum length of a non-empty
+// substring that contains only one unique character.
+// Return the power of the string.
 
 // Example 1:
-// Input: target = [1,3], n = 3
-// Output: ["Push","Push","Pop","Push"]
-// Explanation:
-// Read number 1 and automatically push in the array -> [1]
-// Read number 2 and automatically push in the array then Pop it -> [1]
-// Read number 3 and automatically push in the array -> [1,3]
+// Input: s = "leetcode"
+// Output: 2
+// Explanation: The substring "ee" is of length 2 with the character 'e' only.
 // Example 2:
-// Input: target = [1,2,3], n = 3
-// Output: ["Push","Push","Push"]
+// Input: s = "abbcccddddeeeeedcba"
+// Output: 5
+// Explanation: The substring "eeeee" is of length 5 with the character 'e' only.
 // Example 3:
-// Input: target = [1,2], n = 4
-// Output: ["Push","Push"]
-// Explanation: You only need to read the first 2 numbers and stop.
+// Input: s = "triplepillooooow"
+// Output: 5
 // Example 4:
-// Input: target = [2,3,4], n = 4
-// Output: ["Push","Pop","Push","Push","Push"]
+// Input: s = "hooraaaaaaaaaaay"
+// Output: 11
+// Example 5:
+// Input: s = "tourist"
+// Output: 1
 
 // Constraints:
-//     1 <= target.length <= 100
-//     1 <= target[i] <= 100
-//     1 <= n <= 100
-//     target is strictly increasing.
+//     1 <= s.length <= 500
+//     s contains only lowercase English letters.
 
 
 /**
- * @param {number[]} target
- * @param {number} n
- * @return {string[]}
+ * @param {string} s
+ * @return {number}
  */
-const buildArray = function(target, n) {
-  const res = []
-  for (let i = 0, j = 1; j <= n; j++) {
-    if (target[i] === j) {
-      res.push('Push')
-      if (++i >= target.length) break
-    } else {
-      res.push('Push', 'Pop')
-    }
+const maxPower = function(s) {
+  let res = 1, count = 1
+  for (let i = 1; i < s.length; i++) {
+    if (s[i] === s[i - 1]) count++
+    else count = 1
+    res = Math.max(res, count)
   }
   return res
 }
 
 ;[
-  [[1,3], 3],
-  [[1,2,3], 3],
-  [[1,2], 4],
-  [[2,3,4], 4],
-  [[4,6,8], 12],
-].forEach(([target, n]) => {
-  console.log(buildArray(target, n))
+  'leetcode', // 2
+  'abbcccddddeeeeedcba', // 5
+  'triplepillooooow', // 5
+  'hooraaaaaaaaaaay', // 11
+  'tourist', // 1
+  'cc', // 2
+].forEach((s) => {
+  console.log(maxPower(s))
 })
 
 // Solution:
-// 遍历数字 1~n
-// 匹配 target[i] 时，使用 "Push"
-// 若不匹配 使用 "Push" + "Pop"
-// 当 i > target.length 后，结束
+// count 计数，res 记录过程中最大的 count
 
 // Submission Result: Accepted
