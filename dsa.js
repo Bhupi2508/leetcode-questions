@@ -1,65 +1,66 @@
-// 762. Prime Number of Set Bits in Binary Representation
-// Easy   62%
+// 766. Toeplitz Matrix
+// Easy   64%
 
 
+// A matrix is Toeplitz if every diagonal from top-left to bottom-right has the
+// same element.
+// Now given an M x N matrix, return True if and only if the matrix is Toeplitz.
 
-// Given two integers L and R, find the count of numbers in the range [L, R]
-// (inclusive) having a prime number of set bits in their binary representation.
-// (Recall that the number of set bits an integer has is the number of 1s present
-// when written in binary.  For example, 21 written in binary is 10101 which has
-// 3 set bits.  Also, 1 is not a prime.)
 // Example 1:
-// Input: L = 6, R = 10
-// Output: 4
+// Input:
+// matrix = [
+//   [1,2,3,4],
+//   [5,1,2,3],
+//   [9,5,1,2]
+// ]
+// Output: True
 // Explanation:
-// 6 -> 110 (2 set bits, 2 is prime)
-// 7 -> 111 (3 set bits, 3 is prime)
-// 9 -> 1001 (2 set bits , 2 is prime)
-// 10->1010 (2 set bits , 2 is prime)
+// In the above grid, the diagonals are:
+// "[9]", "[5, 5]", "[1, 1, 1]", "[2, 2, 2]", "[3, 3]", "[4]".
+// In each diagonal all elements are the same, so the answer is True.
 // Example 2:
-// Input: L = 10, R = 15
-// Output: 5
+// Input:
+// matrix = [
+//   [1,2],
+//   [2,2]
+// ]
+// Output: False
 // Explanation:
-// 10 -> 1010 (2 set bits, 2 is prime)
-// 11 -> 1011 (3 set bits, 3 is prime)
-// 12 -> 1100 (2 set bits, 2 is prime)
-// 13 -> 1101 (3 set bits, 3 is prime)
-// 14 -> 1110 (3 set bits, 3 is prime)
-// 15 -> 1111 (4 set bits, 4 is not prime)
+// The diagonal "[1, 2]" has different elements.
 // Note:
-// L, R will be integers L  in the range [1, 10^6].
-// R - L will be at most 10000.
+//     matrix will be a 2D array of integers.
+//     matrix will have a number of rows and columns in range [1, 20].
+//     matrix[i][j] will be integers in range [0, 99].
+// Follow up:
+//     What if the matrix is stored on disk, and the memory is limited such that
+// you can only load at most one row of the matrix into the memory at once?
+//     What if the matrix is so large that you can only load up a partial row
+// into the memory at once?
 
 
 /**
- * @param {number} L
- * @param {number} R
- * @return {number}
+ * @param {number[][]} matrix
+ * @return {boolean}
  */
-const countPrimeSetBits = function(L, R) {
-  const PRIMES = [2, 3, 5, 7, 11, 13, 17, 19]
-  let res = 0
-  for (let i = L; i <= R; i++) {
-    let count = 0
-    for (let j = i; j > 0; j = j >>> 1) if (j % 2) count++
-    if (PRIMES.includes(count)) res++
+const isToeplitzMatrix = function(matrix) {
+  const n = matrix.length, m = matrix[0].length
+  for (let i = 1; i < n; i++) {
+    for (let j = 1; j < m; j++) {
+      if (matrix[i][j] !== matrix[i - 1][j - 1]) return false
+    }
   }
-  return res
+  return true
 }
 
 ;[
-  [6, 10], // 4
-  [10, 15], // 5
-  [842, 888], // 23
-].forEach(([L, R]) => {
-  console.log(countPrimeSetBits(L, R))
+  [[1,2,3,4],[5,1,2,3],[9,5,1,2]], // true
+  [[1,2],[2,2]],                   // false
+].forEach((matrix) => {
+  console.log(isToeplitzMatrix(matrix))
 })
 
 // Solution:
-// 计算每个数的二进制中的 1 的个数
-// 再判断该数是否是质数
-
-// 因为数从 1 到 10^6 (10^6 < 2^20)
-// 所以判断质数时，只需判断其是否为 [2, 3, 5, 7, 11, 13, 17, 19] 中的一个即可。
+// 1. 普通方法：
+// 除了第一行和第一列外，每个数与其左上角上的数比较，不同则返回 false
 
 // Submission Result: Accepted
