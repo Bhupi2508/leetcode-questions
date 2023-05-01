@@ -1,53 +1,68 @@
-// 812. Largest Triangle Area
-// Easy   58%
+// 819. Most Common Word
+// Easy   44%
 
+// Given a paragraph and a list of banned words, return the most frequent word
+// that is not in the list of banned words.  It is guaranteed there is at least
+// one word that isn't banned, and that the answer is unique.
+// Words in the list of banned words are given in lowercase, and free of
+// punctuation.  Words in the paragraph are not case sensitive.  The answer is in
+// lowercase.
 
-// You have a list of points in the plane. Return the area of the largest
-// triangle that can be formed by any 3 of the points.
 // Example:
-// Input: points = [[0,0],[0,1],[1,0],[0,2],[2,0]]
-// Output: 2
+// Input:
+// paragraph = "Bob hit a ball, the hit BALL flew far after it was hit."
+// banned = ["hit"]
+// Output: "ball"
 // Explanation:
-// The five points are show in the figure below. The red triangle is the largest.
-//
-//    ^
-//    |
-//    x
-//    |\
-//    x \
-//    |  \
-//    x-x-x----->
-//
-// Notes:
-//     3 <= points.length <= 50.
-//     No points will be duplicated.
-//      -50 <= points[i][j] <= 50.
-//     Answers within 10^-6 of the true value will be accepted as correct.
+// "hit" occurs 3 times, but it is a banned word.
+// "ball" occurs twice (and no other word does), so it is the most frequent
+// non-banned word in the paragraph.
+// Note that words in the paragraph are not case sensitive,
+// that punctuation is ignored (even if adjacent to words, such as "ball,"),
+// and that "hit" isn't the answer even though it occurs more because it is
+// banned.
 
+// Note:
+//     1 <= paragraph.length <= 1000.
+//     0 <= banned.length <= 100.
+//     1 <= banned[i].length <= 10.
+//     The answer is unique, and written in lowercase (even if its occurrences in
+// paragraph may have uppercase symbols, and even if it is a proper noun.)
+//     paragraph only consists of letters, spaces, or the punctuation symbols
+// !?',;.
+//     There are no hyphens or hyphenated words.
+//     Words only consist of letters, never apostrophes or other punctuation
+// symbols.
 
 /**
- * @param {number[][]} points
- * @return {number}
+ * @param {string} paragraph
+ * @param {string[]} banned
+ * @return {string}
  */
-const largestTriangleArea = function(points) {
-  const n = points.length
-  for (let i = 0; i < n; i++) {
-    for (let j = i + 1; j < n; j++) {
-      for (let k = j + 1; k < n; k++) {
-
-      }
+const mostCommonWord = function (paragraph, banned) {
+  const words = paragraph.replace(/\!|\?|\'|\,|\;|\./g, ' ').split(/\s+/)
+  const hash = {}
+  let res = ''
+  for (let w of words) {
+    const l = w.toLowerCase()
+    if (!banned.includes(l)) {
+      hash[l] = (hash[l] || 0) + 1
+      if (hash[l] > (hash[res] || 0)) res = l
     }
   }
+  return res
 }
 
 ;[
-  [[0,0],[0,1],[1,0],[0,2],[2,0]],
-].forEach(() => {
-
+  ['Bob hit a ball, the hit BALL flew far after it was hit.', ['hit']],
+  ['a, a, a, a, b,b,b,c, c', ['a']],
+].forEach(([paragraph, banned]) => {
+  console.log(mostCommonWord(paragraph, banned))
 })
 
-// Solution:
+// Solption:
+// 先将标点符号转换成空格，再以空格将段落分成一个个单词
+// 使用一个 HashMap 记录除了禁止的每个单词的个数
+// 返回次数最大的一个
 
-// TODO #812 计算三个点形成的三角形的面积
-
-// Submission Result: Accept
+// Submission Result: Accepted
