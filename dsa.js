@@ -1,86 +1,77 @@
-// 994. Rotting Oranges
-// Easy   47%
+// 997. Find the Town Judge
+// Easy   50%
 
 
-// In a given grid, each cell can have one of three values:
-//     the value 0 representing an empty cell;
-//     the value 1 representing a fresh orange;
-//     the value 2 representing a rotten orange.
-// Every minute, any fresh orange that is adjacent (4-directionally) to a rotten
-// orange becomes rotten.
-// Return the minimum number of minutes that must elapse until no cell has a
-// fresh orange.  If this is impossible, return -1 instead.
+// In a town, there are N people labelled from 1 to N.  There is a rumor that one
+// of these people is secretly the town judge.
+// If the town judge exists, then:
+//     The town judge trusts nobody.
+//     Everybody (except for the town judge) trusts the town judge.
+//     There is exactly one person that satisfies properties 1 and 2.
+// You are given trust, an array of pairs trust[i] = [a, b] representing that the
+// person labelled a trusts the person labelled b.
+// If the town judge exists and can be identified, return the label of the town
+// judge.  Otherwise, return -1.
 
 // Example 1:
-// Input: [[2,1,1],[1,1,0],[0,1,1]]
-// Output: 4
+// Input: N = 2, trust = [[1,2]]
+// Output: 2
 // Example 2:
-// Input: [[2,1,1],[0,1,1],[1,0,1]]
-// Output: -1
-// Explanation:  The orange in the bottom left corner (row 2, column 0) is never
-// rotten, because rotting only happens 4-directionally.
+// Input: N = 3, trust = [[1,3],[2,3]]
+// Output: 3
 // Example 3:
-// Input: [[0,2]]
-// Output: 0
-// Explanation:  Since there are already no fresh oranges at minute 0, the answer
-// is just 0.
+// Input: N = 3, trust = [[1,3],[2,3],[3,1]]
+// Output: -1
+// Example 4:
+// Input: N = 3, trust = [[1,2],[2,3]]
+// Output: -1
+// Example 5:
+// Input: N = 4, trust = [[1,3],[1,4],[2,3],[2,4],[4,3]]
+// Output: 3
 
 // Note:
-//     1 <= grid.length <= 10
-//     1 <= grid[0].length <= 10
-//     grid[i][j] is only 0, 1, or 2.
+//     1 <= N <= 1000
+//     trust.length <= 10000
+//     trust[i] are all different
+//     trust[i][0] != trust[i][1]
+//     1 <= trust[i][0], trust[i][1] <= N
 
 
 /**
- * @param {number[][]} grid
+ * @param {number} N
+ * @param {number[][]} trust
  * @return {number}
  */
-const orangesRotting = function(grid) {
-  let count = 0
-  let queue = []
-  for (let i = 0; i < grid.length; i++) {
-    for (let j = 0; j < grid[i].length; j++) {
-      if (grid[i][j] === 1) count++
-      if (grid[i][j] === 2) queue.push([i, j])
-    }
+const findJudge = function(N, trust) {
+  const count = Array(N + 1).fill(0)
+  for (let t of trust) {
+    count[t[0]]--
+    count[t[1]]++
   }
-  function rot(i, j) {
-    if (i >= 0 && j >=0 && i < grid.length && j < grid[0].length && grid[i][j] === 1) {
-      grid[i][j] = 2
-      count--
-      queue.push([i, j])
-    }
+  for (let i = 1; i <= N; i++) {
+    if (count[i] === N - 1) return i
   }
-  let minute = 0
-  while (queue.length > 0) {
-    let len = queue.length
-    while (len-- > 0) {
-      const cell = queue.shift()
-      rot(cell[0] - 1, cell[1])
-      rot(cell[0] + 1, cell[1])
-      rot(cell[0], cell[1] - 1)
-      rot(cell[0], cell[1] + 1)
-    }
-    if (queue.length > 0) minute++
-  }
-  return count === 0 ? minute : -1
+  return -1
 }
 
 ;[
-  [[2,1,1],[1,1,0],[0,1,1]], // 4
-  [[2,1,1],[0,1,1],[1,0,1]], // -1
-  [[0,2]],                   // 0
-  [[2,1,1],[1,1,1],[1,1,2]], // 2
-  [[0]],                     // 0
-].forEach((grid) => {
-  console.log(orangesRotting(grid))
+  [2, [[1,2]]],              // 2
+  [3, [[1,3],[2,3]]],        // 3
+  [3, [[1,3],[2,3],[3,1]]],  // -1
+  [3, [[1,2],[2,3]]],        // -1
+  [4, [[1,3],[1,4],[2,3],[2,4],[4,3]]], // 3
+].forEach(([N, trust]) => {
+  console.log(findJudge(N, trust))
 })
 
 // Solution:
-// BFS
-// 找出所有 2，添加到先进先出队列中，使用广度遍历所有 2 的四周，将遍历过的 1 变为 2，
-// 记录遍历的次数
-// 找出所有 1，记录个数，用于判断是否能将所有 1 变为 2
+// 使用投票箱的方式来统计
+// 每个人一个箱子
+// 若有人去投票，则这个人的箱子就会被关闭，设为 -1
+// 最后查看箱子里的票，若有箱子的票数量为 N - 1，则该箱子的人为法官
 
+// 简化
+// 不用关闭箱子，而是允许箱子的票为负数
+// 投票的人，自己的箱子票数减1
 
 // Submission Result: Accepted
