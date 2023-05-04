@@ -1,96 +1,68 @@
-// 687. Longest Univalue Path
-// Easy 32% locked:false
+// 690. Employee Importance
+// Easy   56%
 
 
-
-// Given a binary tree, find the length of the longest path where each node in
-// the path has the same value. This path may or may not pass through the root.
-
-// Note: The length of path between two nodes is represented by the number of
-// edges between them.
-
+// You are given a data structure of employee information, which includes the
+// employee's unique id, his importance value and his direct subordinates' id.
+// For example, employee 1 is the leader of employee 2, and employee 2 is the
+// leader of employee 3. They have importance value 15, 10 and 5, respectively.
+// Then employee 1 has a data structure like [1, 15, [2]], and employee 2 has [2,
+// 10, [3]], and employee 3 has [3, 5, []]. Note that although employee 3 is also
+// a subordinate of employee 1, the relationship is not direct.
+// Now given the employee information of a company, and an employee id, you need
+// to return the total importance value of this employee and all his
+// subordinates.
 // Example 1:
-// Input:
-//     5
-//    / \
-//   4   5
-//  / \   \
-// 1   1   5
-// Output:
-// 2
-
-// Example 2:
-// Input:
-//     1
-//    / \
-//   4   5
-//  / \   \
-// 4   4   5
-// Output:
-// 2
+// Input: [[1, 5, [2, 3]], [2, 3, []], [3, 3, []]], 1
+// Output: 11
+// Explanation:
+// Employee 1 has importance value 5, and he has two direct subordinates:
+// employee 2 and employee 3. They both have importance value 3. So the total
+// importance value of employee 1 is 5 + 3 + 3 = 11.
 
 // Note:
-// The given binary tree has not more than 10000 nodes. The height of the tree is
-// not more than 1000.
+//     One employee has at most one direct leader and may have several
+// subordinates.
+//     The maximum number of employees won't exceed 2000.
 
 
 
 /**
- * Definition for a binary tree node.
- * function TreeNode(val) {
- *   this.val = val;
- *   this.left = this.right = null;
+ * Definition for Employee.
+ * function Employee(id, importance, subordinates) {
+ *     this.id = id;
+ *     this.importance = importance;
+ *     this.subordinates = subordinates;
  * }
  */
-
-/**
- * @param {TreeNode} root
- * @return {number}
- */
-const longestUnivaluePath = function(root) {
-  let result = 0
-  const iter = function(root) {
-    if (root == null) return { val: null }
-
-    const val = root.val,
-          left = iter(root.left),
-          right = iter(root.right)
-
-    if (left.val === right.val && left.val === val) {
-      result = Math.max(result, left.path + right.path)
-      return { val, path: Math.max(left.path, right.path) + 1 }
-    } else if (left.val === val) {
-      result = Math.max(result, left.path)
-      return { val, path: left.path + 1 }
-    } else if (right.val === val) {
-      result = Math.max(result, right.path)
-      return { val, path: right.path + 1 }
-    }
-
-    return { val, path: 1 }
-  }
-
-  iter(root)
-
-  return result
+function Employee(id, importance, subordinates) {
+  this.id = id;
+  this.importance = importance;
+  this.subordinates = subordinates;
 }
 
-const TreeNode = require('../structs/TreeNode')
+/**
+ * @param {Employee[]} employees
+ * @param {number} id
+ * @return {number}
+ */
+const GetImportance = function(employees, id) {
+  const leader = employees.find((e => e.id === id))
+  let res = leader.importance
+  for (let subId of leader.subordinates) {
+    res += GetImportance(employees, subId)
+  }
+  return res
+}
+
 ;[
-  [5, 4, 5, 1, 1, 5], // 2
-  [1, 4, 5, 4, 4, 5], // 2
-].forEach((array) => {
-  console.log(longestUnivaluePath(TreeNode.from(array)))
+  [[[1,2,[2]], [2,3,[]]], 2],
+].forEach(([array, id]) => {
+  const employees = array.map(item => new Employee(item[0], item[1], item[2]))
+  console.log(GetImportance(employees, id))
 })
 
-
 // Solution:
-// 后序遍历
-// 在每个节点处，根据左右子节点返回的值及自身的值，来计算所要返回的值
-// 有 3 种情况：
-// 1. 3 个节点的值相同，则结合两个子节点累积的最长路径，看是否为当前最长路径，是则记录，
-//    否则不作为。最后返回两个子节点中最长的路径加 1 ，作为该节点的最长路径。
-// 2. 节点的值与左（右）子节点相同，则以左（右）子节点累积的最长路径加 1 ，返回。
-// 3. 没有相同，返回 1 。
+// 找到节点后，递归深度遍历即可。
 
 // Submission Result: Accepted
