@@ -1,38 +1,10 @@
-// 110. Balanced Binary Tree
-// Easy   37%
+// 111. Minimum Depth of Binary Tree
+// Easy   33%
 
-// Given a binary tree, determine if it is height-balanced.
+// Given a binary tree, find its minimum depth.
 
-// For this problem, a height-balanced binary tree is defined as:
-
-// a binary tree in which the depth of the two subtrees of every node never
-// differ by more than 1.
-
-// Example 1:
-
-// Given the following tree [3,9,20,null,null,15,7]:
-
-//    3
-//   / \
-//  9  20
-//    /  \
-//   15   7
-
-// Return true.
-
-// Example 2:
-
-// Given the following tree [1,2,2,3,3,null,null,4,4]:
-
-//       1
-//      / \
-//     2   2
-//    / \
-//   3   3
-//  / \
-// 4   4
-
-// Return false.
+// The minimum depth is the number of nodes along the shortest path from the
+// root node down to the nearest leaf node.
 
 /**
  * Definition for a binary tree node.
@@ -44,39 +16,28 @@
 
 /**
  * @param {TreeNode} root
- * @return {boolean}
+ * @return {number}
  */
-const isBalanced = function(root) {
-  function diff(root) {
-    if (root == null) return 0
-
-    const left = diff(root.left)
-    if (left === -1) return left
-    const right = diff(root.right)
-    if (right === -1) return right
-    if (Math.abs(left - right) > 1) return -1
-
-    return 1 + Math.max(left, right)
-  }
-  return diff(root) !== -1
+const minDepth = function(root) {
+  if (root == null) return 0
+  const left = minDepth(root.left)
+  const right = minDepth(root.right)
+  if (left === 0) return right + 1
+  if (right === 0) return left + 1
+  return  1 + Math.min(left, right)
 }
 
 const TreeNode = require('../structs/TreeNode')
 ;[
-  [3,9,20,null,null,15,7],   // true
-  [1,2,2,3,3,null,null,4,4], // false
+  [1, 2],                       // 2
+  [3,9,20,null,null,15,7],      // 2
+  [1,2,2,3,3,null,null,4,4],    // 2
 ].forEach(array => {
-  console.log(isBalanced(TreeNode.from(array)))
+  console.log(minDepth(TreeNode.from(array)))
 })
 
 // Solution:
-// 使用递归函数遍历整棵树。
-// 函数的返回值有 3 种，
-// 1. 正整数表示 树的高度；
-// 2. 0 表示节点为 null；
-// 3. -1 表示以该节点为根的树不是平衡树。
-
-// 只要有一棵子树不平衡，就可以判断该树不平衡，即 -1 会一直返回。
-// 其余值会如同求树高一样返回。
+// 将左右子树中最小的高度加一返回。
+// 注意空节点（null）不能当作最小高度，因此一边为 0 时，返回另一边加一。
 
 // Submission Result: Accepted
