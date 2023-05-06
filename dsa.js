@@ -1,72 +1,70 @@
-// 1450. Number of Students Doing Homework at a Given Time
-// Easy   82%
+// 1455. Check If a Word Occurs As a Prefix of Any Word in a Sentence
+// Easy   67%
 
 
-// Given two integer arrays startTime and endTime and given an integer queryTime.
-// The ith student started doing their homework at the time startTime[i] and
-// finished it at time endTime[i].
-// Return the number of students doing their homework at time queryTime. More
-// formally, return the number of students where queryTime lays in the interval
-// [startTime[i], endTime[i]] inclusive.
+// Given a sentence that consists of some words separated by a single space, and
+// a searchWord.
+// You have to check if searchWord is a prefix of any word in sentence.
+// Return the index of the word in sentence where searchWord is a prefix of this
+// word (1-indexed).
+// If searchWord is a prefix of more than one word, return the index of the first
+// word (minimum index). If there is no such word return -1.
+// A prefix of a string S is any leading contiguous substring of S.
 
 // Example 1:
-// Input: startTime = [1,2,3], endTime = [3,2,7], queryTime = 4
-// Output: 1
-// Explanation: We have 3 students where:
-// The first student started doing homework at time 1 and finished at time 3 and
-// wasn't doing anything at time 4.
-// The second student started doing homework at time 2 and finished at time 2 and
-// also wasn't doing anything at time 4.
-// The third student started doing homework at time 3 and finished at time 7 and
-// was the only student doing homework at time 4.
+// Input: sentence = "i love eating burger", searchWord = "burg"
+// Output: 4
+// Explanation: "burg" is prefix of "burger" which is the 4th word in the
+// sentence.
 // Example 2:
-// Input: startTime = [4], endTime = [4], queryTime = 4
-// Output: 1
-// Explanation: The only student was doing their homework at the queryTime.
+// Input: sentence = "this problem is an easy problem", searchWord = "pro"
+// Output: 2
+// Explanation: "pro" is prefix of "problem" which is the 2nd and the 6th word in
+// the sentence, but we return 2 as it's the minimal index.
 // Example 3:
-// Input: startTime = [4], endTime = [4], queryTime = 5
-// Output: 0
+// Input: sentence = "i am tired", searchWord = "you"
+// Output: -1
+// Explanation: "you" is not a prefix of any word in the sentence.
 // Example 4:
-// Input: startTime = [1,1,1,1], endTime = [1,3,2,4], queryTime = 7
-// Output: 0
+// Input: sentence = "i use triple pillow", searchWord = "pill"
+// Output: 4
 // Example 5:
-// Input: startTime = [9,8,7,6,5,4,3,2,1], endTime =
-// [10,10,10,10,10,10,10,10,10], queryTime = 5
-// Output: 5
+// Input: sentence = "hello from the other side", searchWord = "they"
+// Output: -1
 
 // Constraints:
-//     startTime.length == endTime.length
-//     1 <= startTime.length <= 100
-//     1 <= startTime[i] <= endTime[i] <= 1000
-//     1 <= queryTime <= 1000
+//     1 <= sentence.length <= 100
+//     1 <= searchWord.length <= 10
+//     sentence consists of lowercase English letters and spaces.
+//     searchWord consists of lowercase English letters.
 
 
 /**
- * @param {number[]} startTime
- * @param {number[]} endTime
- * @param {number} queryTime
+ * @param {string} sentence
+ * @param {string} searchWord
  * @return {number}
  */
-const busyStudent = function(startTime, endTime, queryTime) {
+const isPrefixOfWord = function(sentence, searchWord) {
   let res = 0
-  for (let t of startTime) if (t <= queryTime) res++
-  for (let t of endTime) if (t < queryTime) res--
-  return res
+  for (let word of sentence.split(' ')) {
+    res++
+    if (word.indexOf(searchWord) === 0) return res
+  }
+  return -1
 }
 
 ;[
-  [[1,2,3], [3,2,7], 4], // 1
-  [[4], [4], 4],         // 1
-  [[4], [4], 5],         // 0
-  [[1,1,1,1], [1,3,2,4], 7], // 0
-  [[9,8,7,6,5,4,3,2,1], [10,10,10,10,10,10,10,10,10], 5], // 5
-  [[3,4,5,6,7], [3,4,6,6,7], 5],
-].forEach(([startTime, endTime, queryTime]) => {
-  console.log(busyStudent(startTime, endTime, queryTime))
+  ['i love eating burger', 'burg'], // 4
+  ['this problem is an easy problem', 'pro'], // 2
+  ['i am tired', 'you'], // -1
+  ['i use triple pillow', 'pill'], // 4
+  ['hello from the other side', 'they'], // -1
+].forEach(([sentence, searchWord]) => {
+  console.log(isPrefixOfWord(sentence, searchWord))
 })
 
 // Solution:
-// 先遍历开始时间，小于或等于 queryTime 时，计一个（假设完成时间都超过了 queryTime）
-// 再遍历完成时间，小于 queryTime 时，减一个（减去没有到达 queryTime 的个数）
+// 使用 split 分词
+// 使用 indexOf 判断是否为前缀
 
 // Submission Result: Accepted
