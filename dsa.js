@@ -1,100 +1,103 @@
-// 860. Lemonade Change
-// Easy   51%
+// 863. All Nodes Distance K in Binary Tree
+// Medium   35%
 
 
-// At a lemonade stand, each lemonade costs $5.
-// Customers are standing in a queue to buy from you, and order one at a time (in
-// the order specified by bills).
-// Each customer will only buy one lemonade and pay with either a $5, $10, or $20
-// bill.  You must provide the correct change to each customer, so that the net
-// transaction is that the customer pays $5.
-// Note that you don't have any change in hand at first.
-// Return true if and only if you can provide every customer with correct change.
+// We are given a binary tree (with root node root), a target node, and an
+// integer value `K`.
+// Return a list of the values of all nodes that have a distance K from the
+// target node.  The answer can be returned in any order.
 
 // Example 1:
-// Input: [5,5,5,10,20]
-// Output: true
+// Input: root = [3,5,1,6,2,0,8,null,null,7,4], target = 5, K = 2
+// Output: [7,4,1]
 // Explanation:
-// From the first 3 customers, we collect three $5 bills in order.
-// From the fourth customer, we collect a $10 bill and give back a $5.
-// From the fifth customer, we give a $10 bill and a $5 bill.
-// Since all customers got correct change, we output true.
-// Example 2:
-// Input: [5,5,10]
-// Output: true
-// Example 3:
-// Input: [10,10]
-// Output: false
-// Example 4:
-// Input: [5,5,10,10,20]
-// Output: false
-// Explanation:
-// From the first two customers in order, we collect two $5 bills.
-// For the next two customers in order, we collect a $10 bill and give back a $5
-// bill.
-// For the last customer, we can't give change of $15 back because we only have
-// two $10 bills.
-// Since not every customer received correct change, the answer is false.
+// The nodes that are a distance 2 from the target node (with value 5)
+// have values 7, 4, and 1.
+
+//      3
+//     / \
+//    5  1
+//   /\  /\
+//  6 2 0 8
+//   /\
+//  7 4
+
+// Note that the inputs "root" and "target" are actually TreeNodes.
+// The descriptions of the inputs above are just serializations of these objects.
 
 // Note:
-//     0 <= bills.length <= 10000
-//     bills[i] will be either 5, 10, or 20.
+//   1. The given tree is non-empty.
+//   2. Each node in the tree has unique values 0 <= node.val <= 500.
+//   3. The target node is a node in the tree.
+//   4. 0 <= K <= 1000.
 
 
 /**
- * @param {number[]} bills
- * @return {boolean}
+ * Definition for a binary tree node.
+ * function TreeNode(val) {
+ *   this.val = val;
+ *   this.left = this.right = null;
+ * }
  */
-const lemonadeChange = function(bills) {
-  let B5 = 0, B10 = 0
-  for (let b of bills) {
-    if (b === 5) {
-      B5++
-    } else if (b === 10) {
-      B5--
-      B10++
-      if (B5 < 0) return false
-    } else if (b === 20) {
-      if (B10 > 0) {
-        B10--
-        B5--
-        if (B5 < 0) return false
-      } else {
-        B5 -= 3
-        if (B5 < 0) return false
+
+/**
+ * @param {TreeNode} root
+ * @param {TreeNode} target
+ * @param {number} K
+ * @return {number[]}
+ */
+const distanceK = function(root, target, K) {
+  const result = []
+  function distanceTarget(node, k) {
+    if (node) {
+      if (k === 0) {
+        result.push(node.val)
+      } else if (k > 0) {
+        distanceTarget(node.left, k - 1)
+        distanceTarget(node.right, k - 1)
       }
     }
   }
-  return true
-}
+  distanceTarget(target, K)
 
-const prettier = function(bills) {
-  let five = 0, ten = 0
-  for (let b of bills) {
-    if (b === 5) five++
-    else if (b === 10) five--, ten++
-    else if (ten > 0) ten--, five--
-    else five -= 3
-    if (five < 0) return false
+  function distanceRoot(node) {
+    if (!node) return -1
+    if (node === target) return K - 1
+    const left = distanceRoot(node.left)
+    if (left === 0) {
+      result.push(node.val)
+      return left - 1
+    } else if (left > 0) {
+      distanceTarget(node.right, left - 1)
+      return left - 1
+    } else {
+      const right = distanceRoot(node.right)
+      if (right === 0) {
+        result.push(node.val)
+        return right - 1
+      } else if (right > 0) {
+        distanceTarget(node.left, right - 1)
+        return right - 1
+      }
+    }
   }
-  return true
+  distanceRoot(root)
+
+  return result
 }
 
+const TreeNode = require('../structs/TreeNode')
 ;[
-  // [5,5,5,10,20], // true
-  // [5,5,10],      // true
-  // [10,10],       // false
-  // [5,5,10,10,20],// false
-  [5,5,10,20,5,5,5,5,5,5,5,5,5,10,5,5,20,5,20,5], // true
-].forEach((bills) => {
-  console.log(lemonadeChange(bills))
+  [[3,5,1,6,2,0,8,null,null,7,4], 5, 2], // [7, 4, 1]
+].forEach(([array, a, b]) => {
+  const root = TreeNode.from(array)
+  const target = root.getNode(a)
+  console.log(distanceK(root, target, b))
 })
 
 // Solution:
-// 记录收到的 $5 和 $10 的数量
-// 在收到一个 $10 时，需要返回一个 $5
-// 收到一个 $20 时，可以返回 $10 + $5 或 3 * $5，有 $10 时优先返回 $10
-// 每次交易（假设允许 $5 的数量为负）后，判断 $5 的数量是否小于零，是则返回 false
-// 完成所有交易后 返回 true
+// 1. 以 target 为根节点，递归地找到距离 target 为 K 的节点，
+// 2. 以 root 为根节点，递归地寻找 target，找到后返回 K - 1，代表需要寻找距离其
+//    父节点距离为 K - 1 的节点，一直先上知道回到根节点。
 
 // Submission Result: Accepted
