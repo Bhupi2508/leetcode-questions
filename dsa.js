@@ -1,81 +1,62 @@
-// 1021. Remove Outermost Parentheses
-// Easy   76%
+// 1022. Sum of Root To Leaf Binary Numbers
+// Easy   64%
 
 
-// A valid parentheses string is either empty (""), "(" + A + ")", or A + B,
-// where A and B are valid parentheses strings, and + represents string
-// concatenation.  For example, "", "()", "(())()", and "(()(()))" are all valid
-// parentheses strings.
-// A valid parentheses string S is primitive if it is nonempty, and there does
-// not exist a way to split it into S = A+B, with A and B nonempty valid
-// parentheses strings.
-// Given a valid parentheses string S, consider its primitive decomposition: S =
-// P_1 + P_2 + ... + P_k, where P_i are primitive valid parentheses strings.
-// Return S after removing the outermost parentheses of every primitive string in
-// the primitive decomposition of S.
+// Given a binary tree, each node has value 0 or 1.  Each root-to-leaf path
+// represents a binary number starting with the most significant bit.  For
+// example, if the path is 0 -> 1 -> 1 -> 0 -> 1, then this could represent 01101
+// in binary, which is 13.
+// For all leaves in the tree, consider the numbers represented by the path from
+// the root to that leaf.
+// Return the sum of these numbers.
 
 // Example 1:
-// Input: "(()())(())"
-// Output: "()()()"
-// Explanation:
-// The input string is "(()())(())", with primitive decomposition "(()())" +
-// "(())".
-// After removing outer parentheses of each part, this is "()()" + "()" =
-// "()()()".
-// Example 2:
-// Input: "(()())(())(()(()))"
-// Output: "()()()()(())"
-// Explanation:
-// The input string is "(()())(())(()(()))", with primitive decomposition
-// "(()())" + "(())" + "(()(()))".
-// After removing outer parentheses of each part, this is "()()" + "()" +
-// "()(())" = "()()()()(())".
-// Example 3:
-// Input: "()()"
-// Output: ""
-// Explanation:
-// The input string is "()()", with primitive decomposition "()" + "()".
-// After removing outer parentheses of each part, this is "" + "" = "".
+// Input: [1,0,1,0,1,0,1]
+// Output: 22
+// Explanation: (100) + (101) + (110) + (111) = 4 + 5 + 6 + 7 = 22
 
 // Note:
-//     S.length <= 10000
-//     S[i] is "(" or ")"
-//     S is a valid parentheses string
-
+//     The number of nodes in the tree is between 1 and 1000.
+//     node.val is 0 or 1.
+//     The answer will not exceed 2^31 - 1.
 
 
 /**
- * @param {string} S
- * @return {string}
+ * Definition for a binary tree node.
+ * function TreeNode(val) {
+ *   this.val = val;
+ *   this.left = this.right = null;
+ * }
  */
-const removeOuterParentheses = function(S) {
-  let result = ''
-  let count = 0
-  for (let c of S) {
-    if (c === '(' && count > 0) result += '('
-    if (c === ')' && count > 1) result += ')'
-    count += c === '(' ? 1 : -1
+
+/**
+ * @param {TreeNode} root
+ * @return {number}
+ */
+const sumRootToLeaf = function(root) {
+  function dfs(root, value) {
+    if (root == null) return 0
+
+    value = value * 2 + root.val
+    return root.left === root.right
+      ? value
+      : dfs(root.left, value) + dfs(root.right, value)
   }
-  return result
+  return dfs(root, 0)
 }
 
+const TreeNode = require('../structs/TreeNode')
 ;[
-  '(()())(())',             // '()()()'
-  '(()())(())(()(()))',     // '()()()()(())'
-  '()()',                   // ''
-  '((()))',                 // '(())'
-].forEach((S) => {
-  console.log(removeOuterParentheses(S))
+  [1,0,1,0,1,0,1], // 22
+].forEach((array) => {
+  const root = TreeNode.from(array)
+  console.log(sumRootToLeaf(root))
 })
 
 // Solution:
-// 使用堆栈的思想
-// count 表示栈的高度
-// 遍历字符串
-// 遇到 '(' 入栈，count + 1
-// 遇到 ')' 出栈，count - 1
-// 因为要去掉最外层括号，所以只有（在栈操作前）
-// 当 count > 0 才将 '(' 加入 result
-// 当 count > 1 才将 ')' 加入 result
+// 使用深度遍历,
+// 若节点为 null, 返回 0
+// 若节点为叶子节点，返回 value * 2 + node.val
+// 否则返回其子节点返回值的和
 
-// Submission Result: Accept
+// Submission Result: Accepted
