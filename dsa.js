@@ -1,61 +1,59 @@
-// 713. Subarray Product Less Than K
-// Medium   39%
+// 717. 1-bit and 2-bit Characters
+// Easy   52%
 
 
-// Your are given an array of positive integers nums.
-// Count and print the number of (contiguous) subarrays where the product of all
-// the elements in the subarray is less than k.
+// We have two special characters. The first character can be represented by one
+// bit 0. The second character can be represented by two bits (10 or 11).
+
+// Now given a string represented by several bits. Return whether the last
+// character must be a one-bit character or not. The given string will always end
+// with a zero.
+
 // Example 1:
-// Input: nums = [10, 5, 2, 6], k = 100
-// Output: 8
-// Explanation: The 8 subarrays that have product less than 100 are: [10], [5],
-// [2], [6], [10, 5], [5, 2], [2, 6], [5, 2, 6].
-// Note that [10, 5, 2] is not included as the product of 100 is not strictly
-// less than k.
+
+// Input:
+// bits = [1, 0, 0]
+// Output: True
+// Explanation:
+// The only way to decode it is two-bit character and one-bit character. So the
+// last character is one-bit character.
+
+// Example 2:
+
+// Input:
+// bits = [1, 1, 1, 0]
+// Output: False
+// Explanation:
+// The only way to decode it is two-bit character and two-bit character. So the
+// last character is NOT one-bit character.
+
 // Note:
-// 0 < nums.length <= 50000.
-// 0 < nums[i] < 1000.
-// 0 <= k < 10^6.
+
+// 1 <= len(bits) <= 1000.
+// bits[i] is always 0 or 1.
 
 
 /**
- * @param {number[]} nums
- * @param {number} k
- * @return {number}
+ * @param {number[]} bits
+ * @return {boolean}
  */
-const numSubarrayProductLessThanK = function(nums, k) {
-  if (k === 0) return 0
-  let res = 0
-  const queue = []
-  let p = 1
-  for (let n of nums) {
-    p *= n
-    queue.push(n)
-    while (p >= k && queue.length > 0) {
-      const q = queue.shift()
-      p /= q
-    }
-    res += queue.length
+const isOneBitCharacter = function(bits) {
+  for (let i = 0, n = bits.length; i < n; i++) {
+    if (i === n - 1) return true
+    if (bits[i]) i++
   }
-  return res
+  return false
 }
 
 ;[
-  [[10,5,2,6], 100], // 8
-  [[10,5,100,2,6], 100], // 6
-  [[1,2,3], 0], // 0
-  [[1,1,1], 1], // 0
-].forEach(([nums, k]) => {
-  console.log(numSubarrayProductLessThanK(nums, k))
+  [1,0,0],                      // true
+  [1,1,1,0],                    // false
+].forEach(bits => {
+  console.log(isOneBitCharacter(bits))
 })
 
 // Solution:
-// 使用一个队列 queue 保存子数组
-// 用变量 p 记录当前子数组的乘积
-
-// 遍历数组，每次都将当前数添加到 queue 中，若乘积大于或等于 k，则将 queue 中的第一个数移出
-// 直至 p 小于 k，再将当前 queue 的长度添加到 res 中（包含最后一个数的子数组的数量）
-
-// TODO #713 尝试不使用 queue
+// 遇到一则跳过一个下一个比特，否则不跳过。
+// 最后看是否能遍历到最后一个比特0，若能则返回true，否则false。
 
 // Submission Result: Accepted
