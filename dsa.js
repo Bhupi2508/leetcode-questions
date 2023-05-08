@@ -1,60 +1,75 @@
-// 876. Middle of the Linked List
-// Easy   66%
+// 883. Projection Area of 3D Shapes
+// Easy   67%
 
 
-// Given a non-empty, singly linked list with head node head, return a middle
-// node of linked list.
-// If there are two middle nodes, return the second middle node.
+// On a N * N grid, we place some 1 * 1 * 1 cubes that are axis-aligned with the
+// x, y, and z axes.
+// Each value v = grid[i][j] represents a tower of v cubes placed on top of grid
+// cell (i, j).
+// Now we view the projection of these cubes onto the xy, yz, and zx planes.
+// A projection is like a shadow, that maps our 3 dimensional figure to a 2
+// dimensional plane.
+// Here, we are viewing the "shadow" when looking at the cubes from the top, the
+// front, and the side.
+// Return the total area of all three projections.
 
 // Example 1:
-// Input: [1,2,3,4,5]
-// Output: Node 3 from this list (Serialization: [3,4,5])
-// The returned node has value 3.  (The judge's serialization of this node is
-// [3,4,5]).
-// Note that we returned a ListNode object ans, such that:
-// ans.val = 3, ans.next.val = 4, ans.next.next.val = 5, and ans.next.next.next =
-// NULL.
+// Input: [[2]]
+// Output: 5
 // Example 2:
-// Input: [1,2,3,4,5,6]
-// Output: Node 4 from this list (Serialization: [4,5,6])
-// Since the list has two middle nodes with values 3 and 4, we return the second
-// one.
+// Input: [[1,2],[3,4]]
+// Output: 17
+// Explanation:
+// Here are the three projections ("shadows") of the shape made with each
+// axis-aligned plane.
+// Example 3:
+// Input: [[1,0],[0,2]]
+// Output: 8
+// Example 4:
+// Input: [[1,1,1],[1,0,1],[1,1,1]]
+// Output: 14
+// Example 5:
+// Input: [[2,2,2],[2,1,2],[2,2,2]]
+// Output: 21
 
 // Note:
-//     The number of nodes in the given list will be between 1 and 100.
+//     1 <= grid.length = grid[0].length <= 50
+//     0 <= grid[i][j] <= 50
 
 
 /**
- * Definition for singly-linked list.
- * function ListNode(val) {
- *     this.val = val;
- *     this.next = null;
- * }
+ * @param {number[][]} grid
+ * @return {number}
  */
-/**
- * @param {ListNode} head
- * @return {ListNode}
- */
-const middleNode = function(head) {
-  let slow = fast = head
-  while (fast != null && fast.next != null) {
-    slow = slow.next
-    fast = fast.next.next
+const projectionArea = function(grid) {
+  let res = 0
+  const N = grid.length
+  for (let i = 0; i < N; i++) {
+    let p = 0, q = 0
+    for (let j = 0; j < N; j++) {
+      if (grid[i][j] > 0) res++
+      p = Math.max(p, grid[i][j])
+      q = Math.max(q, grid[j][i])
+    }
+    res += p + q
   }
-  return slow
+  return res
 }
 
-const ListNode = require('../structs/ListNode')
 ;[
-  [1,2,3,4,5],  // [3,4,5]
-  [1,2,3,4,5,6], // [4,5,6]
-].forEach((array) => {
-  console.log((middleNode(ListNode.from(array)) || '').toString())
+  [[2]], // 5
+  [[1,2],[3,4]], // 17
+  [[1,0],[0,2]], // 8
+  [[1,1,1],[1,0,1],[1,1,1]], // 14
+  [[2,2,2],[2,1,2],[2,2,2]], // 21
+].forEach((grid) => {
+  console.log(projectionArea(grid))
 })
 
 // Solution:
-// 使用两个指针，都从头开始向后移动，
-// 慢指针一次移动一个节点，快指针一次移动两个节点。
-// 当快指针为 null 或 其下一个指针为 null 时，慢指针的位置则为中间位置。
+// 顶视图的面积为 网格的方块大于0的个数，
+// 正视图的面积为 每列最大的数的和，
+// 侧视图的面积为 每行最大的数的和，
+// 遍历一遍矩阵，分别计算以上值即可。
 
 // Submission Result: Accepted
