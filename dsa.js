@@ -1,48 +1,51 @@
-// 506. Relative Ranks
-// Easy   46%
+// 507. Perfect Number
+// Easy   33%
 
 
-// Given scores of N athletes, find their relative ranks and the people with the
-// top three highest scores, who will be awarded medals: "Gold Medal", "Silver
-// Medal" and "Bronze Medal".
+// We define the Perfect Number is a positive integer that is equal to the sum of
+// all its positive divisors except itself.
 
-// Example 1:
+// Now, given an integer n, write a function that returns true when it is a
+// perfect number and false when it is not.
 
-// Input: [5, 4, 3, 2, 1]
-// Output: ["Gold Medal", "Silver Medal", "Bronze Medal", "4", "5"]
-// Explanation: The first three athletes got the top three highest scores, so
-// they got "Gold Medal", "Silver Medal" and "Bronze Medal". For the left two
-// athletes, you just need to output their relative ranks according to their
-// scores.
+// Example:
+
+// Input: 28
+// Output: True
+// Explanation: 28 = 1 + 2 + 4 + 7 + 14
 
 // Note:
-
-// N is a positive integer and won't exceed 10,000.
-// All the scores of athletes are guaranteed to be unique.
+// The input number n will not exceed 100,000,000. (1e8)
 
 
 /**
- * @param {number[]} nums
- * @return {string[]}
+ * @param {number} num
+ * @return {boolean}
  */
-const findRelativeRanks = function(nums) {
-  const medals = ['Gold Medal', 'Silver Medal', 'Bronze Medal']
-  const rank = nums.slice()
-        .sort((a, b) => b - a)
-        .reduce((obj, n, i) => (obj[n] = i + 1) && obj, {})
-  return nums.map(v => medals[rank[v] - 1] || rank[v] + '')
+const checkPerfectNumber = function(num) {
+  let sum = 1
+  for (let i = 2, n = Math.sqrt(num); i < n; i++) {
+    if (num % i === 0) sum += i + (num / i)
+  }
+  return num !== 1 && sum === num
 }
 
 ;[
-  [5,4,3,2,1],
-  [10,3,8,9,4],
-].forEach(nums => {
-  console.log(findRelativeRanks(nums))
+  28,                           // true
+  1,                            // false
+].forEach(num => {
+  console.log(checkPerfectNumber(num))
 })
 
 // Solution:
-// 先排序，得到那个元素的名次，
-// 根据名次赋予相应的字符串。
-// 主要是编码方面，如何更简洁吧。
+// 找出所有的因子。
+// 因为不能包含本身，且 1 是确定的。
+// 因此 i 从 2 开始找，一直到 sqrt(num)。
+// 如果除数能被 num 整除则是因子，除得的结果也是因子。
+
+// 为什么一直到 sqrt(num) 呢 ？
+// 假设有两个因子分别为 a，b，且 a * b = num
+// 每对因子中，假设 a <= b，那么 a * a <= a * b = num，
+// a <= sqrt(num)
 
 // Submission Result: Accepted
