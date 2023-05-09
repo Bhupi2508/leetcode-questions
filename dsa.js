@@ -1,58 +1,56 @@
-// 520. Detect Capital
-// Easy   51%
+// 521. Longest Uncommon Subsequence I
+// Easy   55%
 
 
-// Given a word, you need to judge whether the usage of capitals in it is right
-// or not.
+// Given a group of two strings, you need to find the longest uncommon
+// subsequence of this group of two strings.
+// The longest uncommon subsequence is defined as the longest subsequence of one
+// of these strings and this subsequence should not be any subsequence of the
+// other strings.
 
-// We define the usage of capitals in a word to be right when one of the
-// following cases holds:
+// A subsequence is a sequence that can be derived from one sequence by deleting
+// some characters without changing the order of the remaining elements.
+// Trivially, any string is a subsequence of itself and an empty string is a
+// subsequence of any string.
 
-// All letters in this word are capitals, like "USA".
-// All letters in this word are not capitals, like "leetcode".
-// Only the first letter in this word is capital if it has more than one letter,
-// like "Google".
-
-// Otherwise, we define that this word doesn't use capitals in a right way.
+// The input will be two strings, and the output needs to be the length of the
+// longest uncommon subsequence. If the longest uncommon subsequence doesn't
+// exist, return -1.
 
 // Example 1:
 
-// Input: "USA"
-// Output: True
-
-// Example 2:
-
-// Input: "FlaG"
-// Output: False
+// Input: "aba", "cdc"
+// Output: 3
+// Explanation: The longest uncommon subsequence is "aba" (or "cdc"), because
+// "aba" is a subsequence of "aba", but not a subsequence of any other strings in
+// the group of two strings.
 
 // Note:
-// The input will be a non-empty word consisting of uppercase and lowercase latin
-// letters.
+
+// Both strings' lengths will not exceed 100.
+// Only letters from a ~ z will appear in input strings.
 
 
 /**
- * @param {string} word
- * @return {boolean}
+ * @param {string} a
+ * @param {string} b
+ * @return {number}
  */
-const detectCapitalUse = function(word) {
-  const n = word.length
-  let lower = 0
-  for (let l of word) if (l > 'Z') lower++
-  return lower === n || lower === 0 || (word[0] < 'a' && lower === n - 1)
+const findLUSlength = function(a, b) {
+  return a === b ? -1 : Math.max(a.length, b.length)
 }
 
 ;[
-  'USA',                        // true
-  'FlaG',                       // false
-  'leetcode',                   // true
-  'Google',                     // true
-].forEach(word => {
-  console.log(detectCapitalUse(word))
+  ['aba', 'cdc'],               // 3
+  ['aba', 'aba'],               // -1
+  ['abaa', 'aba'],              // 4
+  ['aba', 'abaa'],              // 4
+].forEach(args => {
+  console.log(findLUSlength(...args))
 })
 
 // Solution:
-// 记录小写字符的个数。
-// 如果数量等于 单词的长度 或 0，说明单词全为大写或全为小写，则是正规的。
-// 如果第一个大写，而后面全为小写，即 数量等于长度减一，也是正规的。
+// ??? 我还以为读错题目了呢。
+// 搞得我，试了好多个例子。
 
 // Submission Result: Accepted
