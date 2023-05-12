@@ -1,64 +1,69 @@
-// 938. Range Sum of BST
-// Easy   80%
+// 941. Valid Mountain Array
+// Easy   36%
 
 
-// Given the root node of a binary search tree, return the sum of values of all
-// nodes with value between L and R (inclusive).
-// The binary search tree is guaranteed to have unique values.
+// Given an array A of integers, return true if and only if it is a valid
+// mountain array.
+// Recall that A is a mountain array if and only if:
+//     A.length >= 3
+//     There exists some i with 0 < i < A.length - 1 such that:
+
+//         A[0] < A[1] < ... A[i-1] < A[i]
+//         A[i] > A[i+1] > ... > A[A.length - 1]
+
+
+//           ^
+//        /| |\
+//      /| | | |\
+//    /| | | | | |\
+//   0 2 3 4 5 2 1 0
 
 // Example 1:
-// Input: root = [10,5,15,3,7,null,18], L = 7, R = 15
-// Output: 32
+// Input: [2,1]
+// Output: false
 // Example 2:
-// Input: root = [10,5,15,3,7,13,18,1,null,6], L = 6, R = 10
-// Output: 23
+// Input: [3,5,5]
+// Output: false
+// Example 3:
+// Input: [0,3,2,1]
+// Output: true
 
 // Note:
-//     The number of nodes in the tree is at most 10000.
-//     The final answer is guaranteed to be less than 2^31.
+//     0 <= A.length <= 10000
+//     0 <= A[i] <= 10000
+
+
 
 
 /**
- * Definition for a binary tree node.
- * function TreeNode(val) {
- * this.val = val;
- *     this.left = this.right = null;
- * }
+ * @param {number[]} A
+ * @return {boolean}
  */
-/**
- * @param {TreeNode} root
- * @param {number} L
- * @param {number} R
- * @return {number}
- */
-const rangeSumBST = function(root, L, R) {
-  if (root == null) return 0
-  const v = root.val
-  if (v == L) return v + rangeSumBST(root.right, L, R)
-  if (v == R) return v + rangeSumBST(root.left, L, R)
-  if (v < L) return rangeSumBST(root.right, L, R)
-  if (v > R) return rangeSumBST(root.left, L, R)
-  return v + rangeSumBST(root.left, L, R) + rangeSumBST(root.right, L, R)
+const validMountainArray = function(A) {
+  const len = A.length
+  if (len < 3) return false
+  let p = 0, q = len - 1
+  while (p !== q && A[p] < A[p + 1]) p++
+  while (p !== q && A[q - 1] > A[q]) q--
+  return p !== 0 && q !== len - 1 && p === q
 }
 
-const TreeNode = require('../structs/TreeNode')
 ;[
-  [[10,5,15,3,7,null,18], 7, 15],        // 32
-  [[10,5,15,3,7,13,18,1,null,6], 6, 10], // 23
-].forEach(([array, L, R]) => {
-  console.log(rangeSumBST(TreeNode.from(array), L, R))
+  [2,1],      // false
+  [3,5,5],    // false
+  [0,3,2,1],  // true
+  [0,2,3,4,5,2,1,0], // true
+  [0,2,3,3,5,2,1,0], // false
+  [4,3,2,1,0],       // false
+  [0,1,2,3,4],       // false
+].forEach((A) => {
+  console.log(validMountainArray(A))
 })
 
 // Solution:
-// 使用递归
-// 若节点为 null 返回 0
-// 其余每个节点上的数，有五种情况：
-//  ----  L  -------  R  ----
-//  (1)  (2)   (3)   (4)  (5)
-// 1. val <  L     该节点不用处理，只需要处理其右子树（右子树中也许有大于或等于L的数）
-// 2. val == L     返回该节点的值和其右子树返回的值，左子树不用处理（左子树的值都小于L)
-// 3. L < val < R  返回该节点的值和其左右子树返回的值
-// 4. val == R     返回该节点的值和其左子树返回的值，右子树不用处理（右子树的值都大于R)
-// 5. val >  R     该节点不用处理，只需要处理其左子树（左子树中也许有小于或等于R的数）
+// 想象两个人从山的两边开始爬山，只能向上爬，不能走平路和下坡。
+// 两人各自爬到第一个小山峰时停下来
+// 最后，若两人在同一个位置则返回 true
+// 且两人中任何一个都必须走出一步。
 
 // Submission Result: Accepted
