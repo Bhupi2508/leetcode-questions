@@ -1,102 +1,51 @@
-// 8. String to Integer (atoi)
-// Medium  13%
+// 9. Palindrome Number
+// Easy   35%
 
-// Implement atoi to convert a string to an integer.
+// Determine whether an integer is a palindrome. Do this without extra space.
 
-// Hint: Carefully consider all possible input cases. If you want a challenge,
-// please do not see below and ask yourself what are the possible input cases.
+// click to show spoilers. Some hints:
+// Could negative integers be palindromes? (ie, -1)
 
-// Notes: It is intended for this problem to be specified vaguely (ie, no given
-// input specs). You are responsible to gather all the input requirements up
-// front.
+// If you are thinking of converting the integer to string, note the restriction
+// of using extra space.
 
-// Update (2015-02-10): The signature of the C++ function had been updated. If
-// you still see your function signature accepts a const char * argument, please
-// click the reload button to reset your code definition.
+// You could also try reversing an integer. However, if you have solved the
+// problem "Reverse Integer", you know that the reversed integer might overflow.
+// How would you handle such case?
 
-// spoilers alert... click to show requirements for atoi. Requirements for atoi:
-
-// The function first discards as many whitespace characters as necessary until
-// the first non-whitespace character is found. Then, starting from this
-// character, takes an optional initial plus or minus sign followed by as many
-// numerical digits as possible, and interprets them as a numerical value.
-
-// The string can contain additional characters after those that form the
-// integral number, which are ignored and have no effect on the behavior of this
-// function.
-
-// If the first sequence of non-whitespace characters in str is not a valid
-// integral number, or if no such sequence exists because either str is empty or
-// it contains only whitespace characters, no conversion is performed.
-
-// If no valid conversion could be performed, a zero value is returned. If the
-// correct value is out of the range of representable values, INT_MAX
-// (2147483647) or INT_MIN (-2147483648) is returned.
+// There is a more generic way of solving this problem.
 
 /**
- * @param {string} str
- * @return {number}
+ * @param {number} x
+ * @return {boolean}
  */
-const myAtoi = function(str) {
-  const n = str.length
-
-  let i = 0, result = 0
-  while (str[i] === ' ') i++
-
-  let sign = str[i] === '-' ? -1 : 1
-  if (str[i] === '-' || str[i] === '+') i++
-
-  while (i < n) {
-    const m = str[i] - 0
-    if (Number.isNaN(m) || str[i] === ' ') break
-    result = result * 10 + m
-    i++
+const isPalindrome = function(x) {
+  if (x < 0 || (x !== 0 && x % 10 === 0)) return false
+  let half = 0
+  while (x > half) {
+    half = half * 10 + x % 10
+    x = Math.trunc(x / 10)
   }
 
-  result *= sign
-
-  if (result >= 2147483647) return 2147483647
-  if (result <= -2147483648) return -2147483648
-  return result
+  return x === half || x === Math.trunc(half / 10)
 }
 
 ;[
-  '',                           // 0
-  '       ',                    // 0
-  '-',                          // 0
-  '+',                          // 0
-
-  '123',                        // 123
-  '-123',                       // -123
-  '+123',                       // 123
-  '-0001230',                   // -1230
-
-  '11.2',                       // 11
-  '-123.234',                   // -123
-
-  '  -123',                     // -123
-  '  -12 3',                    // -12
-
-  '-12a42',                     //-12
-].forEach(str => {
-  console.log(myAtoi(str))
+  -12321,                       // false
+  9,                            // true
+].forEach(x => {
+  console.log(isPalindrome(x))
 })
 
 // Solution:
-// 根据提示，首先需要考虑所有可能的输入情况。
-// - 空字符串，'+'和'-'，空格
-// - 前导空格
-// - 前导0
-// - 正负整数字符串
-// - 正负浮点数字符串
-// - 非数字字符串
-// - 中间非数字字符
+// 若 x 小于0，则不可能是回文数
+// 若 x 不为0且末位有0，也不可能为回文数，因为一个数不含前缀0。
 
-// 步骤
-// 1. 处理前导空格，如果有的话
-// 2. 处理符号，如果有符号的话
-// 3. 处理有效数字字符，直到遇到非数字字符
-// 4. 添加符号，并判断是否溢出
-// 5. 返回数字
+// 构造一个新的数，其为原数字长度的一半或者一半多一。
+// 其值为原数字的后一半的倒序。
+
+// 如 x=1213121， 则新数为 half=1213，这时经过运算，原数字变为 x=121。
+// 若 x 的位数为偶数，则比较 x 是否等于 half。
+// 若为奇数，则比较 x 是否等于 half / 10。
 
 // Submission Result: Accepted
