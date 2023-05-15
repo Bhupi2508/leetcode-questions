@@ -1,48 +1,57 @@
-// 204. Count Primes
-// Easy   26%
+// 205. Isomorphic Strings
+// Easy   34%
 
 
-// Description:
+// Given two strings s and t, determine if they are isomorphic.
 
-// Count the number of prime numbers less than a non-negative number, n.
+// Two strings are isomorphic if the characters in s can be replaced to get t.
 
-// Credits:Special thanks to @mithmatt for adding this problem and creating all
-// test cases.
+// All occurrences of a character must be replaced with another character while
+// preserving the order of characters. No two characters may map to the same
+// character but a character may map to itself.
+
+// For example,
+// Given "egg", "add", return true.
+
+// Given "foo", "bar", return false.
+
+// Given "paper", "title", return true.
+
+// Note:
+// You may assume both s and t have the same length.
 
 
 /**
- * @param {number} n
- * @return {number}
+ * @param {string} s
+ * @param {string} t
+ * @return {boolean}
  */
-const countPrimes = function(n) {
-  const primes = Array(n).fill(true)
-  let count = 0
-  for (let i = 2; i < n; i++) {
-    if (primes[i]) {
-      count++
-      for (let j = 2; i * j < n; j++) {
-        primes[i * j] = false
-      }
+const isIsomorphic = function(s, t) {
+  const hash = {}
+  for (let i = 0, n = s.length; i < n; i++) {
+    if (hash[s[i]] == null && hash['-' + t[i]] == null) {
+      hash[s[i]] = t[i]
+      hash['-' + t[i]] = s[i]
     }
+    if (hash[s[i]] !== t[i] || hash['-' + t[i]] !== s[i]) return false
   }
-  return count
+  return true
 }
 
 ;[
-  0,                            // 0
-  1,                            // 0
-  2,                            // 0
-  3,                            // 1
-  4,                            // 2
-  499979,                       // 41537
-].forEach(n => {
-  console.log(countPrimes(n))
+  ['egg', 'add'],               // true
+  ['foo', 'bar'],               // false
+  ['paper', 'title'],           // true
+  ['egga', 'adda'],             // false
+  ['aa', 'ab'],                 // false
+  ['ab', 'aa'],                 // false
+  ['a', 'a'],                   // true
+].forEach(args => {
+  console.log(isIsomorphic(...args))
 })
 
 // Solution:
-// 利用排除法。
-// 先创建一个长度为 n 的数组，若数的值为 true，说明该数为素数，
-// 同时将该数的倍数全部变为 false。
-
+// 利用哈希保存一个双射表。
+// 因为只使用一个表来保存，因此一个直接以键值对出现，另一个的键名需要改变一下。
 
 // Submission Result: Accepted
