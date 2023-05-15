@@ -1,52 +1,53 @@
-// 1128. Number of Equivalent Domino Pairs
-// Easy   47%
+// 1137. N-th Tribonacci Number
+// Easy   57%
 
 
-// Given a list of dominoes, dominoes[i] = [a, b] is equivalent to dominoes[j] =
-// [c, d] if and only if either (a==c and b==d), or (a==d and b==c) - that is,
-// one domino can be rotated to be equal to another domino.
-// Return the number of pairs (i, j) for which 0 <= i < j < dominoes.length, and
-// dominoes[i] is equivalent to dominoes[j].
+// The Tribonacci sequence Tn is defined as follows:
+// T0 = 0, T1 = 1, T2 = 1, and Tn+3 = Tn + Tn+1 + Tn+2 for n >= 0.
+// Given n, return the value of Tn.
 
 // Example 1:
-// Input: dominoes = [[1,2],[2,1],[3,4],[5,6]]
-// Output: 1
+// Input: n = 4
+// Output: 4
+// Explanation:
+// T_3 = 0 + 1 + 1 = 2
+// T_4 = 1 + 1 + 2 = 4
+// Example 2:
+// Input: n = 25
+// Output: 1389537
 
 // Constraints:
-//     1 <= dominoes.length <= 40000
-//     1 <= dominoes[i][j] <= 9
+//     0 <= n <= 37
+//     The answer is guaranteed to fit within a 32-bit integer, ie. answer <=
+// 2^31 - 1.
 
 
 /**
- * @param {number[][]} dominoes
+ * @param {number} n
  * @return {number}
  */
-const numEquivDominoPairs = function(dominoes) {
-  let n = 0
-  const hash = {}
-  for (let dominoe of dominoes) {
-    const small = Math.min(dominoe[0], dominoe[1])
-    const large = Math.max(dominoe[0], dominoe[1])
-    const key = small + '$' + large
-    n += hash[key] || 0
-    hash[key] = (hash[key] || 0) + 1
+const tribonacci = function(n) {
+  if (n === 0) return 0
+  if (n === 1 || n === 2) return 1
+  let a = 0, b = 1, c = 1
+  for (let i = 0; i <= n - 3; i++) {
+    let d = a + b + c
+    a = b
+    b = c
+    c = d
   }
-  return n
+  return c
 }
 
 ;[
-  [[1,2],[2,1],[3,4],[5,6]],            // 1
-  [[1,2],[2,1],[3,4],[5,6],[2,1],[1,2]],// 6
-].forEach((dominoes) => {
-  console.log(numEquivDominoPairs(dominoes))
+  4,  // 4
+  25, // 1389537
+].forEach((n) => {
+  console.log(tribonacci(n))
 })
 
 // Solution:
-// 方法一：每个对都和其后的全部对比较一次，在过程中计数即可。
-// O(n^2) 的时间复杂度
-
-// 方法二：利用 hash 表来记录相同项，
-// 将每个对的数排序，比如小的在前大的在后，用特殊符号分隔，确保生成的字符串相同
-// O(n) 的时间复杂度，O(n) 的空间复杂度
+// 使用递归的话，会导致同一个 Tn 被计算多次，不仅重复计算，而且增加了函数堆栈
+// 使用 3 个变量来保存计算过程的结果就行了
 
 // Submission Result: Accepted
