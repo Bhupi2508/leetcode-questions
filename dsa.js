@@ -1,43 +1,24 @@
 /**
- * @param {string} s
+ * @param {number[]} nums
  * @return {number}
  */
+var lengthOfLIS = function(nums) {
+    if (nums.length === 0) return 0;
 
-// not accepted!!! time exceeded!
-var lengthOfLongestSubstring = function(s) {
-    var visitedChars = {};
-    var len = 0;
-    for (var i = 0; i < s.length; i++) {
-        if (s[i] in visitedChars) {
-            len = Math.max(len, Object.size(visitedChars));
-            delete visitedChars[s[i]];
+    var seqLength = [];
+    for (i = 0; i < nums.length; i++) {
+        seqLength[i] = 1;
+    }
+
+    for (var i = 1; i < nums.length; i++) {
+        for (var j = 0; j < i; j++) {
+            if (j < i && nums[j] < nums[i]) {
+                seqLength[i] = Math.max(seqLength[j] + 1, seqLength[i]);
+            }
         }
-        visitedChars[s[i]] = i;
     }
 
-    return Math.max(len, Object.size(visitedChars));
+    return Math.max.apply(Math, seqLength);
 };
 
-Object.size = function(obj) {
-    var size = 0, key;
-    for (key in obj) {
-        if (obj.hasOwnProperty(key)) size++;
-    }
-    return size;
-};
-
-// accepted, O(N)
-var lengthOfLongestSubstring = function(s) {
-    var visitedChars = {};
-    var len = 0;
-    var j = 0;
-    for (var i = 0; i < s.length; i++) {
-        if (s[i] in visitedChars) {
-            len = Math.max(len, i - j);
-            j = Math.max(j, visitedChars[s[i]] + 1);
-        }
-        visitedChars[s[i]] = i;
-    }
-
-    return Math.max(len, s.length - j);
-};
+// a better solution? O(NlongN)
