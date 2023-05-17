@@ -1,39 +1,30 @@
 /**
- * Key: first pointer tracks from the first element to the last third element.
- * then, it is a 2sum problem for finding -nums[i] from the remaining elements.
- * no matter which pointer meets a duplicate, just skip the duplicate.
- *
- * @param {number[]} nums
- * @return {number[][]}
+ * @param {string[]} tokens
+ * @return {number}
  */
-var threeSum = function(nums) {
-    nums.sort(function(a, b) {
-        return a - b;
-    });
-
-    var results = [];
-
-    for (var i = 0; i < nums.length - 2; i++) {
-        // there is a same number, because this number has been checked last time, skip it.
-        if (i > 0 && nums[i] === nums[i-1]) continue;
-        var lo = i + 1;
-        var hi = nums.length - 1;
-        var twoSum = 0 - nums[i];
-        while (lo < hi) {
-            if (nums[lo] + nums[hi] === twoSum) {
-                results.push([nums[i], nums[lo], nums[hi]]);
-                // there is a same number, because this number has been checked last time, skip it.
-                while (lo < hi && nums[lo] === nums[lo+1]) lo++;
-                while (lo < hi && nums[hi] === nums[hi-1]) hi--;
-                lo++;
-                hi--;
-            } else if (nums[lo] + nums[hi] < twoSum) {
-                lo++;
-            } else {
-                hi--;
-            }
+// seems like it is not a good solution
+var evalRPN = function(tokens) {
+    var stack = [];
+    for (var i = 0; i < tokens.length; i++) {
+        var token = tokens[i];
+        if (!isNaN(token)) {
+            stack.push(token);
+        } else {
+            var num1 = stack.pop();
+            var num2 = stack.pop();
+            var result = getResult(num2, num1, token);
+            stack.push(result);
         }
     }
 
-    return results;
+    return Math.floor(parseInt(stack[stack.length - 1]));
+};
+
+var getResult = function(num1, num2, operator) {
+    var a = parseInt(num1);
+    var b = parseInt(num2);
+    if (operator === '+') return a + b;
+    if (operator === '-') return a - b;
+    if (operator === '/') return a / b;
+    if (operator === '*') return a * b;
 };
