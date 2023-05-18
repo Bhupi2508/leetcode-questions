@@ -1,49 +1,43 @@
-// 383. Ransom Note
-// Easy   47%
+// 387. First Unique Character in a String
+// Easy   46%
 
 
-// Given an arbitrary ransom note string and another string containing letters
-// from all the magazines, write a function that will return true if the ransom
-// note can be constructed from the magazines ; otherwise, it will return false.
+// Given a string, find the first non-repeating character in it and return it's
+// index. If it doesn't exist, return -1.
 
-// Each letter in the magazine string can only be used once in your ransom note.
+// Examples:
 
-// Note:
-// You may assume that both strings contain only lowercase letters.
+// s = "leetcode"
+// return 0.
 
-// canConstruct("a", "b") -> false
-// canConstruct("aa", "ab") -> false
-// canConstruct("aa", "aab") -> true
+// s = "loveleetcode",
+// return 2.
+
+// Note: You may assume the string contain only lowercase letters.
 
 
 /**
- * @param {string} ransomNote
- * @param {string} magazine
- * @return {boolean}
+ * @param {string} s
+ * @return {number}
  */
-const canConstruct = function(ransomNote, magazine) {
-  const hash = {}
-  for (let c of magazine) hash[c] = (hash[c] || 0) + 1
-  for (let c of ransomNote) {
-    if (!hash[c]) return false
-    hash[c]--
+const firstUniqChar = function(s) {
+  const n = s.length, hash = {}
+  for (let i = 0; i < n; i++) hash[s[i]] = (hash[s[i]] || 0) + 1
+  for (let i = 0; i < n; i++) {
+    if (hash[s[i]] === 1) return i
   }
-  return true
+  return -1
 }
 
 ;[
-  ['a', 'b'],                   // false
-  ['aa', 'ab'],                 // false
-  ['aa', 'aab'],                // true
-].forEach(args => {
-  console.log(canConstruct(...args))
+  'leetcode',                   // 0
+  'loveleetcode',               // 2
+].forEach(s => {
+  console.log(firstUniqChar(s))
 })
-
 
 // Solution:
 // 第一次遍历，用哈希表保存 s 字符串中的字符及其个数。
-// 第二次遍历，遇到字符不存在或其数量为 0 时，返回 false。
-// 都存在且够用，则返回 true。
-
+// 第二次遍历，遇到的字符的数量为 1 时，返回该字符的下标。
 
 // Submission Result: Accepted
