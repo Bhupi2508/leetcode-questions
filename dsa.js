@@ -1,26 +1,27 @@
 /**
- * Same idea as permutation
- *
- * @param {number} n
- * @param {number} k
+ * @param {number[]} nums
  * @return {number[][]}
  */
- var combine = function(n, k) {
-     var result = [];
-     var results = [];
-     combineHelper(n, k, 1, result, results);
-     return results;
- };
+var subsets = function(nums) {
+    nums.sort(function(a, b) {
+       return a - b;
+    });
+    var result = [];
+    var results = [result];
+    subsetsHelper(0, nums, result, results);
+    return results;
+};
 
- var combineHelper = function(n, k, start, result, results) {
-     if (k === 0) {
-         results.push(result.slice());
-         return results;
-     }
+var subsetsHelper = function(start, nums, result, results) {
+    if (start === nums.length) {
+        return;
+    }
 
-     for (var i = start; i <=n; i++) {
-         result.push(i);
-         combineHelper(n, k - 1, i + 1, result, results);
-         result.pop(i);
-     }
- };
+    for (var i = start; i < nums.length; i++) {
+        result.push(nums[i]);
+        results.push(result.slice());
+        // start from next element i, not the next element of 'start'
+        subsetsHelper(i + 1, nums, result, results);
+        result.pop(nums[i]);
+    }
+};
