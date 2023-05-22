@@ -1,22 +1,28 @@
 /**
- * key: Use object in JavaScript for hashmap. track target - nums[i] at position i
- * O(N)
+ * Key: same idea as binary tree level order traversal,
+ * if the level is odd, insert the node to the begining of the level result array
+ * if the level is even, insert the node to the end of the level result array
  *
- * @param {number[]} nums
- * @param {number} target
- * @return {number[]}
+ * @param {TreeNode} root
+ * @return {number[][]}
  */
-var twoSum = function(nums, target) {
-    var numsMap = {};
+var zigzagLevelOrder = function(root) {
     var results = [];
-    for (var i = 0; i < nums.length; i++) {
-        if ((target - nums[i]) in numsMap) {
-            results[1] = i;
-            results[0] = numsMap[target - nums[i]];
-            return results;
-        }
-        numsMap[nums[i]] = i;
+    helper(results, root, 0);
+    return results;
+};
+
+var helper = function(results, node, level) {
+    if (!node) return results;
+    if (level >= results.length) {
+        results[level] = [];
+    }
+    if (level % 2 === 0) {
+        results[level].push(node.val);
+    } else {
+        results[level].unshift(node.val);
     }
 
-    return results;
+    helper(results, node.left, level + 1);
+    helper(results, node.right, level + 1);
 };
