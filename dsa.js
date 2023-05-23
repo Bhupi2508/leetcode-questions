@@ -1,102 +1,112 @@
-// 892. Surface Area of 3D Shapes
-// Easy   58%
+// 893. Groups of Special-Equivalent Strings
+// Easy   65%
 
 
-// On a N * N grid, we place some 1 * 1 * 1 cubes.
-// Each value v = grid[i][j] represents a tower of v cubes placed on top of grid
-// cell (i, j).
-// Return the total surface area of the resulting shapes.
+// You are given an array A of strings.
+// A move onto S consists of swapping any two even indexed characters of S, or
+// any two odd indexed characters of S.
+// Two strings S and T are special-equivalent if after any number of moves onto
+// S, S == T.
+// For example, S = "zzxy" and T = "xyzz" are special-equivalent because we may
+// make the moves "zzxy" -> "xzzy" -> "xyzz" that swap S[0] and S[2], then S[1]
+// and S[3].
+// Now, a group of special-equivalent strings from A is a non-empty subset of A
+// such that:
+//     Every pair of strings in the group are special equivalent, and;
+//     The group is the largest size possible (ie., there isn't a string S not in
+// the group such that S is special equivalent to every string in the group)
+// Return the number of groups of special-equivalent strings from A.
 
 // Example 1:
-// Input: [[2]]
-// Output: 10
+// Input: ["abcd","cdab","cbad","xyzz","zzxy","zzyx"]
+// Output: 3
+// Explanation:
+// One group is ["abcd", "cdab", "cbad"], since they are all pairwise special
+// equivalent, and none of the other strings are all pairwise special equivalent
+// to these.
+// The other two groups are ["xyzz", "zzxy"] and ["zzyx"].  Note that in
+// particular, "zzxy" is not special equivalent to "zzyx".
 // Example 2:
-// Input: [[1,2],[3,4]]
-// Output: 34
-// Example 3:
-// Input: [[1,0],[0,2]]
-// Output: 16
-// Example 4:
-// Input: [[1,1,1],[1,0,1],[1,1,1]]
-// Output: 32
-// Example 5:
-// Input: [[2,2,2],[2,1,2],[2,2,2]]
-// Output: 46
+// Input: ["abc","acb","bac","bca","cab","cba"]
+// Output: 3
 
 // Note:
-//     1 <= N <= 50
-//     0 <= grid[i][j] <= 50
+//     1 <= A.length <= 1000
+//     1 <= A[i].length <= 20
+//     All A[i] have the same length.
+//     All A[i] consist of only lowercase letters.
 
 
 /**
- * @param {number[][]} grid
+ * @param {string[]} A
  * @return {number}
  */
-const surfaceArea = function(grid) {
-  const N = grid.length
-  let H = 0, max = 0
-  for (let i = 0; i < N; i++) {
-    for (let j = 0; j < N; j++) {
-      if (grid[i][j]) H++
-      max = Math.max(max, grid[i][j])
+const numSpecialEquivGroups = function(A) {
+  const l = A.length
+  const used = Array(l).fill(false)
+  function resolve(S) {
+    const even = {}
+    const odd = {}
+    for (let i = 0, l = S.length; i < l; i++) {
+      if (i % 2) even[S[i]] = (even[S[i]] || 0) + 1
+      else odd[S[i]] = (odd[S[i]] || 0) + 1
     }
+    return { even, odd }
   }
-  let V = 0
-  for (let k = 0; k < max; k++) {
-    for (let i = 0; i < N; i++) {
-      for (let j = 0; j < N; j++) {
-        if (grid[i][j] - k > 0) {
-          if (i === 0 || grid[i - 1][j] - k <= 0) V++
-          if (j === N - 1 || grid[i][j + 1] - k <= 0) V++
-          if (i === N - 1 || grid[i + 1][j] - k <= 0) V++
-          if (j === 0 || grid[i][j - 1] -k <= 0) V++
-        }
-      }
+  function SpEq(a, b) {
+    for (let key in a.even) {
+      if (a.even[key] !== b.even[key]) return false
     }
+    for (let key in a.odd) {
+      if (a.odd[key] !== b.odd[key]) return false
+    }
+    return true
   }
-  return 2 * H + V
-}
-
-const better = function(grid) {
-  let res = 0, n = grid.length
-  for (let i = 0; i < n; i++) {
-    for (let j = 0; j < n; j++) {
-      if (grid[i][j] > 0) res += grid[i][j] * 4 + 2
-      if (i > 0) res -= Math.min(grid[i][j], grid[i - 1][j]) * 2
-      if (j > 0) res -= Math.min(grid[i][j], grid[i][j - 1]) * 2
+  let res = 0
+  for (let i = 0; i < l; i++) {
+    if (used[i]) continue
+    used[i] = true
+    res++
+    const a = resolve(A[i])
+    for (let j = i + 1; j < l; j++) {
+      if (used[j]) continue
+      if (SpEq(a, resolve(A[j]))) used[j] = true
     }
   }
   return res
 }
 
+const better = function(A) {
+  const set = new Set()
+  for (let s of A) {
+    const even = Array(26).fill(0)
+    const odd = Array(26).fill(0)
+    for (let i = 0; i < s.length; i++) {
+      if (i % 2) even[s.charCodeAt(i) - 97]++
+      else odd[s.charCodeAt(i) - 97]++
+    }
+    set.add(String(even) + String(odd))
+  }
+  return set.size
+}
+
 ;[
-  [[2]], // 10
-  [[1,2],[3,4]], // 34
-  [[1,0],[0,2]], // 16
-  [[1,1,1],[1,0,1],[1,1,1]], // 32
-  [[2,2,2],[2,1,2],[2,2,2]], // 46
-].forEach((grid) => {
-  console.log(surfaceArea(grid))
-  console.log(surfaceArea(grid))
+  ['abcd','cdab','cbad','xyzz','zzxy','zzyx'], // 3
+  ["abc","acb","bac","bca","cab","cba"], // 3
+  ["a","b","c","a","c","c"], // 3
+].forEach((A) => {
+  console.log(numSpecialEquivGroups(A))
 })
 
 // Solution:
-// 分为两部分
-// 1. 水平面
-// 2. 垂直面
-
-// 水平面可以通过遍历网格上的数是否大于0来判断
-
-// 垂直面，是通过从底层向上，一层层计算的
-// 每层中只遍历有方块的四周，若有一个方向没有方块，则添加一个面。
-
-// 最后得出 底层水平面 * 2 + 所有垂直面
+// 使用标记数组，标记已经在分组内的字符串。
+// 使用一个解析函数，解析字符串中的奇数位字符和偶数位字符。
+// 使用一个比较函数，比较两个字符串解析后的数据结构。
 
 // 更好的方法：
-// 一个个网格计算
-// 遍历网格，计算一个网格内的所有方块的面，即（方块数 * 4 + 2）
-// 再减去其与后方和左方的方块合并的面，即（较少的方块数 * 2）
-// 遍历完后即可得到答案。
-
+// 使用 Set 类。
+// 对于每个字符串，使用两个数组分别记录奇、偶位的每个字符的个数，并按字母表排列，
+// 最后将两个数组转成字符串，合并后添加到 set 中。
+// 这样特殊相等的字符串会转成同一个字符串，set 将其合并。
 
 // Submission Result: Accepted
