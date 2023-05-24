@@ -1,21 +1,20 @@
 /**
- * @param {number} x
- * @return {number}
+ * Key: use stack
+ * @param {string} path
+ * @return {string}
  */
-var mySqrt = function(x) {
-        if (x === 0) return x;
-        var left = 0;
-        var right = x;
-        var mid = Math.floor(x / 2);
-        while (left <= right) {
-            var divideX = Math.floor(x / mid);
-            // instead of using mid * mid > x, use x / mid incase overflow happens
-            if (mid > divideX) {
-                right = mid - 1;
-            } else {
-                left = mid + 1;
-            }
-            mid = left + Math.floor((right - left) / 2);
+var simplifyPath = function(path) {
+    var stack = [];
+    var paths = path.split('/');
+    for (var i = 0, length = paths.length; i < length; i++) {
+        if (paths[i] === '..') {
+            stack.pop();
+        } else if (paths[i] === '.') {
+            continue;
+        } else if (paths[i] !== '') {
+            stack.push(paths[i]);
         }
-        return mid;
+    }
+    // if '/../'
+    return stack.length === 0 ? '/' : '/' + stack.join('/');
 };
