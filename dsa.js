@@ -1,50 +1,44 @@
-// 1047. Remove All Adjacent Duplicates In String
-// Easy   66%
+// 1051. Height Checker
+// Easy   68%
 
 
-// Given a string S of lowercase letters, a duplicate removal consists of
-// choosing two adjacent and equal letters, and removing them.
-// We repeatedly make duplicate removals on S until we no longer can.
-// Return the final string after all such duplicate removals have been made.  It
-// is guaranteed the answer is unique.
+// Students are asked to stand in non-decreasing order of heights for an annual
+// photo.
+// Return the minimum number of students that must move in order for all students
+// to be standing in non-decreasing order of height.
 
 // Example 1:
-// Input: "abbaca"
-// Output: "ca"
-// Explanation:
-// For example, in "abbaca" we could remove "bb" since the letters are adjacent
-// and equal, and this is the only possible move.  The result of this move is
-// that the string is "aaca", of which only "aa" is possible, so the final string
-// is "ca".
+// Input: heights = [1,1,4,2,1,3]
+// Output: 3
 
-// Note:
-//     1 <= S.length <= 20000
-//     S consists only of English lowercase letters.
+// Constraints:
+//     1 <= heights.length <= 100
+//     1 <= heights[i] <= 100
 
 
 /**
- * @param {string} S
- * @return {string}
+ * @param {number[]} heights
+ * @return {number}
  */
-const removeDuplicates = function(S) {
-  const n = S.length
-  const arr = S.split('')
-  let i = 0
-  for (let j = 0; j < n; j++, i++) {
-    arr[i] = arr[j]
-    if (i > 0 && arr[i] == arr[i - 1]) i -= 2
+const heightChecker = function(heights) {
+  const arr = [...heights]
+  arr.sort((a, b) => a - b)
+  let count = 0
+  for (let i = 0; i < heights.length; i++) {
+    if (arr[i] !== heights[i]) count++
   }
-  return arr.slice(0, i).join('')
+  return count
 }
 
 ;[
-  'abbaca',             // 'ca'
-].forEach((S) => {
-  console.log(removeDuplicates(S))
+  [1,1,4,2,1,3],    // 3
+  [1,2,3,4,5,3],    // 3
+  [3,2,1],          // 2
+].forEach((heights) => {
+  console.log(heightChecker(heights))
 })
 
 // Solution:
-// 使用两个指针，一个负责遍历数组，
-// 另一个随机变动，遇到相同数则往回指（相当于跳过），只有不同时才往后指。
+// 复制数组，先排序，再和原数组比较，找出位置不同的数的个数。
 
 // Submission Result: Accepted
