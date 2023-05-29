@@ -1,33 +1,38 @@
-// 109. Convert Sorted List to Binary Search Tree
-// Medium   34%
+// 110. Balanced Binary Tree
+// Easy   37%
 
-// Given a singly linked list where elements are sorted in ascending order,
-// convert it to a height balanced BST.
+// Given a binary tree, determine if it is height-balanced.
 
-// For this problem, a height-balanced binary tree is defined as a binary tree
-// in which the depth of the two subtrees of every node never differ by more
-// than 1.
+// For this problem, a height-balanced binary tree is defined as:
 
-// Example:
+// a binary tree in which the depth of the two subtrees of every node never
+// differ by more than 1.
 
-// Given the sorted linked list: [-10,-3,0,5,9],
+// Example 1:
 
-// One possible answer is: [0,-3,9,-10,null,5], which represents the following
-// height balanced BST:
+// Given the following tree [3,9,20,null,null,15,7]:
 
-//      0
-//     / \
-//   -3   9
-//   /   /
-// -10  5
+//    3
+//   / \
+//  9  20
+//    /  \
+//   15   7
 
-/**
- * Definition for singly-linked list.
- * function ListNode(val) {
- *     this.val = val;
- *     this.next = null;
- * }
- */
+// Return true.
+
+// Example 2:
+
+// Given the following tree [1,2,2,3,3,null,null,4,4]:
+
+//       1
+//      / \
+//     2   2
+//    / \
+//   3   3
+//  / \
+// 4   4
+
+// Return false.
 
 /**
  * Definition for a binary tree node.
@@ -37,49 +42,41 @@
  * }
  */
 
-const ListNode = require('../structs/ListNode')
-const TreeNode = require('../structs/TreeNode')
-
 /**
- * @param {ListNode} head
- * @return {TreeNode}
+ * @param {TreeNode} root
+ * @return {boolean}
  */
-const sortedListToBST = function(head) {
-  function iter(head, tail) {
-    if (head === tail) return null
+const isBalanced = function(root) {
+  function diff(root) {
+    if (root == null) return 0
 
-    let slow = head, fast = head
-    while (fast !== tail && fast.next !== tail) {
-      fast = fast.next.next
-      slow = slow.next
-    }
+    const left = diff(root.left)
+    if (left === -1) return left
+    const right = diff(root.right)
+    if (right === -1) return right
+    if (Math.abs(left - right) > 1) return -1
 
-    const root = new TreeNode(slow.val)
-    root.left = iter(head, slow)
-    root.right = iter(slow.next, tail)
-    return root
+    return 1 + Math.max(left, right)
   }
-  return iter(head, null)
+  return diff(root) !== -1
 }
 
+const TreeNode = require('../structs/TreeNode')
 ;[
-  // [],
-  // [0],
-  // [0, 1],
-  // [0, 1, 2],
-  // [0, 1, 2, 3],
-  [-10, -3, 0, 5, 9],
-  // [0, 1, 2, 3, 4, 5],
-  // [0, 1, 2, 3, 4, 5, 6],
-  // [0, 1, 2, 3, 4, 5, 6, 7],
-].forEach((array) => {
-  console.log(sortedListToBST(ListNode.from(array)))
+  [3,9,20,null,null,15,7],   // true
+  [1,2,2,3,3,null,null,4,4], // false
+].forEach(array => {
+  console.log(isBalanced(TreeNode.from(array)))
 })
 
 // Solution:
-// 使用两个指针快慢遍历，找到中间节点，以中间节点为根。
-// 递归左链和右链，分别生成左右子树。
+// 使用递归函数遍历整棵树。
+// 函数的返回值有 3 种，
+// 1. 正整数表示 树的高度；
+// 2. 0 表示节点为 null；
+// 3. -1 表示以该节点为根的树不是平衡树。
 
-// 关键在于快慢遍历。过程中需要特别注意指针的细节。
+// 只要有一棵子树不平衡，就可以判断该树不平衡，即 -1 会一直返回。
+// 其余值会如同求树高一样返回。
 
 // Submission Result: Accepted
