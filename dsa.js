@@ -1,47 +1,50 @@
-// 26. Remove Duplicates from Sorted Array
-// Easy   35%
+// 27. Remove Element
+// Easy   39%
 
-// Given a sorted array, remove the duplicates in place such that each element
-// appear only once and return the new length.
+
+// Given an array and a value, remove all instances of that value in place and
+// return the new length.
 
 // Do not allocate extra space for another array, you must do this in place with
 // constant memory.
 
-// For example,
-// Given input array nums = [1,1,2],
+// The order of elements can be changed. It doesn't matter what you leave beyond
+// the new length.
+
+// Example:
+// Given input array nums = [3,2,2,3], val = 3
 
 // Your function should return length = 2, with the first two elements of nums
-// being 1 and 2 respectively. It doesn't matter what you leave beyond the new
-// length.
+// being 2.
 
 /**
  * @param {number[]} nums
+ * @param {number} val
  * @return {number}
  */
-const removeDuplicates = function(nums) {
-  const n = nums.length
-  if (n === 0) return 0
-
-  let i = 0
-  for (let j = 1; j < n; j++) {
-    if (nums[j] !== nums[i]) {
-      i++
+const removeElement = function(nums, val) {
+  let i = 0, j = nums.length - 1
+  while (i <= j) {
+    if (nums[i] === val) {
       nums[i] = nums[j]
+      j--
+    } else {
+      i++
     }
   }
-
-  return i + 1
+  return j + 1
 }
 
 ;[
-  [1, 2, 2, 3, 3, 3, 4],        // 4
-].forEach(nums => {
-  console.log(removeDuplicates(nums))
+  [[3, 2, 2, 3], 3],                 // [2, 2, 2, 3] 2
+  [[1,2,3,4,5,3,5,2,3,6], 3],        // [1,2,6,4,5,2,5] 7
+  [[1], 1],                          // [1] 0
+].forEach(args => {
+  console.log(removeElement(...args))
 })
 
 // Solution:
-// 保存两个下标
-// j用于遍历整个数组
-// i用于交换后，前k个不同数的下标。
+// 找到需要删除的数，就用最后的数来代替它（放到它的位置上）。
+// i用于遍历，j用于最后的可用交换数。
 
 // Submission Result: Accepted
