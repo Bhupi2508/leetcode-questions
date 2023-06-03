@@ -1,21 +1,31 @@
 /**
- * Let t be total movements from (1, 1) to (m, n), t = m - 1 + n - 1;
- * Let k = m - 1 (the right movements)
- * then the total path is all combinations (m - 1) movements from (m + n - 2)
- * And C(t, k) = t! / (t-k)! * k! = (t * (t - 1) ... (t - k + 1)) / (1 * ... * k)
+ * Key: dp[i][j] = dp[i - 1][j] + dp[i][j - 1]
+ * In this question, if obstacleGrid[i][j] === 1, set dp[i][j] = 0
  *
- * @param {number} m
- * @param {number} n
+ * @param {number[][]} obstacleGrid
  * @return {number}
  */
-var uniquePaths = function(m, n) {
-    var t = m + n - 2;
-    var k = m - 1;
-    var res = 1;
-
-    for (var i = 1; i <= k; i++) {
-        res *= (t - i + 1) / i
+var uniquePathsWithObstacles = function(obstacleGrid) {
+    var path = [[]];
+    obstacleGrid[0][0] === 0 ? path[0][0] = 1 : path[0][0] = 0;
+    for (var i = 1; i < obstacleGrid.length; i++) {
+        // In JavaScript, initialize an new empty array for row i, so that you can have a
+        // two-demension array
+        path[i] = [];
+        (path[i - 1][0] === 1 && obstacleGrid[i][0] === 0) ? path[i][0] = 1 : path[i][0] = 0;
+    }
+    for (var j = 1; j < obstacleGrid[0].length; j++) {
+        (path[0][j - 1] === 1 && obstacleGrid[0][j] === 0) ? path[0][j] = 1 : path[0][j] = 0;
     }
 
-    return res;
+    for (var i = 1; i < obstacleGrid.length; i++) {
+        for (var j = 1; j < obstacleGrid[i].length; j++) {
+           if (obstacleGrid[i][j] === 0) {
+               path[i][j] = path[i - 1][j] + path[i][j - 1];
+           } else {
+               path[i][j] = 0;
+           }
+        }
+    }
+    return path[path.length - 1][path[0].length - 1];
 };
