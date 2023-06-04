@@ -1,31 +1,33 @@
 /**
- * Key: backtracking. Be careful about JavaScript array sort.
- *
  * @param {number[]} candidates
  * @param {number} target
  * @return {number[][]}
  */
-var combinationSum = function(candidates, target) {
+var combinationSum2 = function(candidates, target) {
     var result = [];
     var results = [];
-    
+
     candidates.sort(function(a, b) {
-      return a - b;
+        return a - b;
     });
-    combinationSumHelper(candidates, target, results, result, 0);
+    combinationSum2Helper(candidates, result, results, target, 0);
     return results;
 };
 
-var combinationSumHelper = function(candidates, target, results, result, start) {
-    if (target === 0) {
-        results.push(result.slice());
-        return results;
-    }
+var combinationSum2Helper = function(candidates, result, results, target, start) {
+  if (target === 0) {
+      results.push(result.slice());
+      return;
+  }
 
-    for (var i = start; i < candidates.length; i++) {
-        if (candidates[i] > target) break;
-        result.push(candidates[i]);
-        combinationSumHelper(candidates, target - candidates[i], results, result, i);
-        result.pop(candidates[i]);
-    }
+  for (var i = start; i < candidates.length; i++) {
+      if (target < 0) break;
+      if (i > start && candidates[i] === candidates[i - 1]) {
+          continue;
+      } else {
+          result.push(candidates[i]);
+          combinationSum2Helper(candidates, result, results, target - candidates[i], i + 1);
+          result.pop();
+      }
+  }
 };
