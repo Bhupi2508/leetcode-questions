@@ -1,90 +1,90 @@
-// 682. Baseball Game
-// Easy 58% locked:false
+// 686. Repeated String Match
+// Easy 31%
 
 
-// You're now a baseball game point recorder.
+// Given two strings A and B, find the minimum number of times A has to be
+// repeated such that B is a substring of it. If no such solution, return -1.
 
-// Given a list of strings, each string can be one of the 4 following types:
-
-// 1. Integer (one round's score): Directly represents the number of points you
-//    get in this round.
-// 2. "+" (one round's score): Represents that the points you get in this round
-//    are the sum of the last two valid round's points.
-// 3. "D" (one round's score): Represents that the points you get in this round
-//    are the doubled data of the last valid round's points.
-// 4. "C" (an operation, which isn't a round's score): Represents the last valid
-//    round's points you get were invalid and should be removed.
-
-// Each round's operation is permanent and could have an impact on the round
-// before and the round after.
-
-// You need to return the sum of the points you could get in all the rounds.
-
-// Example 1:
-
-// Input: ["5","2","C","D","+"]
-// Output: 30
-// Explanation:
-// - Round 1: You could get 5 points. The sum is: 5.
-// - Round 2: You could get 2 points. The sum is: 7.
-// - Operation 1: The round 2's data was invalid. The sum is: 5.
-// - Round 3: You could get 10 points (the round 2's data has been removed). The
-//   sum is: 15.
-// - Round 4: You could get 5 + 10 = 15 points. The sum is: 30.
-
-// Example 2:
-
-// Input: ["5","-2","4","C","D","9","+","+"]
-// Output: 27
-// Explanation:
-// - Round 1: You could get 5 points. The sum is: 5.
-// - Round 2: You could get -2 points. The sum is: 3.
-// - Round 3: You could get 4 points. The sum is: 7.
-// - Operation 1: The round 3's data is invalid. The sum is: 3.
-// - Round 4: You could get -4 points (the round 3's data has been removed). The
-//   sum is: -1.
-// - Round 5: You could get 9 points. The sum is: 8.
-// - Round 6: You could get -4 + 9 = 5 points. The sum is 13.
-// - Round 7: You could get 9 + 5 = 14 points. The sum is 27.
+// For example, with A = "abcd" and B = "cdabcdab".
+// Return 3, because by repeating A three times (“abcdabcdabcd”), B is a
+// substring of it; and B is not a substring of A repeated two times
+// ("abcdabcd").
 
 // Note:
-// The size of the input list will be between 1 and 1000.
-// Every integer represented in the list will be between -30000 and 30000.
-
+// The length of A and B will be between 1 and 10000.
 
 /**
- * @param {string[]} ops
+ * @param {string} A
+ * @param {string} B
  * @return {number}
  */
-const calPoints = function(ops) {
-  const round = ops.length
-  let len = -1
-  for (let i = 0; i < round; i++) {
-    const num = parseInt(ops[i])
-    if (num === num) ops[++len] = num
-    if (ops[i] === '+') ops[++len] = (ops[len - 1] || 0) + (ops[len - 2] || 0)
-    if (ops[i] === 'D') ops[++len] = (ops[len - 1] || 0) * 2
-    if (ops[i] === 'C') len--
+const repeatedStringMatch = function(A, B) {
+  const alen = A.length, blen = B.length
+  if (alen >= blen && A.includes(B)) return 1
+  let trylen = Math.min(alen, blen), ai = -1
+  while (ai < 0) {
+    ai = A.indexOf(B.slice(0, trylen--), alen - trylen - 1)
+    if (ai < 0 && trylen === 0) return -1
   }
 
-  let result = 0
-  for (let i = 0; i <= len; i++) {
-    result += ops[i]
+  let bi = 0, result = 1
+  while (bi < blen) {
+    if (B[bi++] !== A[ai++]) return -1
+    if (ai === alen && bi < blen) {
+      ai = 0
+      result++
+    }
   }
-
   return result
 }
 
-console.log(calPoints(['5','2','C','D','+']))
-console.log(calPoints(['5','-2','4','C','D','9','+','+']))
-console.log(calPoints(['1','D','D','D']))
+;[
+  ['abcd', 'cdabcdab'],
+  ['a', 'aa'],
+  ['aa', 'a'],
+  ['bb', 'bbbbbbb'],
+  ['abababaaba', 'aabaaba'],
+  ['abcd', 'abcdb'],
+  ['baa', 'abaab'],
+].forEach(args => {
+  console.log(repeatedStringMatch(...args))
+})
 
 // Solution:
-// 关键在于读懂问题
+// * 方法1
+// 1. 初始化 result = 1
+// 2. 先找出 B[0] 对应 A 中的哪一个字符，如位置 ai。
+// 3. B 从 0 开始，A 从 ai 开始（首尾相接），一个一个比较。
+// 4. 每次 ai 变为 0，表示已经重复了一遍，result++。
+// 5. 如果对应字符不同，就返回 -1。
+// 注意：result的初始值的设置，与边界问题。
 
-// 迭代的时候，记录最后一个有效的轮次的得分，因为迭代过程会执行删去无效轮次的操作（"C")。
-// 将数字字符转换成数字。
-// "D" 和 "+" 也转换为有效得分，并插在最后一个有效得分的后面。
-// 最后将每轮有效得分相加
+// 无需重复构建字符串，只要改变下标即可，将 A 想象为首位相接的字符串数组。
+
+// 时间复杂度：O(m + n), 常数级
+// 存在问题：如例5，没有找到合适的 B[0] 对应的 A[ai]
+// 解决：尝试从 B 的最长字符开始匹配，依次缩短。
+
+// * 方法2
+// 替换方法1中的第二步，不是字符匹配，而是字符串匹配（B的前段字符串，B[0:i], i < blen)
+// 时间复杂度：O((m * min(m, n) * n), 立方级
+// 存在问题：时间复杂度太大。
+
+// * 方法3
+// 改进 方法2，只遍历最长的匹配。
+// 时间复杂度：O(m * min(m, n)), 平方级
+
+// 只遍历最长的匹配，是否可以完成任务？
+// 假设 A = a_1 + a_2 + a_3, B = b_1 + b_2 + b_3
+// 如果 B 是 A 重复字符串的子字符串，那么 A 和 B 必须符合以下情况：
+// 1. B = a_2 （B 直接是 A 的子字符串)，此时 B 为最长匹配。
+// 2. b_1 = a_3, b_2 = A*, b_3 = a_1 (A 需要重复，形成 ... + a_3 + A* + a_1 + ...)，
+//    此时 b_1 为最长匹配。(A* 表示 A重复0或多遍)
+
+// b_1 = a_2 = a_3 会出现什么情况呢？
+// 如果我们只匹配 b_1 = a_3，即只匹配 A 的最后与 B 的最前的相同长度的字符。
+// 可以想象看两张纸条，一张的前端与另一张的后端重叠。
+// 那么 无论 a_2 等于什么都无所谓。
 
 // Submission Result: Accepted
+
