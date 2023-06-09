@@ -1,51 +1,60 @@
-// 91. Decode Ways
-// Medium 19% locked:false
+// 92. Reverse Linked List II
+// Medium 30% locked:false
 
-// A message containing letters from A-Z is being encoded to numbers using the
-// following mapping:
+// Reverse a linked list from position m to n. Do it in-place and in one-pass.
 
-// 'A' -> 1
-// 'B' -> 2
-// ...
-// 'Z' -> 26
+// For example:
+// Given 1->2->3->4->5->NULL, m = 2 and n = 4,
 
-// Given an encoded message containing digits, determine the total number of
-// ways to decode it.
+// return 1->4->3->2->5->NULL.
 
-// For example,
-// Given encoded message "12", it could be decoded as "AB" (1 2) or "L" (12).
-
-// The number of ways decoding "12" is 2.
+// Note:
+// Given m, n satisfy the following condition:
+// 1 <= m <= n <= length of list.
 
 /**
- * @param {string} s
- * @return {number}
+ * Definition for singly-linked list.
+ * function ListNode(val) {
+ *     this.val = val;
+ *     this.next = null;
+ * }
  */
-const numDecodings = function(s) {
-  if (s.length === 0) return 0
 
-  const set = s.split(/\D/).filter(v => v.length !== 0)
+/**
+ * @param {ListNode} head
+ * @param {number} m
+ * @param {number} n
+ * @return {ListNode}
+ */
+const reverseBetween = function(head, m, n) {
+  if (head == null || m >= n) return head
 
-  let res = 0
-  for (let ns of set) {
-    const n = ns.length
-    let i = 0, prev = 0, curr = ns[0] === '0' ? 0 : 1
-    for (; i < n && ns[i] !== '0'; i++) {
-      if (ns[i + 1] === '0') {
-        i++
-        prev = curr
-      } else if (ns[i - 1] !== '0') {
-        if (i === 0 || ns[i - 1] + ns[i] - '0' <= 26) {
-          [curr, prev] = [curr + prev, curr]
-        } else {
-          prev = curr
-        }
-      }
-    }
-    res += i === n ? curr : 0
+  const start = new ListNode()
+  start.next = head
+
+  let a = start, count = n - m
+  while (--m > 0) a = a.next
+
+  let b = a.next
+  while (--count >= 0) {
+    const t = b.next
+    b.next = t.next
+    t.next = a.next
+    a.next = t
   }
 
-  return res
+  return start.next
 }
 
-console.log(numDecodings("1234212011"))
+const ListNode = require('../structs/ListNode')
+;[
+  [[1, 2, 3, 4, 5], 2, 4],      // 1->4->3->2->5
+].forEach(([array, m, n]) => {
+  console.log((reverseBetween(ListNode.from(array), m, n) || '').toString())
+})
+
+// Solution:
+// 使用头插法将中间的节点倒置。
+// 主要指针的细节。
+
+// Submission Result: Accepted
