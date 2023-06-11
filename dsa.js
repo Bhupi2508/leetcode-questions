@@ -1,27 +1,43 @@
 /**
- * @param {number} dividend
- * @param {number} divisor
+ * @param {string} s
  * @return {number}
  */
-// Time Limit Exceeded  
-var divide = function(dividend, divisor) {
-    if (divisor === 0) return 0;
-    var aDividend = Math.abs(dividend);
-    var aDivisor = Math.abs(divisor);
 
-    var result = 0;
-    while (aDividend >= aDivisor) {
-        var shifts = 0;
-        while (aDividend >= (aDivisor << shifts)) {
-            shifts++;
+// not accepted!!! time exceeded!
+var lengthOfLongestSubstring = function(s) {
+    var visitedChars = {};
+    var len = 0;
+    for (var i = 0; i < s.length; i++) {
+        if (s[i] in visitedChars) {
+            len = Math.max(len, Object.size(visitedChars));
+            delete visitedChars[s[i]];
         }
-        result += (1 << (shifts - 1));
-        aDividend -= (aDivisor << (shifts - 1));
+        visitedChars[s[i]] = i;
     }
 
-    if ((dividend > 0 && divisor > 0) || (dividend < 0 && divisor < 0)) {
-        return result;
-    } else {
-        return -1 * result;
+    return Math.max(len, Object.size(visitedChars));
+};
+
+Object.size = function(obj) {
+    var size = 0, key;
+    for (key in obj) {
+        if (obj.hasOwnProperty(key)) size++;
     }
+    return size;
+};
+
+// accepted, O(N)
+var lengthOfLongestSubstring = function(s) {
+    var visitedChars = {};
+    var len = 0;
+    var j = 0;
+    for (var i = 0; i < s.length; i++) {
+        if (s[i] in visitedChars) {
+            len = Math.max(len, i - j);
+            j = Math.max(j, visitedChars[s[i]] + 1);
+        }
+        visitedChars[s[i]] = i;
+    }
+
+    return Math.max(len, s.length - j);
 };
