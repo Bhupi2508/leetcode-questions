@@ -1,40 +1,27 @@
 /**
- * @param {string} s
- * @param {set<string>} wordDict
- *   Note: wordDict is a Set object, see:
- *   https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set
- * @return {boolean}
+ * Definition for singly-linked list.
+ * function ListNode(val) {
+ *     this.val = val;
+ *     this.next = null;
+ * }
  */
 
-// recursion, not accepted, time exceeds limits. O(N^2)
-var wordBreak = function(s, wordDict) {
-    return helper(s, wordDict, 0);
-};
-
-var helper = function(s, wordDict, start) {
-    if (start === s.length) return true;
-    // also let ... of is an ES6 feature
-    for (var word of wordDict) {
-        var wLength = word.length;
-        if (s.substring(start, start + wLength) === word) {
-            if (helper(s, wordDict, start + wLength)) return true;
-        }
+/**
+ * Key: two pointers, slow move one step one time, fast moves two steps one time
+ * if there is a cycle fast will meet slow
+ * 
+ * @param {ListNode} head
+ * @return {boolean}
+ */
+var hasCycle = function(head) {
+    if (!head) return false;
+    var fast = head;
+    var slow = head;
+    while (fast.next && fast.next.next) {
+        slow = slow.next;
+        fast = fast.next.next
+        if (slow === fast) return true;
     }
+
     return false;
-};
-
-// Dynamic, accepted
-var wordBreak = function(s, wordDict) {
-    var canBreak = [true];
-    for (var i = 0; i < s.length; i++) {
-        if (!canBreak[i]) continue;
-        for (var word of wordDict) {
-            var wLength = word.length;
-            if (canBreak[i + wLength]) continue;
-            if (s.substring(i, i + wLength) === word) {
-                canBreak[i + wLength]  = true;
-            }
-        }
-    }
-    return canBreak[s.length] ? true : false;
 };
