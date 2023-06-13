@@ -1,79 +1,66 @@
-// 481. Magical String
-// Medium   46%
+// 482. License Key Formatting
+// Easy   43%
 
 
-// A magical string S consists of only '1' and '2' and obeys the following rules:
-
-// The string S is magical because concatenating the number of contiguous
-// occurrences of characters '1' and '2' generates the string S itself.
-
-// The first few elements of string S is the following:
-// S = "1221121221221121122……"
-// If we group the consecutive '1's and '2's in S, it will be:
-// 1   22  11  2  1  22  1  22  11  2  11  22 ......
-// and the occurrences of '1's or '2's in each group are:
-// 1   2   2   1  1  2   1  2   2   1  2   2  ......
-
-// You can see that the occurrence sequence above is the S itself.
-// Given an integer N as input, return the number of '1's in the first N number
-// in the magical string S.
-
-// Note:
-// N will not exceed 100,000.
-
+// You are given a license key represented as a string S which consists only
+// alphanumeric character and dashes. The string is separated into N+1 groups by
+// N dashes.
+// Given a number K, we would want to reformat the strings such that each group
+// contains exactly K characters, except for the first group which could be
+// shorter than K, but still must contain at least one character. Furthermore,
+// there must be a dash inserted between two groups and all lowercase letters
+// should be converted to uppercase.
+// Given a non-empty string S and a number K, format the string according to the
+// rules described above.
 // Example 1:
-// Input: 6
-// Output: 3
-// Explanation: The first 6 elements of magical string S is "12211" and it
-// contains three 1's, so return 3.
+// Input: S = "5F3Z-2e-9-w", K = 4
+// Output: "5F3Z-2E9W"
+// Explanation: The string S has been split into two parts, each part has 4
+// characters.
+// Note that the two extra dashes are not needed and can be removed.
+// Example 2:
+// Input: S = "2-5g-3-J", K = 2
+// Output: "2-5G-3J"
+// Explanation: The string S has been split into three parts, each part has 2
+// characters except the first part as it could be shorter as mentioned above.
+// Note:
+// The length of string S will not exceed 12,000, and K is a positive integer.
+// String S consists only of alphanumerical characters (a-z and/or A-Z and/or
+// 0-9) and dashes(-).
+// String S is non-empty.
 
 
 /**
- * @param {number} n
- * @return {number}
+ * @param {string} S
+ * @param {number} K
+ * @return {string}
  */
-const magicalString = function(n) {
-  if (n <= 0) return 0
-  const s = [1]
-  for (let i = 0; s.length < n; i++) {
-    if (s[i] === 2) {
-      s.push(s[s.length - 1])
-    }
-    if (s.length < n) {
-      s.push(i % 2 ? 1 : 2)
+const licenseKeyFormatting = function(S, K) {
+  let res = ''
+  for (let i = S.length - 1, count = 0; i >= 0; i--) {
+    if (S[i] !== '-') {
+      if (count === 0 && res !== '') res = '-' + res
+      res = S[i].toUpperCase() + res
+      count = (count + 1) % K
     }
   }
-  return s.filter(v => v < 2).length
+  return res
 }
 
 ;[
-  1,  // 1
-  2,  // 1
-  3,  // 1
-  4,  // 2
-  5,  // 3
-  6,  // 3
-  19, // 9
-].forEach((n) => {
-  console.log(magicalString(n))
+  ['5F3Z-2e-9-w', 4],
+  ['2-5g-3-J', 2],
+  ['1de0w-2nM-3MED', 3],
+  ["--a-a-a-a--", 2],
+].forEach(([S, K]) => {
+  console.log(licenseKeyFormatting(S, K))
 })
 
 // Solution:
-// 文字图解释（其中两个 s 为同一个序列）：
-// s = 1   2 2  1 1  2  1  2 2  1  2 2  1 1  2  1 1  2 2 ......
-//     |   |/   |/   |  |  |/   |  |/   |/   |  |/   |/
-// s = 1   2    2    1  1  2    1  2    2    1  2    2   ......
+// !!注意多个连续 - 符号的情况，别添加多余的 - 符号。
 
-// 从中可以看出，连续相同的数字成为一组：
-//  - 每组的数字是 1 和 2 交替出现的，即奇数组为 2 的组合，偶数组为 1 的组合，
-//  - 每组的数字出现的次数，是非分组序列的同下标（组数与数组下标相同）的数，
-//    即 s[i] = 1 时，添加一个数，s[i] = 2 时，添加两个数。
-
-
-// 实现中，使用了一些小技巧：超前添加。即使用 s[i] 来完成 s[i + 1] 对应的组数的
-// 第一个数。具体为：
-//  - s[i] = 2时，添加一个与末尾相同的数，然后再添加一个交替数
-//  - s[i] = 1时，添加一个交替数。
-
+// 使用 count 来记录当前一组的长度（不用也行，可以通过 res 计算）
+// 从后向前遍历，忽略 - 符号，每遍历一个字符，都转成大写，并添加到 res 头部。
+// 当 count == K 时，添加一个 - 符号到 res 头部，注意首尾处。
 
 // Submission Result: Accepted
