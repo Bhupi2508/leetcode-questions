@@ -1,60 +1,65 @@
-// 1154. Day of the Year
-// Easy   49%
+// 1160. Find Words That Can Be Formed by Characters
+// Easy   67%
 
 
-// Given a string date representing a Gregorian calendar date formatted as
-// YYYY-MM-DD, return the day number of the year.
+// You are given an array of strings words and a string chars.
+// A string is good if it can be formed by characters from chars (each character
+// can only be used once).
+// Return the sum of lengths of all good strings in words.
 
 // Example 1:
-// Input: date = "2019-01-09"
-// Output: 9
-// Explanation: Given date is the 9th day of the year in 2019.
+// Input: words = ["cat","bt","hat","tree"], chars = "atach"
+// Output: 6
+// Explanation:
+// The strings that can be formed are "cat" and "hat" so the answer is 3 + 3 = 6.
 // Example 2:
-// Input: date = "2019-02-10"
-// Output: 41
-// Example 3:
-// Input: date = "2003-03-01"
-// Output: 60
-// Example 4:
-// Input: date = "2004-03-01"
-// Output: 61
+// Input: words = ["hello","world","leetcode"], chars = "welldonehoneyr"
+// Output: 10
+// Explanation:
+// The strings that can be formed are "hello" and "world" so the answer is 5 + 5
+// = 10.
 
-// Constraints:
-//     date.length == 10
-//     date[4] == date[7] == '-', and all other date[i]'s are digits
-//     date represents a calendar date between Jan 1st, 1900 and Dec 31, 2019.
+// Note:
+//     1 <= words.length <= 1000
+//     1 <= words[i].length, chars.length <= 100
+//     All strings contain lowercase English letters only.
 
 
 /**
- * @param {string} date
+ * @param {string[]} words
+ * @param {string} chars
  * @return {number}
  */
-const dayOfYear = function(date) {
-  let [y, m, res] = date.split('-').map(a => Number.parseInt(a))
-  const md = [
-    31,
-    y % 4 == 0 && (y % 100 != 0 || y % 400 == 0) ? 29 : 28,
-    31,30,31,30,31,31,30,31,30,31
-  ]
-  while (--m > 0) res += md[m - 1]
+const countCharacters = function(words, chars) {
+  const hash = {}
+  for (let c of chars) hash[c] = (hash[c] || 0) + 1
+  let res = 0
+  for (let word of words) {
+    const h = Object.assign({}, hash)
+    let canBeFormed = true
+    for (let c of word) {
+      if (h[c] === undefined || --h[c] < 0) {
+        canBeFormed = false
+        break
+      }
+    }
+    if (canBeFormed) res += word.length
+  }
   return res
 }
+
 ;[
-  '2019-01-09', // 9
-  '2019-02-10', // 41
-  '2003-03-01', // 60
-  '2004-03-01', // 61
-  '2020-12-31', // 366
-  "1900-03-25", // 84
-].forEach((date) => {
-  console.log(dayOfYear(date))
+  [['cat','bt','hat','tree'], 'atach'],
+  [['hello','world','leetcode'], 'welldonehoneyr'],
+].forEach(([words, chars]) => {
+  console.log(countCharacters(words, chars))
 })
 
 // Solution:
-// !!注意 2月的天数
-// 闰年的定义
-// 1. 能被 400 整除
-// 2. 能被 4 整除同时不能被 100 整除
+// 使用 hashMap 来保存 chars 中每个字符出现的次数。
+// 遍历每个 word 使用 hashMap 统计其每个字符出现的次数，并与 chars 的比较，
+// 当所有字符都在 chars 中出现，并且数量不超出范围时，添加长度到 res 中。
 
+// 改进：复制 chars 的 hashMap，并在遍历 word 时使用。
 
 // Submission Result: Accepted
