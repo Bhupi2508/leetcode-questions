@@ -1,82 +1,28 @@
 /**
- * Definition for singly-linked list.
- * function ListNode(val) {
- *     this.val = val;
- *     this.next = null;
- * }
+ * Use the idea of House Robber I, find the maxAmount twice.
+ * first to find the max amount from 0 to length - 2,
+ * second to find the max amount from 1 to length - 1,
+ * doing this because the last house and first house are connected, they can't both
+ * be robbed. Finally find the max value from first and second.
+ *
+ * @param {number[]} nums
+ * @return {number}
  */
-/**
- * @param {ListNode} l1
- * @param {ListNode} l2
- * @return {ListNode}
- */
-
-// needs improvement, it can be shorter
-var addTwoNumbers = function(l1, l2) {
-    var l3 = new ListNode();
-    var p3 = l3;
-    var addOne = false;
-    var digitSum = 0;
-
-    while (l1 || l2) {
-        var l1Digit = 0;
-        var l2Digit = 0;
-        if (l1) l1Digit = l1.val;
-        if (l2) l2Digit = l2.val;
-        if (addOne) {
-            digitSum = l1Digit + l2Digit + 1;
-        } else {
-            digitSum = l1Digit + l2Digit;
-        }
-
-        if (digitSum > 9) {
-            digitSum -= 10;
-            addOne = true;
-        } else {
-            addOne = false;
-        }
-
-        var node = new ListNode(digitSum);
-        l3.next = node;
-        l3 = node;
-        if (l1) l1 = l1.next;
-        if (l2) l2 = l2.next;
-    }
-
-    if (addOne) {
-        var node = new ListNode(1);
-        l3.next = node;
-    }
-
-    return p3.next;
+var rob = function(nums) {
+    if (nums.length === 0) return 0;
+    if (nums.length === 1) return nums[0];
+    return Math.max(robSingle(nums, 0, nums.length - 2), robSingle(nums, 1, nums.length - 1));
 };
 
-// a shorter and smarter Version, from LeetCode community
-var addTwoNumbers = function(l1, l2) {
-    var l3 = new ListNode();
-    var p3 = l3;
-    var digitSum = 0;
+var robSingle = function(nums, start, end) {
+    var toRob = 0;
+    var notRob = 0;
 
-    while (l1 || l2) {
-        digitSum = Math.floor(digitSum / 10);
-
-        if (l1) {
-            digitSum += l1.val;
-            l1 = l1.next;
-        }
-
-        if (l2) {
-            digitSum += l2.val;
-            l2 = l2.next
-        }
-
-        l3.next = new ListNode(digitSum % 10);
-        l3 = l3.next;
+    for (var i = start; i <= end; i++) {
+        var tmp = toRob;
+        toRob = notRob + nums[i];
+        notRob = Math.max(notRob, tmp);
     }
 
-    if (Math.floor(digitSum / 10) === 1) {
-        l3.next = new ListNode(1);
-    }
-
-    return p3.next;
+    return Math.max(toRob, notRob);
 };
