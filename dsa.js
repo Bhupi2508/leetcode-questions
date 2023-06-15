@@ -1,52 +1,63 @@
-// 462. Minimum Moves to Equal Array Elements II
-// Medium   51%
+// 463. Island Perimeter
+// Easy   57%
 
 
-// Given a non-empty integer array, find the minimum number of moves required to
-// make all array elements equal, where a move is incrementing a selected element
-// by 1 or decrementing a selected element by 1.
-
-// You may assume the array's length is at most 10,000.
+// You are given a map in form of a two-dimensional integer grid where 1
+// represents land and 0 represents water. Grid cells are connected
+// horizontally/vertically (not diagonally). The grid is completely surrounded by
+// water, and there is exactly one island (i.e., one or more connected land
+// cells). The island doesn't have "lakes" (water inside that isn't connected to
+// the water around the island). One cell is a square with side length 1. The
+// grid is rectangular, width and height don't exceed 100. Determine the
+// perimeter of the island.
 
 // Example:
 
-// Input:
-// [1,2,3]
+// [[0,1,0,0],
+//  [1,1,1,0],
+//  [0,1,0,0],
+//  [1,1,0,0]]
 
-// Output:
-// 2
-
-// Explanation:
-// Only two moves are needed (remember each move increments or decrements one
-// element):
-
-// [1,2,3]  =>  [2,2,3]  =>  [2,2,2]
+// Answer: 16
+// Explanation: The perimeter is the 16 yellow stripes in the image below:
 
 
 /**
- * @param {number[]} nums
+ * @param {number[][]} grid
  * @return {number}
  */
-const minMoves2 = function(nums) {
-  nums.sort((a, b) => a - b)
-  const mid = nums.length >> 1
+const islandPerimeter = function(grid) {
+  if (grid.length === 0 || grid[0].length === 0 ) return 0
+  const m = grid.length, n = grid[0].length
+  const getIJ = (i, j) => (grid[i] && grid[i][j] || 0) ^ 1
   let result = 0
-  for (let num of nums) result += Math.abs(nums[mid] - num)
+  for (let i = 0; i < m; i++) {
+    for (let j = 0; j < n; j++) {
+      if (grid[i][j]) {
+        result +=
+          getIJ(i - 1, j) +
+          getIJ(i, j - 1) +
+          getIJ(i, j + 1) +
+          getIJ(i + 1, j)
+      }
+    }
+  }
   return result
 }
 
 ;[
-  [1, 2, 3],                    // 2
-  [1, 5, 12, 16, 21, 22, 27],   // 52
-  [1, 5, 12, 16, 21, 49],      // 68
-].forEach(nums => {
-  console.log(minMoves2(nums))
+  [[0,1,0,0],
+   [1,1,1,0],
+   [0,1,0,0],
+   [1,1,0,0]],                  // 16
+].forEach(grid => {
+  console.log(islandPerimeter(grid))
 })
 
 // Solution:
-// 先排序找到中位数（若长度为偶数，则可选两个数中的任意一个）
-// 将其他数全部移到与中位数相同的数即可。
 
-// TODO: #462 为何选中位数为对齐数？
+// 对岛屿的每个块，检查其四周是否为水。
+// 是，结果则加 1
+// 否则加 0
 
 // Submission Result: Accepted
