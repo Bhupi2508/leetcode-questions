@@ -1,98 +1,63 @@
-// 61. Rotate List
-// Medium   24%
+// 62. Unique Paths
+// Medium   41%
 
-// Given a list, rotate the list to the right by k places, where k is
-// non-negative.
+// A robot is located at the top-left corner of a m x n grid (marked 'Start' in
+// the diagram below).
 
-// For example:
-// Given 1->2->3->4->5->NULL and k = 2,
-// return 4->5->1->2->3->NULL.
+// The robot can only move either down or right at any point in time. The robot
+// is trying to reach the bottom-right corner of the grid (marked 'Finish' in
+// the diagram below).
+
+// How many possible unique paths are there?
+
+
+// Above is a 3 x 7 grid. How many possible unique paths are there?
+
+// Note: m and n will be at most 100.
+
+// easy recursion but big
+// const uniquePaths = function(m, n) {
+//   if (m === 1) return 1
+//   if (n === 1) return 1
+//   return uniquePaths(m - 1, n) + uniquePaths(m, n - 1)
+// }
+
 
 /**
- * Definition for singly-linked list.
- * function ListNode(val) {
- *     this.val = val;
- *     this.next = null;
- * }
+ * @param {number} m
+ * @param {number} n
+ * @return {number}
  */
-
-/**
- * @param {ListNode} head
- * @param {number} k
- * @return {ListNode}
- */
-const rotateRight = function(head, k) {
-  if (head === null || k === 0) return head
-
-  let p = head, q = head, total = 0
-  for (let i = k; i > 0 && q !== null; i--) {
-    q = q.next
-    total++
-  }
-
-  if (q === null) {
-    if (k % total === 0) return head
-    else {
-      q = head
-      for (let i = 0; i < k % total; i++) q = q.next
+const uniquePaths = function(m, n) {
+  const dp = Array(n).fill(0)
+  dp[0] = 1
+  for (let i = 0; i < m; i++) {
+    for (let j = 1; j < n; j++) {
+      dp[j] += dp[j - 1]
     }
   }
-
-  while (q.next !== null) {
-    q = q.next
-    p = p.next
-  }
-
-  const newHead = p.next
-  p.next = null
-  q.next = head
-
-  return newHead
+  return dp[n - 1]
 }
 
-const latest = function(head, k) {
-  function iter(node, i) {
-    if (node.next == null) {
-      k %= i
-      if (k === 0) return head
-      node.next = head
-      return node
-    }
-
-    let newHead = iter(node.next, i + 1)
-    if (--k === 0) {
-      newHead = node.next
-      node.next = null
-    }
-    return newHead
-  }
-
-  return head ? iter(head, 1) : head
-}
-
-const ListNode = require('../structs/ListNode')
 ;[
-  [[1,2,3,4,5], 2],
-  [[1,2], 101],
-  [[1], 0],
-  [[1], 1]
-].forEach(([array, k]) => {
-  console.log((rotateRight(ListNode.from(array), k) || '').toString())
-  console.log(latest(ListNode.from(array), k).toString())
+  [3, 7],
+  [3, 6],
+  [100, 100],
+].forEach(([m, n]) => {
+  console.log(uniquePaths(m, n))
 })
 
 // Solution:
-// 使用迭代递归函数，来形成一个栈。
-// 先遍历整个链表，直到最后一个节点，并记录链表的长度。
-// 使用链表长度更新k, 因为当k大于链表长度时，需要使用取模运算，即k=k%n(n为长度)。
+// 使用动态规划。
+// 用一个表来表示一个mxn的方格，
+// 表的每个项表示从开始位置到当前位置的全部不同路径。
+// 每个项都是上一个位置与左一个位置相加所得。
+// 最后结果为终点值，即最后一个项的值。
 
-// 若第一次更新k时，就等于0，则直接返回头节点；若不为0，则将链头连到链尾后，形成环。
-// 之后就一层层返回，每返回一层，k都需要减一。
-
-// 当k等于0时，说明该节点的下一个节点为右边到左边的第k个节点，将下一个节点作为新的头部，
-// 并将该节点的next指针设为null，并返回新的头部
-// 若k不为0，则直接返回上一层返回的头部。
-
-// 最后得到的新的头部，即是所求的链表的头部。
+// 对动态规划表进行优化。
+// 因为每次都是上一项加左一项。
+// 因此只需要用一个数组即可，
+// 每一项在改变之前都代表着上一项的值，只需在原来基础上加左一项即可。
+// 因为每一行的每一项只改变一次，且仅使用两次。
 
 // Submission Result: Accepted
