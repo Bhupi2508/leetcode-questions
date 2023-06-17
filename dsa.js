@@ -1,24 +1,21 @@
 /**
- * @param {number[]} nums
+ * @param {number[]} prices
  * @return {number}
  */
-var lengthOfLIS = function(nums) {
-    if (nums.length === 0) return 0;
+var maxProfit = function(prices) {
+    if (prices.length <= 1) return 0;
+    var sells = [0];
+    var buys = [-prices[0]];
 
-    var seqLength = [];
-    for (i = 0; i < nums.length; i++) {
-        seqLength[i] = 1;
-    }
-
-    for (var i = 1; i < nums.length; i++) {
-        for (var j = 0; j < i; j++) {
-            if (j < i && nums[j] < nums[i]) {
-                seqLength[i] = Math.max(seqLength[j] + 1, seqLength[i]);
-            }
+    for (var i = 1; i < prices.length; i++) {
+        var delta = prices[i] - prices[i - 1];
+        sells[i] = Math.max(buys[i - 1] + prices[i], sells[i - 1] + delta);
+        if (i > 1) {
+            buys[i] = Math.max(sells[i - 2] - prices[i], buys[i - 1] - delta);
+        } else {
+            buys[i] = Math.max(-prices[i], buys[i - 1] - delta);
         }
     }
 
-    return Math.max.apply(Math, seqLength);
+    return Math.max.apply(null, sells);
 };
-
-// a better solution? O(NlongN)
