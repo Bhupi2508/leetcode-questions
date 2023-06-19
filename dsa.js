@@ -1,72 +1,34 @@
-// 419. Battleships in a Board
-// Medium   62%
+// 434. Number of Segments in a String
+// Easy   36%
 
-// Given an 2D board, count how many battleships are in it. The battleships are
-// represented with 'X's, empty slots are represented with '.'s. You may assume
-// the following rules:
 
-// - You receive a valid board, made of only battleships or empty slots.
-// - Battleships can only be placed horizontally or vertically. In other words,
-//   they can only be made of the shape 1xN (1 row, N columns) or Nx1 (N rows, 1
-//   column), where N can be of any size.
-// - At least one horizontal or vertical cell separates between two battleships
-//   there are no adjacent battleships.
+// Count the number of segments in a string, where a segment is defined to be a
+// contiguous sequence of non-space characters.
+
+// Please note that the string does not contain any non-printable characters.
 
 // Example:
 
-// X..X
-// ...X
-// ...X
-
-// In the above board there are 2 battleships.
-
-// Invalid Example:
-
-// ...X
-// XXXX
-// ...X
-
-// This is an invalid board that you will not receive - as battleships will
-// always have a cell separating between them.
-
-// Follow up:Could you do it in one-pass, using only O(1) extra memory and
-// without modifying the value of the board?
+// Input: "Hello, my name is John"
+// Output: 5
 
 
 /**
- * @param {character[][]} board
+ * @param {string} s
  * @return {number}
  */
-const countBattleships = function(board) {
-  const rows = board.length, cols = board[0].length
-  let result = 0
-  for (let i = 0; i < rows; i++) {
-    for (let j = 0; j < cols; j++) {
-      if (board[i][j] === '.') continue
-      if (i > 0 && board[i - 1][j] === 'X') continue
-      if (j > 0 && board[i][j - 1] === 'X') continue
-      result++
-    }
-  }
-  return result
+const countSegments = function(s) {
+  return s.split(' ').filter(w => w !== '').length
 }
 
 ;[
-  [['X','X','.','X'],
-   ['.','.','.','X'],
-   ['X','.','.','X']],
-  // 3
-
-  [['X','.','.','X'],
-   ['.','.','.','X'],
-   ['.','.','.','X']],
-  // 2
-].forEach(board => {
-  console.log(countBattleships(board))
+  "Hello, my name is John",     // 5
+].forEach(s => {
+  console.log(countSegments(s))
 })
 
 // Solution:
-// 只需要数最上或最左的船就行了。
-// 如果上有或左有，说明其不是最上的或最左的。
+// 可耻地使用了 split 函数。
+// filter 去除多余的空格产生的空字符。
 
 // Submission Result: Accepted
