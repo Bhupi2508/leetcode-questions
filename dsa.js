@@ -1,68 +1,63 @@
-// 1431. Kids With the Greatest Number of Candies
-// Easy   89%
+// 1436. Destination City
+// Easy   79%
 
 
-// Given the array candies and the integer extraCandies, where candies[i]
-// represents the number of candies that the ith kid has.
-// For each kid check if there is a way to distribute extraCandies among the kids
-// such that he or she can have the greatest number of candies among them. Notice
-// that multiple kids can have the greatest number of candies.
+// You are given the array paths, where paths[i] = [cityAi, cityBi] means there
+// exists a direct path going from cityAi to cityBi. Return the destination city,
+// that is, the city without any path outgoing to another city.
+// It is guaranteed that the graph of paths forms a line without any loop,
+// therefore, there will be exactly one destination city.
 
 // Example 1:
-// Input: candies = [2,3,5,1,3], extraCandies = 3
-// Output: [true,true,true,false,true]
-// Explanation:
-// Kid 1 has 2 candies and if he or she receives all extra candies (3) will have
-// 5 candies --- the greatest number of candies among the kids.
-// Kid 2 has 3 candies and if he or she receives at least 2 extra candies will
-// have the greatest number of candies among the kids.
-// Kid 3 has 5 candies and this is already the greatest number of candies among
-// the kids.
-// Kid 4 has 1 candy and even if he or she receives all extra candies will only
-// have 4 candies.
-// Kid 5 has 3 candies and if he or she receives at least 2 extra candies will
-// have the greatest number of candies among the kids.
+// Input: paths = [["London","New York"],["New York","Lima"],["Lima","Sao
+// Paulo"]]
+// Output: "Sao Paulo"
+// Explanation: Starting at "London" city you will reach "Sao Paulo" city which
+// is the destination city. Your trip consist of: "London" -> "New York" ->
+// "Lima" -> "Sao Paulo".
 // Example 2:
-// Input: candies = [4,2,1,1,2], extraCandies = 1
-// Output: [true,false,false,false,false]
-// Explanation: There is only 1 extra candy, therefore only kid 1 will have the
-// greatest number of candies among the kids regardless of who takes the extra
-// candy.
+// Input: paths = [["B","C"],["D","B"],["C","A"]]
+// Output: "A"
+// Explanation: All possible trips are:
+// "D" -> "B" -> "C" -> "A".
+// "B" -> "C" -> "A".
+// "C" -> "A".
+// "A".
+// Clearly the destination city is "A".
 // Example 3:
-// Input: candies = [12,1,12], extraCandies = 10
-// Output: [true,false,true]
+// Input: paths = [["A","Z"]]
+// Output: "Z"
 
 // Constraints:
-//     2 <= candies.length <= 100
-//     1 <= candies[i] <= 100
-//     1 <= extraCandies <= 50
+//     1 <= paths.length <= 100
+//     paths[i].length == 2
+//     1 <= cityAi.length, cityBi.length <= 10
+//     cityAi != cityBi
+//     All strings consist of lowercase and uppercase English letters and the
+// space character.
 
 
 /**
- * @param {number[]} candies
- * @param {number} extraCandies
- * @return {boolean[]}
+ * @param {string[][]} paths
+ * @return {string}
  */
-const kidsWithCandies = function(candies, extraCandies) {
-  let max = candies[0]
-  for (let c of candies) max = Math.max(max, c)
-  const res = []
-  for (let c of candies) {
-    res.push(c + extraCandies >= max)
-  }
-  return res
+const destCity = function(paths) {
+  const map = {}
+  for (let p of paths) map[p[0]] = p[1]
+  let dest = paths[0][1]
+  while (map[dest]) dest = map[dest]
+  return dest
 }
 
 ;[
-  [[2,3,5,1,3], 3],
-  [[4,2,1,1,2], 1],
-  [[12,1,12], 10],
-].forEach(([candies, extraCandies]) => {
-  console.log(kidsWithCandies(candies, extraCandies))
+  [['London','New York'],['New York','Lima'],['Lima','Sao Paulo']],
+  [['B', 'C'],['D','B'],['C','A']],
+  [['A', 'Z']],
+].forEach((paths) => {
+  console.log(destCity(paths))
 })
 
 // Solution:
-// 找出最大值，
-// 遍历数组，比较 candies[i] + extraCandies 是否大于 max 即可
+// 使用 hashMap 解决。
 
 // Submission Result: Accepted
