@@ -1,8 +1,8 @@
-// 108. Convert Sorted Array to Binary Search Tree
-// Easy   42%
+// 109. Convert Sorted List to Binary Search Tree
+// Medium   34%
 
-// Given an array where elements are sorted in ascending order, convert it to a
-// height balanced BST.
+// Given a singly linked list where elements are sorted in ascending order,
+// convert it to a height balanced BST.
 
 // For this problem, a height-balanced binary tree is defined as a binary tree
 // in which the depth of the two subtrees of every node never differ by more
@@ -10,7 +10,7 @@
 
 // Example:
 
-// Given the sorted array: [-10,-3,0,5,9],
+// Given the sorted linked list: [-10,-3,0,5,9],
 
 // One possible answer is: [0,-3,9,-10,null,5], which represents the following
 // height balanced BST:
@@ -21,6 +21,13 @@
 //   /   /
 // -10  5
 
+/**
+ * Definition for singly-linked list.
+ * function ListNode(val) {
+ *     this.val = val;
+ *     this.next = null;
+ * }
+ */
 
 /**
  * Definition for a binary tree node.
@@ -30,28 +37,49 @@
  * }
  */
 
+const ListNode = require('../structs/ListNode')
+const TreeNode = require('../structs/TreeNode')
+
 /**
- * @param {number[]} nums
+ * @param {ListNode} head
  * @return {TreeNode}
  */
-const sortedArrayToBST = function(nums) {
-  const n = nums.length
-  if (n === 0) return null
-  const mid = (n - 1) >> 1
-  const root = new TreeNode(nums[mid])
-  root.left = sortedArrayToBST(nums.slice(0, mid))
-  root.right = sortedArrayToBST(nums.slice(mid + 1, n))
-  return root
+const sortedListToBST = function(head) {
+  function iter(head, tail) {
+    if (head === tail) return null
+
+    let slow = head, fast = head
+    while (fast !== tail && fast.next !== tail) {
+      fast = fast.next.next
+      slow = slow.next
+    }
+
+    const root = new TreeNode(slow.val)
+    root.left = iter(head, slow)
+    root.right = iter(slow.next, tail)
+    return root
+  }
+  return iter(head, null)
 }
 
 ;[
-  [-10,-3,0,5,9],
-].forEach(nums => {
-  console.log(sortedArrayToBST(nums))
+  // [],
+  // [0],
+  // [0, 1],
+  // [0, 1, 2],
+  // [0, 1, 2, 3],
+  [-10, -3, 0, 5, 9],
+  // [0, 1, 2, 3, 4, 5],
+  // [0, 1, 2, 3, 4, 5, 6],
+  // [0, 1, 2, 3, 4, 5, 6, 7],
+].forEach((array) => {
+  console.log(sortedListToBST(ListNode.from(array)))
 })
 
 // Solution:
-// 构造一个平衡的二叉查找树。
-// 以中位数为根节点，分别递归地以左边和右边的数构造左右子树。
+// 使用两个指针快慢遍历，找到中间节点，以中间节点为根。
+// 递归左链和右链，分别生成左右子树。
+
+// 关键在于快慢遍历。过程中需要特别注意指针的细节。
 
 // Submission Result: Accepted
