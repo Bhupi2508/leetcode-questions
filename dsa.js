@@ -6,32 +6,43 @@
  * }
  */
 /**
+ * sort, then merge. In fact, this method use O(logN) space for recursive function calls.
+ * needs to be improved.
+ *
  * @param {ListNode} head
  * @return {ListNode}
  */
-var insertionSortList = function(head) {
-    if (!head) return head;
-    var dummyHead = new ListNode(null);
-    dummyHead.next = head;
-    var first = dummyHead;
-    var second = head;
+var sortList = function(head) {
+    if (!head || !head.next) return head;
+    var fast = head;
+    var slow = head;
 
-    while (second.next) {
-        if (second.next.val < second.val) {
-            var smallNode = second.next;
-            second.next = second.next.next;
-            while (first.next && first.next.val < smallNode.val) {
-                first = first.next;
-            }
-            smallNode.next = first.next;
-            first.next = smallNode;
-            first = dummyHead;
-        } else {
-            second = second.next;
-            if (!second) break;
-        }
-
+    while (fast.next && fast.next.next) {
+        slow = slow.next;
+        fast = fast.next.next;
     }
+    fast = slow.next;
+    slow.next = null;
+    var secondHalf = sortList(fast);
+    var firstHalf = sortList(head);
+    return merge(firstHalf, secondHalf);
+};
 
-    return dummyHead.next;
+var merge = function(l1, l2) {
+    var l3 = new ListNode();
+    var l3Head = l3;
+    while (l1 && l2) {
+        if (l1.val <= l2.val ) {
+            l3.next = l1;
+            l1 = l1.next;
+        } else {
+            l3.next = l2;
+            l2 = l2.next;
+        }
+        l3 = l3.next;
+    }
+    if (!l1) l3.next = l2;
+    if (!l2) l3.next = l1;
+
+    return l3Head.next;
 };
