@@ -1,28 +1,31 @@
 /**
- * @param {number[]} nums
+ * Key: backtracking. Be careful about JavaScript array sort.
+ *
+ * @param {number[]} candidates
  * @param {number} target
- * @return {number}
+ * @return {number[][]}
  */
-// it not O(logN)
-var searchInsert = function(nums, target) {
-  for (var i = 0; i < nums.length; i++) {
-      if (nums[i] >= target) return i;
-  }
-
-  return nums.length;
+var combinationSum = function(candidates, target) {
+    var result = [];
+    var results = [];
+    
+    candidates.sort(function(a, b) {
+      return a - b;
+    });
+    combinationSumHelper(candidates, target, results, result, 0);
+    return results;
 };
 
-// because it is a sorted array, we can use binary search.
-var searchInsert = function(nums, target) {
-  var low = 0;
-  var high = nums.length - 1;
+var combinationSumHelper = function(candidates, target, results, result, start) {
+    if (target === 0) {
+        results.push(result.slice());
+        return results;
+    }
 
-  while (low <= high) {
-      var mid = low + Math.floor((high - low) / 2);
-      if (nums[mid] === target) return mid;
-      if (target < nums[mid]) high = mid - 1;
-      else low = mid + 1;
-  }
-
-  return low;
+    for (var i = start; i < candidates.length; i++) {
+        if (candidates[i] > target) break;
+        result.push(candidates[i]);
+        combinationSumHelper(candidates, target - candidates[i], results, result, i);
+        result.pop(candidates[i]);
+    }
 };
