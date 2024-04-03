@@ -1,44 +1,23 @@
 /**
- * Definition for singly-linked list.
- * function ListNode(val) {
- *     this.val = val;
- *     this.next = null;
- * }
+ * The idea is from https://leetcode.com/discuss/41527/simple-and-fast-c-c-with-explanation
+ * @param {number[]} height
+ * @return {number}
  */
-/**
- * Definition for a binary tree node.
- * function TreeNode(val) {
- *     this.val = val;
- *     this.left = this.right = null;
- * }
- */
-/**
- * @param {ListNode} head
- * @return {TreeNode}
- */
-var sortedListToBST = function(head) {
-    if (!head) return head;
-    var slow = head;
-    var fast = head;
-    var prev = null;
+var maxArea = function(height) {
+    var start = 0;
+    var end = height.length - 1;
+    var area = 0;
 
-    while (fast && fast.next) {
-        fast = fast.next.next;
-        prev = slow;
-        slow = slow.next;
+    while (start < end) {
+        var minHeight = Math.min(height[start], height[end]);
+        area = Math.max(area, minHeight * (end - start));
+        while (start < end && height[start] <= minHeight) {
+            start++;
+        }
+        while (start < end && height[end] <= minHeight) {
+            end--;
+        }
     }
 
-    var node = new TreeNode(slow.val);
-    // if prev is null, it means, slow and fast did not move, it means this half is done.
-    // otherwise, prev is the end of the first half (left sub tree). And set prev.next = null.
-    if (!prev) {
-        head = null;
-    } else {
-        prev.next = null;
-    }
-
-    node.left = sortedListToBST(head);
-    node.right = sortedListToBST(slow.next);
-
-    return node;
+    return area;
 };
