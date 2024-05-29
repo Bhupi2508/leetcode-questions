@@ -6,24 +6,19 @@
  * }
  */
 /**
- * @param {number[]} inorder
- * @param {number[]} postorder
+ * @param {number[]} nums
  * @return {TreeNode}
  */
-var buildTree = function(inorder, postorder) {
-    return helper(inorder, 0, inorder.length - 1, postorder, 0, postorder.length - 1);
+var sortedArrayToBST = function(nums) {
+    var high = nums.length - 1;
+    return arrayToBSTHelper(nums, 0, high);
 };
 
-var helper = function(inorder, inStart, inEnd, postorder, postStart, postEnd) {
-    if (inEnd < inStart || postEnd < postStart) return null;
-    var rootVal = postorder[postEnd];
-    var root = new TreeNode(rootVal);
-    for (var i = 0; i < inEnd; i++) {
-        if (inorder[i] === rootVal) {
-            break;
-        }
-    }
-    root.left = helper(inorder, inStart , i - 1 , postorder, postStart, postStart + i - 1 - inStart);
-    root.right = helper(inorder, i + 1, inEnd, postorder, postEnd - inEnd + i, postEnd - 1);
+var arrayToBSTHelper = function(nums, low, high) {
+    if (low > high) return null;
+    var mid = low + Math.floor((high - low) / 2);
+    var root = new TreeNode(nums[mid]);
+    root.left = arrayToBSTHelper(nums, low, mid - 1);
+    root.right = arrayToBSTHelper(nums, mid + 1, high);
     return root;
 };
